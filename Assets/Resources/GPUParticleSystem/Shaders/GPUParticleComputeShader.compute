@@ -1,0 +1,38 @@
+﻿// Update kernel
+#pragma kernel UPDATE
+
+struct Particle
+{
+    float3 position;
+};
+
+RWStructuredBuffer<Particle> gParticleBufferIN;
+
+RWStructuredBuffer<Particle> gParticleBufferOUT;
+
+[numthreads(64,1,1)]
+void UPDATE(uint3 id : SV_DispatchThreadID)
+{
+    uint tID = id.x;
+
+    Particle pSelf = gParticleBufferIN[tID];
+	
+    gParticleBufferOUT[tID] = pSelf;
+}
+
+// Emitt kernel
+//#pragma kernel EMITT
+//
+//RWStructuredBuffer<float4> POSITION_IN;
+//
+//RWStructuredBuffer<float4> POSITION_OUT;
+//
+//[numthreads(64, 1, 1)]
+//void UPDATE(uint3 id : SV_DispatchThreadID)
+//{
+//    uint tID = id.x;
+//    float4 self_position = POSITION_IN[tID];
+//
+//    POSITION_OUT[tID] = self_position;
+//}
+
