@@ -8,11 +8,30 @@ public class GPUParticleSystem : MonoBehaviour
 
     public struct GPUParticle
     {
-        public float x,y,z;
-        float pad;
+        public float px,py,pz; // Position.
+        public float vx, vy, vz; // Velocity
+        public float sx, sy; // Scale.
+        public float cx, cy, cz; // Color.
 
-        public GPUParticle(float x = 0, float y = 0, float z = 0) { this.x = x; this.y = y; this.z = z; pad = 0; }
-        public GPUParticle(Vector3 position) { x = position.x; y = position.y; z = position.z; pad = 0; }
+        public GPUParticle(
+            float px = 0, float py = 0, float pz = 0, 
+            float vx = 0, float vy = 0, float vz = 0, 
+            float sx = 1, float sy = 1, 
+            float cx = 0.2f, float cy = 0.7f, float cz = 0.4f)
+        {
+            this.px = px; this.py = py; this.pz = pz;
+            this.vx = vx; this.vy = vy; this.vz = vz;
+            this.sx = sx; this.sy = sy;
+            this.cx = cx; this.cy = cy; this.cz = cz;
+        }
+
+        public GPUParticle(Vector3 position, Vector3 velocity, Vector2 scale, Vector3 color)
+        {
+            this.px = position.x; this.py = position.y; this.pz = position.z;
+            this.vx = velocity.x; this.vy = velocity.y; this.vz = velocity.z;
+            this.sx = scale.x; this.sy = scale.y;
+            this.cx = color.x; this.cy = color.y; this.cz = color.z;
+        }
     }
 
     private class SwapBuffer
@@ -50,7 +69,7 @@ public class GPUParticleSystem : MonoBehaviour
         sRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
         sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
         sKernelUpdate = sComputeShader.FindKernel("UPDATE");
-        //sKernelEmitt = sComputeShader.FindKernel("EMITT");
+        sKernelEmitt = sComputeShader.FindKernel("EMITT");
     }
 
     // SHUTDOWN.
@@ -94,6 +113,7 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.SetBuffer(sKernelUpdate, "gParticleBufferIN", mParticleBuffer.GetInputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gParticleBufferOUT", mParticleBuffer.GetOutputBuffer());
         sComputeShader.SetInt("gParticleCount", mParticleCount);
+        sComputeShader.SetFloat("gDeltaTime", Time.deltaTime);
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mParticleCount / 64.0f), 1, 1);
     }
 
@@ -111,9 +131,19 @@ public class GPUParticleSystem : MonoBehaviour
     // SET PARTICLES.
     public void SetParticles(GPUParticle[] particleArray)
     {
-        mParticleBuffer.GetInputBuffer().SetData(particleArray); // TODO, remove one
+        mParticleBuffer.GetInputBuffer().SetData(particleArray); // TODO, remove one?
         mParticleBuffer.GetOutputBuffer().SetData(particleArray);
         mNextFrameParticleCount = particleArray.GetLength(0);
+    }
+
+    public void EmittParticle()
+    {
+        sComputeShader.SetBuffer(sKernelEmitt, "gParticleBufferIN", mParticleBuffer.GetInputBuffer());
+        sComputeShader.SetBuffer(sKernelEmitt, "gParticleBufferOUT", mParticleBuffer.GetOutputBuffer());
+        sComputeShader.SetInt("gEmittIndex", mParticleCount);
+        sComputeShader.Dispatch(sKernelEmitt, 1, 1, 1);
+
+        mNextFrameParticleCount = mParticleCount + 1;
     }
 
     public int Count { get { return mParticleCount; } }

@@ -4,7 +4,9 @@
 struct Particle
 {
     float3 position;
-    float pad;
+	float3 velocity;
+    float2 scale;
+	float3 color;
 };
 
 uniform RWStructuredBuffer<Particle> gParticleBufferIN;
@@ -12,6 +14,8 @@ uniform RWStructuredBuffer<Particle> gParticleBufferIN;
 uniform RWStructuredBuffer<Particle> gParticleBufferOUT;
 
 uniform int gParticleCount = 0;
+
+uniform float gDeltaTime = 0.f;
 
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
@@ -22,22 +26,25 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
     Particle pSelf = gParticleBufferIN[tID];
 
+	pSelf.position = pSelf.position + pSelf.velocity * gDeltaTime;
+
     gParticleBufferOUT[tID] = pSelf;
 }
 
 // Emitt kernel
-//#pragma kernel EMITT
-//
-//RWStructuredBuffer<float4> POSITION_IN;
-//
-//RWStructuredBuffer<float4> POSITION_OUT;
-//
-//[numthreads(64, 1, 1)]
-//void UPDATE(uint3 id : SV_DispatchThreadID)
-//{
-//    uint tID = id.x;
-//    float4 self_position = POSITION_IN[tID];
-//
-//    POSITION_OUT[tID] = self_position;
-//}
+#pragma kernel EMITT
+
+uniform int gEmittIndex = 0;
+
+[numthreads(1, 1, 1)]
+void EMITT(uint3 id : SV_DispatchThreadID)
+{
+	Particle particle;
+	particle.position = float3(-3, 0, 5);
+	particle.velocity = float3(0, 1, 0);
+	particle.scale = float2(1, 1);
+	particle.color = float3(1, 0, 0);
+
+	gParticleBufferIN[gEmittIndex] = particle;
+}
 

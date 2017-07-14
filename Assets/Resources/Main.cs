@@ -8,16 +8,14 @@ public class Main : MonoBehaviour
 
     private void Start ()
     {
-        GameObject go = new GameObject();
-
-        GPUParticleSystem system = go.AddComponent<GPUParticleSystem>();
+        GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
 
         system.SetParticles(new GPUParticleSystem.GPUParticle[] { new GPUParticleSystem.GPUParticle(0,0,5) });
     }
 
     private void Update()
     {
-
+        GetComponent<GPUParticleSystem>().EmittParticle();
     }
 
     private void OnDestroy()
