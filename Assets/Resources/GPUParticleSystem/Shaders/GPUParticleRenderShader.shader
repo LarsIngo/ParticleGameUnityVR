@@ -4,7 +4,9 @@
     {
         Pass
         {
-            ZTest Always Cull Off ZWrite Off
+            ZTest Less
+			Cull Back
+			ZWrite Off
 
             Fog{ Mode off }
 
@@ -43,8 +45,8 @@
                 float3 pUp = cross(pRight, pForward);
                 float2 scale = float2(1, 1);
 
-                float x = vID == 0 || vID == 1 || vID == 4;
-                float y = vID == 0 || vID == 2 || vID == 5;
+                float x = vID == 0 || vID == 1 || vID == 5;
+                float y = vID == 0 || vID == 2 || vID == 4;
 
                 float2 uv = float2(x, 1.0f - y);
 
