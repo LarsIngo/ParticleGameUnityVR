@@ -18,9 +18,10 @@
             struct Particle
             {
                 float3 position;
+                float pad;
             };
 
-            StructuredBuffer<Particle> gParticleBuffer;
+            uniform StructuredBuffer<Particle> gParticleBuffer;
 
             struct VSoutput
             {

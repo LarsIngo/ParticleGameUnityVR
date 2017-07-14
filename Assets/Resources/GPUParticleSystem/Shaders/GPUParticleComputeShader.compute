@@ -4,19 +4,24 @@
 struct Particle
 {
     float3 position;
+    float pad;
 };
 
-RWStructuredBuffer<Particle> gParticleBufferIN;
+uniform RWStructuredBuffer<Particle> gParticleBufferIN;
 
-RWStructuredBuffer<Particle> gParticleBufferOUT;
+uniform RWStructuredBuffer<Particle> gParticleBufferOUT;
+
+uniform int gParticleCount = 0;
 
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
 {
     uint tID = id.x;
 
+    if (tID >= gParticleCount) return;
+
     Particle pSelf = gParticleBufferIN[tID];
-	
+
     gParticleBufferOUT[tID] = pSelf;
 }
 
