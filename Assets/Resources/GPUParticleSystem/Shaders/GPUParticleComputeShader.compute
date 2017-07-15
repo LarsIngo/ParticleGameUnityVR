@@ -1,12 +1,21 @@
 ﻿// Update kernel
 #pragma kernel UPDATE
 
+//struct Constants
+//{
+//    float drag;
+//    float3 force;
+//};
+//
+//uniform RWStructuredBuffer<Constants> gConstantsBuffer;
+
 struct Particle
 {
     float3 position;
-	float3 velocity;
+    float3 velocity;
     float2 scale;
-	float3 color;
+    float3 color;
+    //float lifetime;
 };
 
 uniform RWStructuredBuffer<Particle> gParticleBufferIN;
@@ -20,13 +29,13 @@ uniform float gDeltaTime = 0.f;
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
 {
-    uint tID = id.x;
+    int tID = (int)id.x;
 
     if (tID >= gParticleCount) return;
 
     Particle pSelf = gParticleBufferIN[tID];
 
-	pSelf.position = pSelf.position + pSelf.velocity * gDeltaTime;
+    pSelf.position = pSelf.position + pSelf.velocity * gDeltaTime;
 
     gParticleBufferOUT[tID] = pSelf;
 }
@@ -34,17 +43,34 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 // Emitt kernel
 #pragma kernel EMITT
 
+struct EmittInfo
+{
+    int emittIndex;
+    float3 position;
+    float3 velocity;
+    float2 scale;
+    float3 color;
+    //float lifetime;
+};
+
+uniform RWStructuredBuffer<EmittInfo> gEmittInfoBuffer;
+
 uniform int gEmittIndex = 0;
+//uniform float3 gEmittPostion = float3(0, 0, 0);
+//uniform float3 gEmittVelocity = float3(0, 0, 0);
 
 [numthreads(1, 1, 1)]
 void EMITT(uint3 id : SV_DispatchThreadID)
 {
-	Particle particle;
-	particle.position = float3(-3, 0, 5);
-	particle.velocity = float3(0, 1, 0);
-	particle.scale = float2(1, 1);
-	particle.color = float3(1, 0, 0);
+    EmittInfo emittInfo = gEmittInfoBuffer[0];
+    Particle particle;
 
-	gParticleBufferIN[gEmittIndex] = particle;
+    particle.position = float3(0, 0, 5);
+    particle.velocity = float3(0, 1, 0);
+    particle.scale = float2(1, 1);
+    particle.color = float3(1, 0, 0);
+    //particle.lifetime = 10.0f;
+
+    gParticleBufferIN[gEmittIndex] = particle;
 }
 

@@ -6,31 +6,51 @@ public class GPUParticleSystem : MonoBehaviour
 {
     /// +++ STRUCTS +++ ///
 
-    public struct GPUParticle
+    private struct GPUParticle
     {
-        public float px,py,pz; // Position.
-        public float vx, vy, vz; // Velocity
-        public float sx, sy; // Scale.
-        public float cx, cy, cz; // Color.
+        private float px, py, pz; // Position.
+        private float vx, vy, vz; // Velocity
+        private float sx, sy; // Scale.
+        private float cx, cy, cz; // Color.
+        //private float lifetime;
+    }
 
-        public GPUParticle(
-            float px = 0, float py = 0, float pz = 0, 
-            float vx = 0, float vy = 0, float vz = 0, 
-            float sx = 1, float sy = 1, 
-            float cx = 0.2f, float cy = 0.7f, float cz = 0.4f)
+    //private struct Constants
+    //{
+    //    private float drag; // Constant Drag.
+    //    private float fx, fy, fz; // Constant Force.
+
+    //    public Constants(
+    //        float drag = 1,
+    //        float fx = 0, float fy = 0, float fz = 0
+    //        )
+    //    {
+    //        this.drag = drag;
+    //        this.fx = fx; this.fy = fy; this.fz = fz;
+    //    }
+    //}
+
+    private struct EmittInfo
+    {
+        private float px, py, pz; // Initial Position.
+        private float vx, vy, vz; // Initial Velocity.
+        private float sx, sy; // Initial Scale.
+        private float cx, cy, cz; // Initial Color.
+        //private float lifetime; // Particle Lifetime.
+
+        public EmittInfo(
+            float px = 0, float py = 0, float pz = 0,
+            float vx = 0, float vy = 1, float vz = 0,
+            float sx = 1, float sy = 1,
+            float cx = 1, float cy = 0, float cz = 0
+            //float lifetime = 10
+            )
         {
             this.px = px; this.py = py; this.pz = pz;
             this.vx = vx; this.vy = vy; this.vz = vz;
             this.sx = sx; this.sy = sy;
             this.cx = cx; this.cy = cy; this.cz = cz;
-        }
-
-        public GPUParticle(Vector3 position, Vector3 velocity, Vector2 scale, Vector3 color)
-        {
-            this.px = position.x; this.py = position.y; this.pz = position.z;
-            this.vx = velocity.x; this.vy = velocity.y; this.vz = velocity.z;
-            this.sx = scale.x; this.sy = scale.y;
-            this.cx = color.x; this.cy = color.y; this.cz = color.z;
+            //this.lifetime = lifetime;
         }
     }
 
@@ -87,21 +107,82 @@ public class GPUParticleSystem : MonoBehaviour
 
     /// +++ MEMBERS +++ ///
 
+    // Particle.
     private SwapBuffer mParticleBuffer;
     private const int mMaxParticleCount = 1000;
     private int mParticleCount = 0;
     private int mNextFrameParticleCount = 0;
+    private ComputeBuffer mEmittInfoBuffer;
+    private ComputeBuffer mConstantsBuffer;
+
+    // Emitter.
+    /// <summary>
+    /// Time since last emitt.
+    /// </summary>
+    private float mEmittTimer = 0.0f;
+
+    /// <summary>
+    /// Particles to emitt per seconds(hertz).
+    /// Default: 1
+    /// </summary>
+    private float mEmittFrequency = 1.0f;
 
     // INIT.
     private void InitSystem()
     {
         mParticleBuffer = new SwapBuffer(2, mMaxParticleCount, System.Runtime.InteropServices.Marshal.SizeOf(typeof(GPUParticle)));
+        mEmittInfoBuffer = new ComputeBuffer(1, System.Runtime.InteropServices.Marshal.SizeOf(typeof(EmittInfo)));
+        //mConstantsBuffer = new ComputeBuffer(1, System.Runtime.InteropServices.Marshal.SizeOf(typeof(Constants)));
     }
 
     // DEINIT.
     private void DeInitSystem()
     {
         mParticleBuffer.Release();
+        mEmittInfoBuffer.Release();
+        //mConstantsBuffer.Release();
+    }
+
+    // EMITT UPDATE.
+    private void EmittUppdate()
+    {
+        // Update timer.
+        mEmittTimer += Time.deltaTime;
+
+        int emittCount = (int)(mEmittFrequency * mEmittTimer);
+
+        if (emittCount == 0) return;
+
+        mEmittTimer -= emittCount * 1.0f / mEmittFrequency;
+
+        for (int i = 0; i < emittCount; ++i)
+        {
+            // BIND PARTICLE BUFFER.
+            sComputeShader.SetBuffer(sKernelEmitt, "gParticleBufferIN", mParticleBuffer.GetInputBuffer());
+
+            sComputeShader.SetInt("gEmittIndex", mParticleCount + i);
+
+            // EMITT INFO.
+            EmittInfo emittInfo = new EmittInfo(
+                transform.position.x, transform.position.y, transform.position.z, // Position.
+                0.0f, 1.0f, 0.0f, // Velocity.
+                0.4f, 0.4f, // Scale.
+                1.0f, 0.0f, 1.0f // Color.
+                //1.0f // Lifetime.
+                );
+            mEmittInfoBuffer.SetData(new EmittInfo[] { emittInfo });
+            sComputeShader.SetBuffer(sKernelEmitt, "gEmittInfoBuffer", mEmittInfoBuffer);
+
+            // CONSTANTS.
+            //Constants constants = new Constants();
+            //mConstantsBuffer.SetData(new Constants[] { constants });
+            //sComputeShader.SetBuffer(sKernelEmitt, "gConstantsBuffer", mConstantsBuffer);
+
+            // DISPATCH.
+            sComputeShader.Dispatch(sKernelEmitt, 1, 1, 1);
+        }
+
+        mNextFrameParticleCount = mParticleCount + emittCount;
     }
 
     // UPDATE.
@@ -128,24 +209,6 @@ public class GPUParticleSystem : MonoBehaviour
         Graphics.DrawProcedural(MeshTopology.Triangles, 6, mParticleCount);
     }
 
-    // SET PARTICLES.
-    public void SetParticles(GPUParticle[] particleArray)
-    {
-        mParticleBuffer.GetInputBuffer().SetData(particleArray); // TODO, remove one?
-        mParticleBuffer.GetOutputBuffer().SetData(particleArray);
-        mNextFrameParticleCount = particleArray.GetLength(0);
-    }
-
-    public void EmittParticle()
-    {
-        sComputeShader.SetBuffer(sKernelEmitt, "gParticleBufferIN", mParticleBuffer.GetInputBuffer());
-        sComputeShader.SetBuffer(sKernelEmitt, "gParticleBufferOUT", mParticleBuffer.GetOutputBuffer());
-        sComputeShader.SetInt("gEmittIndex", mParticleCount);
-        sComputeShader.Dispatch(sKernelEmitt, 1, 1, 1);
-
-        mNextFrameParticleCount = mParticleCount + 1;
-    }
-
     public int Count { get { return mParticleCount; } }
 
     // MONOBEHAVIOUR.
@@ -158,7 +221,10 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Update()
     {
-        // Update this frame.
+        // Update emitter this frame.
+        EmittUppdate();
+
+        // Update particles this frame.
         UpdateSystem();
     }
 
