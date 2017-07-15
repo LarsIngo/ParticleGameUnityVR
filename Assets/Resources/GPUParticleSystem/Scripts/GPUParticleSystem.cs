@@ -12,23 +12,23 @@ public class GPUParticleSystem : MonoBehaviour
         public Vector3 velocity;
         public Vector2 scale;
         public Vector3 color;
-        //private float lifetime; // Lifetime.
+        //private float lifetime;
     }
 
     private struct Constants
     {
-        public float drag; // Constant Drag.
-        public Vector3 force; // Constant Force.
+        public float drag;
+        public Vector3 force;
     }
 
     private struct EmittInfo
     {
-        public int emittIndex; // Index in particle array.
-        public Vector3 postition; // Initial Position.
-        public Vector3 velocity; // Initial Velocity.
-        public Vector2 scale; // Initial Scale.
-        public Vector3 color; // Initial Color.
-        //private float lifetime; // Initial Lifetime.
+        public int emittIndex;
+        public Vector3 postition;
+        public Vector3 velocity;
+        public Vector2 scale;
+        public Vector3 color;
+        public float lifetime;
     }
 
     private class SwapBuffer

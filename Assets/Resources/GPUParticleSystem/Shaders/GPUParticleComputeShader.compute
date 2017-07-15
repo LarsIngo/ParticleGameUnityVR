@@ -57,7 +57,7 @@ struct EmittInfo
     float3 velocity;
     float2 scale;
     float3 color;
-    //float lifetime;
+    float lifetime;
 };
 
 uniform RWStructuredBuffer<EmittInfo> gEmittInfoBuffer;
