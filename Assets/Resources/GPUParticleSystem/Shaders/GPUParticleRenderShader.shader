@@ -18,15 +18,10 @@
             #pragma vertex vert
             #pragma fragment frag
 
-            struct Particle
-            {
-                float3 position;
-                float3 velocity;
-                float2 scale;
-                float3 color;
-            };
-
-            uniform StructuredBuffer<Particle> gParticleBuffer;
+            StructuredBuffer<float4> gPosition;
+            StructuredBuffer<float4> gVelocity;
+            StructuredBuffer<float4> gScale;
+            StructuredBuffer<float4> gColor;
 
             struct VSoutput
             {
@@ -41,9 +36,9 @@
                 float3 lensUp = UNITY_MATRIX_IT_MV[1].xyz;
                 float3 lensForward = UNITY_MATRIX_IT_MV[2].xyz;
 
-                Particle particle = gParticleBuffer[iID];
-                float3 pPosition = particle.position;
-                float2 pScale = particle.scale;
+                float3 pPosition = gPosition[iID].xyz;
+                float2 pScale = gScale[iID].xy;
+                float3 pColor = gColor[iID].xyz;
 
                 float3 pForward = normalize(_WorldSpaceCameraPos - pPosition);
                 float3 pRight = cross(pForward, lensUp);
@@ -56,7 +51,7 @@
 
                 VSoutput output;
                 output.position = UnityObjectToClipPos(float4(vPosition, 1));
-                output.color = particle.color;
+                output.color = pColor;
                 output.uv = float2(x, 1.0f - y);
 
                 return output;

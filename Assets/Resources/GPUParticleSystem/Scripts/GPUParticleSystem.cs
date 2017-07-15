@@ -6,13 +6,13 @@ public class GPUParticleSystem : MonoBehaviour
 {
     /// +++ STRUCTS +++ ///
 
-    private struct GPUParticle
-    {
-        public Vector3 position;
-        public Vector3 velocity;
-        public Vector2 scale;
-        public Vector3 color;
-    }
+    //private struct GPUParticle
+    //{
+    //    public Vector3 position;
+    //    public Vector3 velocity;
+    //    public Vector2 scale;
+    //    public Vector3 color;
+    //}
 
     private struct Constants
     {
@@ -84,7 +84,10 @@ public class GPUParticleSystem : MonoBehaviour
     /// +++ MEMBERS +++ ///
 
     // Particle.
-    private SwapBuffer mParticleBuffer;
+    private SwapBuffer mPositionBuffer;
+    private SwapBuffer mVelocityBuffer;
+    private SwapBuffer mScaleBuffer;
+    private SwapBuffer mColorBuffer;
     private const int mMaxParticleCount = 1000;
     private int mParticleCount = 0;
     private int mNextFrameParticleCount = 0;
@@ -106,7 +109,11 @@ public class GPUParticleSystem : MonoBehaviour
     // INIT.
     private void InitSystem()
     {
-        mParticleBuffer = new SwapBuffer(2, mMaxParticleCount, System.Runtime.InteropServices.Marshal.SizeOf(typeof(GPUParticle)));
+        mPositionBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
+        mVelocityBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
+        mScaleBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
+        mColorBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
+
         mEmittInfoBuffer = new ComputeBuffer(1, System.Runtime.InteropServices.Marshal.SizeOf(typeof(EmittInfo)));
         mConstantsBuffer = new ComputeBuffer(1, System.Runtime.InteropServices.Marshal.SizeOf(typeof(Constants)));
     }
@@ -114,7 +121,11 @@ public class GPUParticleSystem : MonoBehaviour
     // DEINIT.
     private void DeInitSystem()
     {
-        mParticleBuffer.Release();
+        mPositionBuffer.Release();
+        mVelocityBuffer.Release();
+        mScaleBuffer.Release();
+        mColorBuffer.Release();
+
         mEmittInfoBuffer.Release();
         mConstantsBuffer.Release();
     }
@@ -133,8 +144,11 @@ public class GPUParticleSystem : MonoBehaviour
 
         for (int i = 0; i < emittCount; ++i)
         {
-            // BIND PARTICLE BUFFER.
-            sComputeShader.SetBuffer(sKernelEmitt, "gEmittParticleBuffer", mParticleBuffer.GetInputBuffer());
+            // BIND PARTICLE BUFFERS.
+            sComputeShader.SetBuffer(sKernelEmitt, "gPosition", mPositionBuffer.GetInputBuffer());
+            sComputeShader.SetBuffer(sKernelEmitt, "gVelocity", mVelocityBuffer.GetInputBuffer());
+            sComputeShader.SetBuffer(sKernelEmitt, "gScale", mScaleBuffer.GetInputBuffer());
+            sComputeShader.SetBuffer(sKernelEmitt, "gColor", mColorBuffer.GetInputBuffer());
 
             // EMITT INFO.
             EmittInfo emittInfo = new EmittInfo();
@@ -165,11 +179,24 @@ public class GPUParticleSystem : MonoBehaviour
         mConstantsBuffer.SetData(new Constants[] { constants });
         sComputeShader.SetBuffer(sKernelUpdate, "gConstantsBuffer", mConstantsBuffer);
 
-        mParticleBuffer.Swap();
-        sComputeShader.SetBuffer(sKernelUpdate, "gParticleBufferIN", mParticleBuffer.GetInputBuffer());
-        sComputeShader.SetBuffer(sKernelUpdate, "gParticleBufferOUT", mParticleBuffer.GetOutputBuffer());
+        mPositionBuffer.Swap();
+        mVelocityBuffer.Swap();
+        mScaleBuffer.Swap();
+        mColorBuffer.Swap();
+
+        sComputeShader.SetBuffer(sKernelUpdate, "gPositionIN", mPositionBuffer.GetInputBuffer());
+        sComputeShader.SetBuffer(sKernelUpdate, "gVelocityIN", mVelocityBuffer.GetInputBuffer());
+        sComputeShader.SetBuffer(sKernelUpdate, "gScaleIN", mScaleBuffer.GetInputBuffer());
+        sComputeShader.SetBuffer(sKernelUpdate, "gColorIN", mColorBuffer.GetInputBuffer());
+
+        sComputeShader.SetBuffer(sKernelUpdate, "gPositionOUT", mPositionBuffer.GetOutputBuffer());
+        sComputeShader.SetBuffer(sKernelUpdate, "gVelocityOUT", mVelocityBuffer.GetOutputBuffer());
+        sComputeShader.SetBuffer(sKernelUpdate, "gScaleOUT", mScaleBuffer.GetOutputBuffer());
+        sComputeShader.SetBuffer(sKernelUpdate, "gColorOUT", mColorBuffer.GetOutputBuffer());
+
         sComputeShader.SetInt("gParticleCount", mParticleCount);
         sComputeShader.SetFloat("gDeltaTime", Time.deltaTime);
+
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mParticleCount / 64.0f), 1, 1);
     }
 
@@ -179,8 +206,15 @@ public class GPUParticleSystem : MonoBehaviour
         if (mParticleCount == 0) return;
 
         sRenderMaterial.SetPass(0);
-        sRenderMaterial.SetBuffer("gParticleBuffer", mParticleBuffer.GetOutputBuffer());
+
+        //sRenderMaterial.SetBuffer("gParticleBuffer", mParticleBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gPosition", mPositionBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gVelocity", mVelocityBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gScale", mScaleBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gColor", mColorBuffer.GetOutputBuffer());
+
         sRenderMaterial.SetInt("gParticleCount", mParticleCount);
+
         Graphics.DrawProcedural(MeshTopology.Triangles, 6, mParticleCount);
     }
 
