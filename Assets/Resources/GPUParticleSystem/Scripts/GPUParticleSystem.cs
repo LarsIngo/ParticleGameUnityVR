@@ -6,22 +6,6 @@ public class GPUParticleSystem : MonoBehaviour
 {
     /// +++ STRUCTS +++ ///
 
-    //private struct Constants
-    //{
-    //    public float drag;
-    //    public Vector3 force;
-    //}
-
-    //private struct EmittInfo
-    //{
-    //    public int emittIndex;
-    //    public Vector3 postition;
-    //    public Vector3 velocity;
-    //    public Vector2 scale;
-    //    public Vector3 color;
-    //    public float lifetime;
-    //}
-
     private class SwapBuffer
     {
         ComputeBuffer[] mBufferArray;
