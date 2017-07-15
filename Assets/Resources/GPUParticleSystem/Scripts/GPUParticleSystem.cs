@@ -12,7 +12,7 @@ public class GPUParticleSystem : MonoBehaviour
         private float vx, vy, vz; // Velocity
         private float sx, sy; // Scale.
         private float cx, cy, cz; // Color.
-        //private float lifetime;
+        //private float lifetime; // Lifetime.
     }
 
     //private struct Constants
@@ -36,7 +36,7 @@ public class GPUParticleSystem : MonoBehaviour
         private float vx, vy, vz; // Initial Velocity.
         private float sx, sy; // Initial Scale.
         private float cx, cy, cz; // Initial Color.
-        //private float lifetime; // Particle Lifetime.
+        //private float lifetime; // Initial Lifetime.
 
         public EmittInfo(
             float px = 0, float py = 0, float pz = 0,
@@ -123,9 +123,9 @@ public class GPUParticleSystem : MonoBehaviour
 
     /// <summary>
     /// Particles to emitt per seconds(hertz).
-    /// Default: 1
+    /// Default: 2
     /// </summary>
-    private float mEmittFrequency = 1.0f;
+    private float mEmittFrequency = 2.0f;
 
     // INIT.
     private void InitSystem()
