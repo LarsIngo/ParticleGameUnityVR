@@ -34,8 +34,13 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     if (tID >= gParticleCount) return;
 
     Particle pSelf = gParticleBufferIN[tID];
+    Constants constants = gConstantsBuffer[0];
 
     pSelf.position = pSelf.position + pSelf.velocity * gDeltaTime;
+
+    pSelf.velocity = pSelf.velocity + constants.force * gDeltaTime;
+
+    pSelf.velocity = pSelf.velocity - pSelf.velocity * (constants.drag * gDeltaTime);
 
     //pSelf.lifetime = pSelf.lifetime - gDeltaTime;
 
@@ -47,6 +52,7 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
 struct EmittInfo
 {
+    int emittIndex;
     float3 position;
     float3 velocity;
     float2 scale;
@@ -56,7 +62,7 @@ struct EmittInfo
 
 uniform RWStructuredBuffer<EmittInfo> gEmittInfoBuffer;
 
-uniform int gEmittIndex = 0;
+//uniform int gEmittIndex = 0;
 //uniform float3 gEmittPostion = float3(0, 0, 0);
 //uniform float3 gEmittVelocity = float3(0, 0, 0);
 
@@ -72,6 +78,6 @@ void EMITT(uint3 id : SV_DispatchThreadID)
     particle.color = emittInfo.color;
     //particle.lifetime = 10.0f;
 
-    gParticleBufferIN[gEmittIndex] = particle;
+    gParticleBufferIN[emittInfo.emittIndex] = particle;
 }
 

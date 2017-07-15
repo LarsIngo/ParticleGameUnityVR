@@ -17,21 +17,13 @@ public class GPUParticleSystem : MonoBehaviour
 
     private struct Constants
     {
-        private float drag; // Constant Drag.
-        private float fx, fy, fz; // Constant Force.
-
-        public Constants(
-            float drag = 1,
-            float fx = 0, float fy = 0, float fz = 0
-            )
-        {
-            this.drag = drag;
-            this.fx = fx; this.fy = fy; this.fz = fz;
-        }
+        public float drag; // Constant Drag.
+        public Vector3 force; // Constant Force.
     }
 
     private struct EmittInfo
     {
+        private int emittIndex; // Index in particle array.
         private float px, py, pz; // Initial Position.
         private float vx, vy, vz; // Initial Velocity.
         private float sx, sy; // Initial Scale.
@@ -39,6 +31,7 @@ public class GPUParticleSystem : MonoBehaviour
         //private float lifetime; // Initial Lifetime.
 
         public EmittInfo(
+            int emittIndex,
             float px = 0, float py = 0, float pz = 0,
             float vx = 0, float vy = 1, float vz = 0,
             float sx = 1, float sy = 1,
@@ -46,6 +39,7 @@ public class GPUParticleSystem : MonoBehaviour
             //float lifetime = 10
             )
         {
+            this.emittIndex = emittIndex;
             this.px = px; this.py = py; this.pz = pz;
             this.vx = vx; this.vy = vy; this.vz = vz;
             this.sx = sx; this.sy = sy;
@@ -160,10 +154,11 @@ public class GPUParticleSystem : MonoBehaviour
             // BIND PARTICLE BUFFER.
             sComputeShader.SetBuffer(sKernelEmitt, "gParticleBufferIN", mParticleBuffer.GetInputBuffer());
 
-            sComputeShader.SetInt("gEmittIndex", mParticleCount + i);
+            //sComputeShader.SetInt("gEmittIndex", mParticleCount + i);
 
             // EMITT INFO.
             EmittInfo emittInfo = new EmittInfo(
+                mParticleCount + i,
                 transform.position.x, transform.position.y, transform.position.z, // Position.
                 0.0f, 1.0f, 0.0f, // Velocity.
                 0.4f, 0.4f, // Scale.
@@ -172,11 +167,6 @@ public class GPUParticleSystem : MonoBehaviour
                 );
             mEmittInfoBuffer.SetData(new EmittInfo[] { emittInfo });
             sComputeShader.SetBuffer(sKernelEmitt, "gEmittInfoBuffer", mEmittInfoBuffer);
-
-            // CONSTANTS.
-            Constants constants = new Constants();
-            mConstantsBuffer.SetData(new Constants[] { constants });
-            sComputeShader.SetBuffer(sKernelEmitt, "gConstantsBuffer", mConstantsBuffer);
 
             // DISPATCH.
             sComputeShader.Dispatch(sKernelEmitt, 1, 1, 1);
@@ -189,6 +179,13 @@ public class GPUParticleSystem : MonoBehaviour
     private void UpdateSystem()
     {
         if (mParticleCount == 0) return;
+
+        // CONSTANTS.
+        Constants constants = new Constants();
+        constants.drag = 1.0f / 5.0f;
+        constants.force = new Vector3(0, 0, 0);
+        mConstantsBuffer.SetData(new Constants[] { constants });
+        sComputeShader.SetBuffer(sKernelUpdate, "gConstantsBuffer", mConstantsBuffer);
 
         mParticleBuffer.Swap();
         sComputeShader.SetBuffer(sKernelUpdate, "gParticleBufferIN", mParticleBuffer.GetInputBuffer());
