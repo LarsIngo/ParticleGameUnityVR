@@ -8,10 +8,10 @@ public class GPUParticleSystem : MonoBehaviour
 
     private struct GPUParticle
     {
-        private float px, py, pz; // Position.
-        private float vx, vy, vz; // Velocity
-        private float sx, sy; // Scale.
-        private float cx, cy, cz; // Color.
+        public Vector3 position;
+        public Vector3 velocity;
+        public Vector2 scale;
+        public Vector3 color;
         //private float lifetime; // Lifetime.
     }
 
@@ -23,29 +23,12 @@ public class GPUParticleSystem : MonoBehaviour
 
     private struct EmittInfo
     {
-        private int emittIndex; // Index in particle array.
-        private float px, py, pz; // Initial Position.
-        private float vx, vy, vz; // Initial Velocity.
-        private float sx, sy; // Initial Scale.
-        private float cx, cy, cz; // Initial Color.
+        public int emittIndex; // Index in particle array.
+        public Vector3 postition; // Initial Position.
+        public Vector3 velocity; // Initial Velocity.
+        public Vector2 scale; // Initial Scale.
+        public Vector3 color; // Initial Color.
         //private float lifetime; // Initial Lifetime.
-
-        public EmittInfo(
-            int emittIndex,
-            float px = 0, float py = 0, float pz = 0,
-            float vx = 0, float vy = 1, float vz = 0,
-            float sx = 1, float sy = 1,
-            float cx = 1, float cy = 0, float cz = 0
-            //float lifetime = 10
-            )
-        {
-            this.emittIndex = emittIndex;
-            this.px = px; this.py = py; this.pz = pz;
-            this.vx = vx; this.vy = vy; this.vz = vz;
-            this.sx = sx; this.sy = sy;
-            this.cx = cx; this.cy = cy; this.cz = cz;
-            //this.lifetime = lifetime;
-        }
     }
 
     private class SwapBuffer
@@ -154,17 +137,13 @@ public class GPUParticleSystem : MonoBehaviour
             // BIND PARTICLE BUFFER.
             sComputeShader.SetBuffer(sKernelEmitt, "gParticleBufferIN", mParticleBuffer.GetInputBuffer());
 
-            //sComputeShader.SetInt("gEmittIndex", mParticleCount + i);
-
             // EMITT INFO.
-            EmittInfo emittInfo = new EmittInfo(
-                mParticleCount + i,
-                transform.position.x, transform.position.y, transform.position.z, // Position.
-                0.0f, 1.0f, 0.0f, // Velocity.
-                0.4f, 0.4f, // Scale.
-                1.0f, 0.0f, 1.0f // Color.
-                //1.0f // Lifetime.
-                );
+            EmittInfo emittInfo = new EmittInfo();
+            emittInfo.emittIndex = mParticleCount + i;
+            emittInfo.postition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            emittInfo.velocity = new Vector3(0.0f, 1.0f, 0.0f);
+            emittInfo.scale = new Vector3(0.4f, 0.4f);
+            emittInfo.color = new Vector3(1.0f, 0.0f, 1.0f);
             mEmittInfoBuffer.SetData(new EmittInfo[] { emittInfo });
             sComputeShader.SetBuffer(sKernelEmitt, "gEmittInfoBuffer", mEmittInfoBuffer);
 
