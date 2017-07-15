@@ -12,7 +12,6 @@ public class GPUParticleSystem : MonoBehaviour
         public Vector3 velocity;
         public Vector2 scale;
         public Vector3 color;
-        //private float lifetime;
     }
 
     private struct Constants
@@ -135,7 +134,7 @@ public class GPUParticleSystem : MonoBehaviour
         for (int i = 0; i < emittCount; ++i)
         {
             // BIND PARTICLE BUFFER.
-            sComputeShader.SetBuffer(sKernelEmitt, "gParticleBufferIN", mParticleBuffer.GetInputBuffer());
+            sComputeShader.SetBuffer(sKernelEmitt, "gEmittParticleBuffer", mParticleBuffer.GetInputBuffer());
 
             // EMITT INFO.
             EmittInfo emittInfo = new EmittInfo();

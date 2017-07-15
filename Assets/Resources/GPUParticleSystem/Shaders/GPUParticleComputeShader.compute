@@ -7,7 +7,7 @@ struct Constants
     float3 force;
 };
 
-uniform RWStructuredBuffer<Constants> gConstantsBuffer;
+uniform StructuredBuffer<Constants> gConstantsBuffer;
 
 struct Particle
 {
@@ -15,10 +15,10 @@ struct Particle
     float3 velocity;
     float2 scale;
     float3 color;
-    //float lifetime;
+    //float tmp;
 };
 
-uniform RWStructuredBuffer<Particle> gParticleBufferIN;
+uniform StructuredBuffer<Particle> gParticleBufferIN;
 
 uniform RWStructuredBuffer<Particle> gParticleBufferOUT;
 
@@ -60,7 +60,9 @@ struct EmittInfo
     float lifetime;
 };
 
-uniform RWStructuredBuffer<EmittInfo> gEmittInfoBuffer;
+uniform StructuredBuffer<EmittInfo> gEmittInfoBuffer;
+
+uniform RWStructuredBuffer<Particle> gEmittParticleBuffer;
 
 //uniform int gEmittIndex = 0;
 //uniform float3 gEmittPostion = float3(0, 0, 0);
@@ -76,8 +78,8 @@ void EMITT(uint3 id : SV_DispatchThreadID)
     particle.velocity = emittInfo.velocity;
     particle.scale = emittInfo.scale;
     particle.color = emittInfo.color;
-    //particle.lifetime = 10.0f;
+    //particle.tmp = 10.0f;
 
-    gParticleBufferIN[emittInfo.emittIndex] = particle;
+    gEmittParticleBuffer[emittInfo.emittIndex] = particle;
 }
 
