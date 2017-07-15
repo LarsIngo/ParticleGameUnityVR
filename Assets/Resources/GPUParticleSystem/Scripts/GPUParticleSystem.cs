@@ -214,7 +214,7 @@ public class GPUParticleSystem : MonoBehaviour
         sRenderMaterial.SetBuffer("gColor", mColorBuffer.GetOutputBuffer());
         sRenderMaterial.SetBuffer("gLifetime", mLifetimeBuffer.GetOutputBuffer());
 
-        Graphics.DrawProcedural(MeshTopology.Points, mParticleCount, 1);
+        Graphics.DrawProcedural(MeshTopology.Points, mMaxParticleCount, 1);
     }
 
     public int Count { get { return mParticleCount; } }
