@@ -83,8 +83,7 @@ public class GPUParticleSystem : MonoBehaviour
     private SwapBuffer mLifetimeBuffer;
 
     private const int mMaxParticleCount = 1000;
-    private int mParticleCount = 0;
-    private int mNextFrameParticleCount = 0;
+    private int mEmittIndex = 0;
     private ComputeBuffer mEmittInfoBuffer;
     private ComputeBuffer mConstantsBuffer;
 
@@ -149,7 +148,7 @@ public class GPUParticleSystem : MonoBehaviour
 
             // EMITT INFO.
             EmittInfo emittInfo = new EmittInfo();
-            emittInfo.emittIndex = mParticleCount + i;
+            emittInfo.emittIndex = mEmittIndex;
             emittInfo.postition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
             emittInfo.velocity = new Vector3(0.0f, 1.0f, 0.0f);
             emittInfo.scale = new Vector3(0.4f, 0.4f);
@@ -160,16 +159,15 @@ public class GPUParticleSystem : MonoBehaviour
 
             // DISPATCH.
             sComputeShader.Dispatch(sKernelEmitt, 1, 1, 1);
-        }
 
-        mNextFrameParticleCount = mParticleCount + emittCount;
+            // Increment emitt index.
+            mEmittIndex = (mEmittIndex + 1) % mMaxParticleCount;
+        }
     }
 
     // UPDATE.
     private void UpdateSystem()
     {
-        if (mParticleCount == 0) return;
-
         // CONSTANTS.
         Constants constants = new Constants();
         constants.drag = 1.0f / 5.0f;
@@ -204,8 +202,6 @@ public class GPUParticleSystem : MonoBehaviour
     // RENDER.
     private void RenderSystem()
     {
-        if (mParticleCount == 0) return;
-
         sRenderMaterial.SetPass(0);
 
         sRenderMaterial.SetBuffer("gPosition", mPositionBuffer.GetOutputBuffer());
@@ -217,7 +213,7 @@ public class GPUParticleSystem : MonoBehaviour
         Graphics.DrawProcedural(MeshTopology.Points, mMaxParticleCount, 1);
     }
 
-    public int Count { get { return mParticleCount; } }
+    public int Count { get { return mMaxParticleCount; } }
 
     // MONOBEHAVIOUR.
     private void Awake()
@@ -241,9 +237,6 @@ public class GPUParticleSystem : MonoBehaviour
     {
         // Render this frame.
         RenderSystem();
-
-        // Update particle count for next frame.
-        mParticleCount = mNextFrameParticleCount;
     }
 
     // MONOBEHAVIOUR.
