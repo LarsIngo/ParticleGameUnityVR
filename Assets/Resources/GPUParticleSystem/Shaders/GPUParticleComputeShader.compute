@@ -1,13 +1,13 @@
 ﻿// Update kernel
 #pragma kernel UPDATE
 
-//struct Constants
-//{
-//    float drag;
-//    float3 force;
-//};
-//
-//uniform RWStructuredBuffer<Constants> gConstantsBuffer;
+struct Constants
+{
+    float drag;
+    float3 force;
+};
+
+uniform RWStructuredBuffer<Constants> gConstantsBuffer;
 
 struct Particle
 {

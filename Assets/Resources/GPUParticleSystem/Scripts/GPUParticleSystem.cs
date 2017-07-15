@@ -15,20 +15,20 @@ public class GPUParticleSystem : MonoBehaviour
         //private float lifetime; // Lifetime.
     }
 
-    //private struct Constants
-    //{
-    //    private float drag; // Constant Drag.
-    //    private float fx, fy, fz; // Constant Force.
+    private struct Constants
+    {
+        private float drag; // Constant Drag.
+        private float fx, fy, fz; // Constant Force.
 
-    //    public Constants(
-    //        float drag = 1,
-    //        float fx = 0, float fy = 0, float fz = 0
-    //        )
-    //    {
-    //        this.drag = drag;
-    //        this.fx = fx; this.fy = fy; this.fz = fz;
-    //    }
-    //}
+        public Constants(
+            float drag = 1,
+            float fx = 0, float fy = 0, float fz = 0
+            )
+        {
+            this.drag = drag;
+            this.fx = fx; this.fy = fy; this.fz = fz;
+        }
+    }
 
     private struct EmittInfo
     {
@@ -132,7 +132,7 @@ public class GPUParticleSystem : MonoBehaviour
     {
         mParticleBuffer = new SwapBuffer(2, mMaxParticleCount, System.Runtime.InteropServices.Marshal.SizeOf(typeof(GPUParticle)));
         mEmittInfoBuffer = new ComputeBuffer(1, System.Runtime.InteropServices.Marshal.SizeOf(typeof(EmittInfo)));
-        //mConstantsBuffer = new ComputeBuffer(1, System.Runtime.InteropServices.Marshal.SizeOf(typeof(Constants)));
+        mConstantsBuffer = new ComputeBuffer(1, System.Runtime.InteropServices.Marshal.SizeOf(typeof(Constants)));
     }
 
     // DEINIT.
@@ -140,7 +140,7 @@ public class GPUParticleSystem : MonoBehaviour
     {
         mParticleBuffer.Release();
         mEmittInfoBuffer.Release();
-        //mConstantsBuffer.Release();
+        mConstantsBuffer.Release();
     }
 
     // EMITT UPDATE.
@@ -174,9 +174,9 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gEmittInfoBuffer", mEmittInfoBuffer);
 
             // CONSTANTS.
-            //Constants constants = new Constants();
-            //mConstantsBuffer.SetData(new Constants[] { constants });
-            //sComputeShader.SetBuffer(sKernelEmitt, "gConstantsBuffer", mConstantsBuffer);
+            Constants constants = new Constants();
+            mConstantsBuffer.SetData(new Constants[] { constants });
+            sComputeShader.SetBuffer(sKernelEmitt, "gConstantsBuffer", mConstantsBuffer);
 
             // DISPATCH.
             sComputeShader.Dispatch(sKernelEmitt, 1, 1, 1);
