@@ -16,6 +16,7 @@
             #include "UnityCG.cginc"
             #pragma target 5.0
             #pragma vertex vert
+            #pragma geometry geom
             #pragma fragment frag
 
             StructuredBuffer<float4> gPosition;
@@ -24,41 +25,86 @@
             StructuredBuffer<float4> gColor;
             StructuredBuffer<float4> gLifetime;
 
-            struct VSoutput
+            // ---
+
+            struct vsOutput
             {
-                float4 position : SV_POSITION;
+                float4 svPosition : SV_POSITION;
+                float3 velocity : VELOCITY;
+                float2 scale : SCALE;
                 float3 color : COLOR;
+                float lifetime : LIFETIME;
+            };
+
+            vsOutput vert(uint vID : SV_VertexID)
+            {
+                vsOutput output;
+
+                output.svPosition = float4(gPosition[vID].xyz, 1);
+                output.velocity = gVelocity[vID].xyz;
+                output.scale = gScale[vID].xy;
+                output.color = gColor[vID].xyz;
+                output.lifetime = gLifetime[vID].x;
+
+                return output;
+            }
+
+            // ---
+
+            struct gsOutput
+            {
+                float4 svPosition : SV_POSITION;
+                float3 worldPosition : WORLDPOSITION;
+                float3 velocity : VELOCITY;
+                float2 scale : SCALE;
+                float3 color : COLOR;
+                float lifetime : LIFETIME;
                 float2 uv : UV;
             };
 
-            VSoutput vert(uint vID : SV_VertexID, uint iID : SV_InstanceID)
+            [maxvertexcount(6)]
+            void geom(point vsOutput input[1], inout TriangleStream<gsOutput> TriStream)
             {
+                float pLifetime = input[0].lifetime;
+
+                if (pLifetime < 0.f) return;
+
                 float3 lensRight = UNITY_MATRIX_IT_MV[0].xyz;
                 float3 lensUp = UNITY_MATRIX_IT_MV[1].xyz;
                 float3 lensForward = UNITY_MATRIX_IT_MV[2].xyz;
 
-                float3 pPosition = gPosition[iID].xyz;
-                float2 pScale = gScale[iID].xy;
-                float3 pColor = gColor[iID].xyz;
+                float3 pPosition = input[0].svPosition.xyz;
+                float3 pVelocity = input[0].velocity;
+                float2 pScale = input[0].scale;
+                float3 pColor = input[0].color;
 
                 float3 pForward = normalize(_WorldSpaceCameraPos - pPosition);
                 float3 pRight = cross(pForward, lensUp);
                 float3 pUp = cross(pRight, pForward);
 
-                float x = vID == 0 || vID == 1 || vID == 5;
-                float y = vID == 0 || vID == 2 || vID == 4;
+                gsOutput output;
+                for (int vID = 0; vID < 6; ++vID)
+                {
+                    float x = vID == 0 || vID == 1 || vID == 5;
+                    float y = vID == 0 || vID == 2 || vID == 4;
 
-                float3 vPosition = pPosition + pRight * ((x * 2.f - 1.f) * pScale.x) + pUp * ((y * 2.f - 1.f) * pScale.y);
+                    float3 vPosition = pPosition + pRight * ((x * 2.f - 1.f) * pScale.x) + pUp * ((y * 2.f - 1.f) * pScale.y);
 
-                VSoutput output;
-                output.position = UnityObjectToClipPos(float4(vPosition, 1));
-                output.color = pColor;
-                output.uv = float2(x, 1.0f - y);
+                    output.svPosition = UnityObjectToClipPos(float4(vPosition, 1));
+                    output.worldPosition = vPosition;
+                    output.velocity = pVelocity;
+                    output.scale = pScale;
+                    output.color = pColor;
+                    output.lifetime = pLifetime;
+                    output.uv = float2(x, 1.0f - y);
 
-                return output;
+                    TriStream.Append(output);
+                }
             }
 
-            float4 frag(VSoutput input) : SV_TARGET0
+            // ---
+
+            float4 frag(gsOutput input) : SV_TARGET0
             {
                 float x = input.uv.x - 0.5f;
                 float y = input.uv.y - 0.5f;
