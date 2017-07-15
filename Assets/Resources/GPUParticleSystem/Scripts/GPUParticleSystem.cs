@@ -195,10 +195,10 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.SetBuffer(sKernelUpdate, "gColorOUT", mColorBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gLifetimeOUT", mLifetimeBuffer.GetOutputBuffer());
 
-        sComputeShader.SetInt("gParticleCount", mParticleCount);
+        sComputeShader.SetInt("gMaxParticleCount", mMaxParticleCount);
         sComputeShader.SetFloat("gDeltaTime", Time.deltaTime);
 
-        sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mParticleCount / 64.0f), 1, 1);
+        sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
     }
 
     // RENDER.

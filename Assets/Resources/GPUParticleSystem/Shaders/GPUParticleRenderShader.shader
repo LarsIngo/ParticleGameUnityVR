@@ -67,7 +67,7 @@
             {
                 float pLifetime = input[0].lifetime;
 
-                if (pLifetime < 0.f) return;
+                if (pLifetime < 0.02f) return;
 
                 float3 lensRight = UNITY_MATRIX_IT_MV[0].xyz;
                 float3 lensUp = UNITY_MATRIX_IT_MV[1].xyz;

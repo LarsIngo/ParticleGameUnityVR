@@ -23,7 +23,7 @@ RWStructuredBuffer<float4> gScaleOUT;
 RWStructuredBuffer<float4> gColorOUT;
 RWStructuredBuffer<float4> gLifetimeOUT;
 
-uniform int gParticleCount = 0;
+uniform int gMaxParticleCount = 0;
 
 uniform float gDeltaTime = 0.f;
 
@@ -32,11 +32,11 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 {
     int tID = (int)id.x;
 
-    if (tID >= gParticleCount) return;
+    if (tID >= gMaxParticleCount) return;
 
     float pLifetime = gLifetimeIN[tID].x;
 
-    if (pLifetime < -0.1f) return;
+    if (pLifetime < 0.01f) return;
 
     Constants constants = gConstantsBuffer[0];
     float3 pPosition = gPositionIN[tID].xyz;
