@@ -1,4 +1,6 @@
-﻿// Update kernel
+﻿CGPROGRAM
+
+// Update kernel
 #pragma kernel UPDATE
 
 struct Constants
@@ -83,3 +85,4 @@ void EMITT(uint3 id : SV_DispatchThreadID)
     gEmittParticleBuffer[emittInfo.emittIndex] = particle;
 }
 
+ENDCG
