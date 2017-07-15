@@ -22,6 +22,7 @@
             StructuredBuffer<float4> gVelocity;
             StructuredBuffer<float4> gScale;
             StructuredBuffer<float4> gColor;
+            //StructuredBuffer<float4> gLifetime;
 
             struct VSoutput
             {
