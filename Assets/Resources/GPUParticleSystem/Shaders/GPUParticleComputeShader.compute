@@ -3,14 +3,6 @@
 // Update kernel
 #pragma kernel UPDATE
 
-struct Constants
-{
-    float drag;
-    float3 force;
-};
-
-uniform StructuredBuffer<Constants> gConstantsBuffer;
-
 StructuredBuffer<float4> gPositionIN;
 StructuredBuffer<float4> gVelocityIN;
 StructuredBuffer<float4> gScaleIN;
@@ -23,9 +15,11 @@ RWStructuredBuffer<float4> gScaleOUT;
 RWStructuredBuffer<float4> gColorOUT;
 RWStructuredBuffer<float4> gLifetimeOUT;
 
-uniform int gMaxParticleCount = 0;
+uniform int gMaxParticleCount;
+uniform float gDeltaTime;
 
-uniform float gDeltaTime = 0.f;
+uniform float3 gForce;
+uniform float gDrag;
 
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
@@ -36,9 +30,8 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
     float pLifetime = gLifetimeIN[tID].x;
 
-    if (pLifetime < 0.01f) return;
+    if (pLifetime < 0.0f) return;
 
-    Constants constants = gConstantsBuffer[0];
     float3 pPosition = gPositionIN[tID].xyz;
     float3 pVelocity = gVelocityIN[tID].xyz;
     float2 pScale = gScaleIN[tID].xy;
@@ -48,10 +41,10 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     pPosition = pPosition + pVelocity * gDeltaTime;
 
     // Update velocity (acceleration).
-    pVelocity = pVelocity + constants.force * gDeltaTime;
+    pVelocity = pVelocity + gForce * gDeltaTime;
 
     // Update velocity (retardation).
-    pVelocity = pVelocity - pVelocity * (constants.drag * gDeltaTime);
+    pVelocity = pVelocity - pVelocity * (gDrag * gDeltaTime);
 
     // Update lifetime.
     pLifetime = pLifetime - gDeltaTime;
@@ -66,40 +59,29 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 // Emitt kernel
 #pragma kernel EMITT
 
-struct EmittInfo
-{
-    int emittIndex;
-    float3 position;
-    float3 velocity;
-    float2 scale;
-    float3 color;
-    float lifetime;
-};
+RWStructuredBuffer<float4> gPositionBuffer;
+RWStructuredBuffer<float4> gVelocityBuffer;
+RWStructuredBuffer<float4> gScaleBuffer;
+RWStructuredBuffer<float4> gColorBuffer;
+RWStructuredBuffer<float4> gLifetimeBuffer;
 
-uniform StructuredBuffer<EmittInfo> gEmittInfoBuffer;
-
-RWStructuredBuffer<float4> gPosition;
-RWStructuredBuffer<float4> gVelocity;
-RWStructuredBuffer<float4> gScale;
-RWStructuredBuffer<float4> gColor;
-RWStructuredBuffer<float4> gLifetime;
+uniform int gEmittIndex;
+uniform float3 gPosition;
+uniform float3 gVelocity;
+uniform float2 gScale;
+uniform float3 gColor;
+uniform float gLifetime;
 
 [numthreads(1, 1, 1)]
 void EMITT(uint3 id : SV_DispatchThreadID)
 {
-    EmittInfo emittInfo = gEmittInfoBuffer[0];
+    int index = gEmittIndex;
 
-    float3 pPostion = emittInfo.position;
-    float3 pVelocity = emittInfo.velocity;
-    float2 pScale = emittInfo.scale;
-    float3 pColor = emittInfo.color;
-    float pLifetime = emittInfo.lifetime;
-
-    gPosition[emittInfo.emittIndex] = float4(pPostion, 0);
-    gVelocity[emittInfo.emittIndex] = float4(pVelocity, 0);
-    gScale[emittInfo.emittIndex] = float4(pScale, 0, 0);
-    gColor[emittInfo.emittIndex] = float4(pColor, 0);
-    gLifetime[emittInfo.emittIndex] = float4(pLifetime, 0, 0, 0);
+    gPositionBuffer[index] = float4(gPosition, 0);
+    gVelocityBuffer[index] = float4(gVelocity, 0);
+    gScaleBuffer[index] = float4(gScale, 0, 0);
+    gColorBuffer[index] = float4(gColor, 0);
+    gLifetimeBuffer[index] = float4(gLifetime, 0, 0, 0);
 }
 
 ENDCG

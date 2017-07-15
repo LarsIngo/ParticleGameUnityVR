@@ -13,7 +13,7 @@ public class Main : MonoBehaviour
         mGO = new GameObject();
         mGO.transform.position = new Vector3(0,0,5);
         GPUParticleSystem system = mGO.AddComponent<GPUParticleSystem>();
-        //system.SetEmittFrequency(120.0f);
+        //system.EmittParticleLifeTime = 1.0f;
 
     }
 

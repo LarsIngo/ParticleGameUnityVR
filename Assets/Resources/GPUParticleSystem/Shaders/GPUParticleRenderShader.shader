@@ -62,12 +62,12 @@
                 float2 uv : UV;
             };
 
-            [maxvertexcount(6)]
+            [maxvertexcount(4)]
             void geom(point vsOutput input[1], inout TriangleStream<gsOutput> TriStream)
             {
                 float pLifetime = input[0].lifetime;
 
-                if (pLifetime < 0.02f) return;
+                if (pLifetime < 0.01f) return;
 
                 float3 lensRight = UNITY_MATRIX_IT_MV[0].xyz;
                 float3 lensUp = UNITY_MATRIX_IT_MV[1].xyz;
@@ -83,10 +83,10 @@
                 float3 pUp = cross(pRight, pForward);
 
                 gsOutput output;
-                for (int vID = 0; vID < 6; ++vID)
+                for (int vID = 0; vID < 4; ++vID)
                 {
-                    float x = vID == 0 || vID == 1 || vID == 5;
-                    float y = vID == 0 || vID == 2 || vID == 4;
+                    float x = vID == 0 || vID == 1;
+                    float y = vID == 0 || vID == 2;
 
                     float3 vPosition = pPosition + pRight * ((x * 2.f - 1.f) * pScale.x) + pUp * ((y * 2.f - 1.f) * pScale.y);
 
@@ -100,6 +100,8 @@
 
                     TriStream.Append(output);
                 }
+
+                TriStream.RestartStrip();
             }
 
             // ---
