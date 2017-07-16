@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/// <summary>
+/// Particle System on the GPU.
+/// Each system acts like an emitter.
+/// Config Emitt values to change the behaviour of the particles.
+/// </summary>
 public class GPUParticleSystem : MonoBehaviour
 {
     /// +++ STRUCTS +++ ///
@@ -44,6 +49,7 @@ public class GPUParticleSystem : MonoBehaviour
     static int sKernelUpdate = -1;
     static int sKernelEmitt = -1;
     static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
+    static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary = null;
 
     // STARTUP.
     public static void StartUp()
@@ -53,6 +59,7 @@ public class GPUParticleSystem : MonoBehaviour
         sKernelUpdate = sComputeShader.FindKernel("UPDATE");
         sKernelEmitt = sComputeShader.FindKernel("EMITT");
         sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
+        sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
     }
 
     // SHUTDOWN.
@@ -68,6 +75,8 @@ public class GPUParticleSystem : MonoBehaviour
             it.Value.mIndexBuffer.Release();
         }
         sEmittMeshInfoDictionary.Clear();
+        sGPUParticleSystemDictionary.Clear();
+        sGPUParticleSystemDictionary = null;
     }
 
     /// MEMBER
@@ -369,8 +378,9 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Awake()
     {
-        if (sRenderMaterial == null) StartUp();
+        if (sGPUParticleSystemDictionary == null) StartUp();
         InitSystem();
+        sGPUParticleSystemDictionary[this] = this;
     }
 
     // MONOBEHAVIOUR.
@@ -401,9 +411,10 @@ public class GPUParticleSystem : MonoBehaviour
     private void OnDestroy()
     {
         DeInitSystem();
-        if (sRenderMaterial != null) Shutdown();
+        sGPUParticleSystemDictionary.Remove(this);
+        if (sGPUParticleSystemDictionary.Count == 0) Shutdown();
     }
 
     /// --- MEMBERS --- ///
-    /// 
+    
 }
