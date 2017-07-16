@@ -8,6 +8,7 @@ public class Main : MonoBehaviour
 
     GameObject mGO;
     public GameObject attractor;
+    public GameObject emitter;
 
     private void Start ()
     {
@@ -22,6 +23,9 @@ public class Main : MonoBehaviour
         system.EmittInitialScale = new Vector2(0.01f, 0.01f);
         system.EmittInitialColor = new Vector3(0.0f, 1.0f, 0.0f);
         system.TMPAcceleratorPower = 10f;
+
+        mGO.transform.parent = emitter.transform;
+
     }
 
     private void Update()
