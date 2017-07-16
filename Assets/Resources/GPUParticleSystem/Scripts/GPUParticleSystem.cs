@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/// <summary>
+/// Particle System on the GPU.
+/// Each system acts like an emitter.
+/// Config Emitt values to change the behaviour of the particles.
+/// </summary>
 public class GPUParticleSystem : MonoBehaviour
 {
     /// +++ STRUCTS +++ ///
@@ -44,6 +49,9 @@ public class GPUParticleSystem : MonoBehaviour
     static int sKernelUpdate = -1;
     static int sKernelEmitt = -1;
     static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
+    static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary = null;
+    static ComputeBuffer sGPUParticleAttractorBuffer = null;
+    const int sMaxAttractorCount = 64;
 
     // STARTUP.
     public static void StartUp()
@@ -53,6 +61,8 @@ public class GPUParticleSystem : MonoBehaviour
         sKernelUpdate = sComputeShader.FindKernel("UPDATE");
         sKernelEmitt = sComputeShader.FindKernel("EMITT");
         sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
+        sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
+        sGPUParticleAttractorBuffer = new ComputeBuffer(sMaxAttractorCount, sizeof(float) * 4);
     }
 
     // SHUTDOWN.
@@ -68,6 +78,9 @@ public class GPUParticleSystem : MonoBehaviour
             it.Value.mIndexBuffer.Release();
         }
         sEmittMeshInfoDictionary.Clear();
+        sGPUParticleSystemDictionary.Clear();
+        sGPUParticleSystemDictionary = null;
+        sGPUParticleAttractorBuffer.Release();
     }
 
     /// MEMBER
@@ -146,20 +159,6 @@ public class GPUParticleSystem : MonoBehaviour
     /// Default: 1,1,1
     /// </summary>
     public Vector3 EmittInitialColor { get { return mEmittInitialColor; } set { mEmittInitialColor = value; } }
-
-    private Vector3 mTMPAcceleratorPosition = Vector3.zero;
-    /// <summary>
-    /// TMP Position of accelerator.
-    /// Default: 0,0,0
-    /// </summary>
-    public Vector3 TMPAcceleratorPosition { get { return mTMPAcceleratorPosition; } set { mTMPAcceleratorPosition = value; } }
-
-    private float mTMPAcceleratorPower = 100.0f;
-    /// <summary>
-    /// TMP Power of accelerator.
-    /// Default: 100
-    /// </summary>
-    public float TMPAcceleratorPower { get { return mTMPAcceleratorPower; } set { mTMPAcceleratorPower = value; } }
 
     private bool mActive = true;
     /// <summary>
@@ -341,8 +340,31 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.SetFloat("gConstantDrag", mEmittConstantDrag);
 
         // ACCELERATOR.
-        sComputeShader.SetFloats("gAcceleratorPosition", new float[] { mTMPAcceleratorPosition.x, mTMPAcceleratorPosition.y, mTMPAcceleratorPosition.z });
-        sComputeShader.SetFloat("gAcceleratorPower", mTMPAcceleratorPower);
+        Dictionary<GPUParticleAttractor, GPUParticleAttractor> attractorDictionary = GPUParticleAttractor.GetGPUParticleAttractorDictionary();
+        if (attractorDictionary == null)
+        {
+            sComputeShader.SetInt("gAttractorCount", 0);
+        }
+        else
+        {
+            Debug.Assert(attractorDictionary.Count < sMaxAttractorCount);
+
+            float[] attractorArray = new float[attractorDictionary.Count * 4];
+            int i = 0;
+            foreach (KeyValuePair<GPUParticleAttractor, GPUParticleAttractor> it in attractorDictionary)
+            {
+                GPUParticleAttractor attractor = it.Value;
+
+                attractorArray[i++] = attractor.transform.position.x;
+                attractorArray[i++] = attractor.transform.position.y;
+                attractorArray[i++] = attractor.transform.position.z;
+                attractorArray[i++] = attractor.Power;
+            }
+            sGPUParticleAttractorBuffer.SetData(attractorArray);
+
+            sComputeShader.SetInt("gAttractorCount", attractorDictionary.Count);
+            sComputeShader.SetBuffer(sKernelUpdate, "gAttractorBuffer", sGPUParticleAttractorBuffer);
+        }
 
         // DISPATCH.
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
@@ -369,8 +391,9 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Awake()
     {
-        if (sRenderMaterial == null) StartUp();
+        if (sGPUParticleSystemDictionary == null) StartUp();
         InitSystem();
+        sGPUParticleSystemDictionary[this] = this;
     }
 
     // MONOBEHAVIOUR.
@@ -401,9 +424,10 @@ public class GPUParticleSystem : MonoBehaviour
     private void OnDestroy()
     {
         DeInitSystem();
-        if (sRenderMaterial != null) Shutdown();
+        sGPUParticleSystemDictionary.Remove(this);
+        if (sGPUParticleSystemDictionary.Count == 0) Shutdown();
     }
 
     /// --- MEMBERS --- ///
-    /// 
+    
 }

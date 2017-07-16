@@ -21,8 +21,8 @@ uniform float gDeltaTime;
 uniform float3 gConstantAcceleration;
 uniform float gConstantDrag;
 
-uniform float3 gAcceleratorPosition;
-uniform float gAcceleratorPower;
+uniform int gAttractorCount;
+StructuredBuffer<float4> gAttractorBuffer;
 
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
@@ -43,24 +43,32 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     // Update position.
     pPosition = pPosition + pVelocity * gDeltaTime;
 
-    // Update velocity (constant forces).
+    // Update velocity (constants).
     pVelocity = pVelocity + gConstantAcceleration * gDeltaTime;
 
     // Update velocity (retardation).
     pVelocity = pVelocity - pVelocity * (gConstantDrag * gDeltaTime);
 
-    // Update velocity (accelerators).
-    float3 acceleratorDirection = gAcceleratorPosition - pPosition;
-    float distance = length(acceleratorDirection);
-
-    if (distance > 0.1f)
+    // Update velocity (attractors).
+    int attractorCount = gAttractorCount;
+    for (int i = 0; i < attractorCount; ++i)
     {
-        acceleratorDirection = normalize(acceleratorDirection);
+        float4 attractor = gAttractorBuffer[i];
+        float3 aPosition = attractor.xyz;
+        float aPower = attractor.w;
 
-        float distanceFactor = clamp(1.f / (distance * distance), 0, 1.f);
-        float acceleration = gAcceleratorPower * distanceFactor;
+        float3 acceleratorDirection = aPosition - pPosition;
+        float distance = length(acceleratorDirection);
 
-        pVelocity = pVelocity + acceleratorDirection * (acceleration * gDeltaTime);
+        if (distance > 0.1f)
+        {
+            acceleratorDirection = normalize(acceleratorDirection);
+
+            float distanceFactor = clamp(1.f / (distance * distance), 0, 1.f);
+            float acceleration = aPower * distanceFactor;
+
+            pVelocity = pVelocity + acceleratorDirection * (acceleration * gDeltaTime);
+        }
     }
 
     // Update lifetime.
