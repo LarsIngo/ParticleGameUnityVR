@@ -50,8 +50,12 @@ public class GPUParticleSystem : MonoBehaviour
     static int sKernelEmitt = -1;
     static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
     static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary = null;
+
     static ComputeBuffer sGPUParticleAttractorBuffer = null;
     const int sMaxAttractorCount = 64;
+
+    static ComputeBuffer sGPUParticleVectorFieldBuffer = null;
+    const int sMaxVectorFieldCount = 64;
 
     // STARTUP.
     public static void StartUp()
@@ -63,6 +67,7 @@ public class GPUParticleSystem : MonoBehaviour
         sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
         sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
         sGPUParticleAttractorBuffer = new ComputeBuffer(sMaxAttractorCount, sizeof(float) * 4);
+        sGPUParticleVectorFieldBuffer = new ComputeBuffer(sMaxVectorFieldCount, sizeof(float) * 8);
     }
 
     // SHUTDOWN.
@@ -81,6 +86,7 @@ public class GPUParticleSystem : MonoBehaviour
         sGPUParticleSystemDictionary.Clear();
         sGPUParticleSystemDictionary = null;
         sGPUParticleAttractorBuffer.Release();
+        sGPUParticleVectorFieldBuffer.Release();
     }
 
     /// MEMBER
@@ -366,8 +372,41 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelUpdate, "gAttractorBuffer", sGPUParticleAttractorBuffer);
         }
 
+        // Vector Fields.
+        Dictionary<GPUParticleVectorField, GPUParticleVectorField> vectorFieldDictionary = GPUParticleVectorField.GetGPUParticleAttractorDictionary();
+        if (vectorFieldDictionary == null)
+        {
+            sComputeShader.SetInt("gVectorFieldCount", 0);
+        }
+        else
+        {
+            Debug.Assert(vectorFieldDictionary.Count < sMaxVectorFieldCount);
+
+            float[] vectorFieldArray = new float[vectorFieldDictionary.Count * 8];
+            int i = 0;
+            foreach (KeyValuePair<GPUParticleVectorField, GPUParticleVectorField> it in vectorFieldDictionary)
+            {
+                GPUParticleVectorField vectorField = it.Value;
+
+                vectorFieldArray[i++] = vectorField.transform.position.x;
+                vectorFieldArray[i++] = vectorField.transform.position.y;
+                vectorFieldArray[i++] = vectorField.transform.position.z;
+                vectorFieldArray[i++] = vectorField.Radius;
+                vectorFieldArray[i++] = vectorField.Vector.x;
+                vectorFieldArray[i++] = vectorField.Vector.y;
+                vectorFieldArray[i++] = vectorField.Vector.z;
+                vectorFieldArray[i++] = vectorField.Radius;
+
+            }
+            sGPUParticleVectorFieldBuffer.SetData(vectorFieldArray);
+
+            sComputeShader.SetInt("gVectorFieldCount", vectorFieldDictionary.Count);
+            sComputeShader.SetBuffer(sKernelUpdate, "gVectorFieldBuffer", sGPUParticleVectorFieldBuffer);
+        }
+
         // DISPATCH.
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
+
     }
 
     // RENDER.
