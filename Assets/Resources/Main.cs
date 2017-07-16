@@ -7,6 +7,8 @@ public class Main : MonoBehaviour
 {
 
     GameObject mGO;
+    public GameObject rightHand;
+    public GameObject leftHand;
 
     private void Start ()
     {
@@ -15,7 +17,16 @@ public class Main : MonoBehaviour
         GPUParticleSystem system = mGO.AddComponent<GPUParticleSystem>();
         system.EmittMesh = mGO.GetComponent<MeshFilter>().mesh;
         system.EmittParticleLifeTime = 3.0f;
-        system.EmittFrequency = 50.0f;
+        system.EmittFrequency = 350.0f;
+
+        if (rightHand)
+        {
+
+            mGO.transform.position = rightHand.transform.position;
+            mGO.transform.parent = rightHand.transform;
+
+        }
+
 
     }
 
