@@ -147,6 +147,20 @@ public class GPUParticleSystem : MonoBehaviour
     /// </summary>
     public Vector3 EmittInitialColor { get { return mEmittInitialColor; } set { mEmittInitialColor = value; } }
 
+    private Vector3 mTMPAcceleratorPosition = Vector3.zero;
+    /// <summary>
+    /// TMP Position of accelerator.
+    /// Default: 0,0,0
+    /// </summary>
+    public Vector3 TMPAcceleratorPosition { get { return mTMPAcceleratorPosition; } set { mTMPAcceleratorPosition = value; } }
+
+    private float mTMPAcceleratorPower = 100.0f;
+    /// <summary>
+    /// TMP Power of accelerator.
+    /// Default: 100
+    /// </summary>
+    public float TMPAcceleratorPower { get { return mTMPAcceleratorPower; } set { mTMPAcceleratorPower = value; } }
+
     private bool mActive = true;
     /// <summary>
     /// Whether emitter should emitt particles.
@@ -255,7 +269,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
             // Inherit velocity from emitter if true.
-            Vector3 velocity = (transform.position - mLastPosition) / (Time.deltaTime * (mEmittInheritVelocity ? 1 : 0)) + mEmittInitialVelocity;
+            Vector3 velocity = ((transform.position - mLastPosition) / Time.deltaTime) * (mEmittInheritVelocity ? 1 : 0) + mEmittInitialVelocity;
 
             // EMITT INFO.
             sComputeShader.SetInt("gEmittIndex", mEmittIndex);
@@ -326,12 +340,9 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.SetFloats("gConstantAcceleration", new float[] {mEmittConstantAcceleration.x, mEmittConstantAcceleration.y, mEmittConstantAcceleration.z });
         sComputeShader.SetFloat("gConstantDrag", mEmittConstantDrag);
 
-        Vector3 mAcceleratorPosition = new Vector3(3,1,5);
-        float mAcceleratorPower = 100.0f;
-
         // ACCELERATOR.
-        sComputeShader.SetFloats("gAcceleratorPosition", new float[] { mAcceleratorPosition.x, mAcceleratorPosition.y, mAcceleratorPosition.z });
-        sComputeShader.SetFloat("gAcceleratorPower", mAcceleratorPower);
+        sComputeShader.SetFloats("gAcceleratorPosition", new float[] { mTMPAcceleratorPosition.x, mTMPAcceleratorPosition.y, mTMPAcceleratorPosition.z });
+        sComputeShader.SetFloat("gAcceleratorPower", mTMPAcceleratorPower);
 
         // DISPATCH.
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
