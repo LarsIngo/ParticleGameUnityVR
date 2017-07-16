@@ -31,13 +31,6 @@ public class GPUParticleAttractor : MonoBehaviour
 
     /// +++ MEMBERS +++ ///
 
-    private Vector3 mPosition = Vector3.zero;
-    /// <summary>
-    /// Position of attractor.
-    /// Default: 0,0,0
-    /// </summary>
-    public Vector3 Position { get { return mPosition; } set { mPosition = value; } }
-
     private float mPower = 100.0f;
     /// <summary>
     /// Power of attractor.

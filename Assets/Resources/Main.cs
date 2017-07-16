@@ -6,19 +6,23 @@ using UnityEngine.Rendering;
 public class Main : MonoBehaviour
 {
 
-    GameObject mGO;
+    GameObject mSystemGO;
+    GameObject mAttractorGO;
 
     private void Start ()
     {
-        mGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        mGO.transform.position = new Vector3(0,0,5);
-        GPUParticleSystem system = mGO.AddComponent<GPUParticleSystem>();
-        system.EmittMesh = mGO.GetComponent<MeshFilter>().mesh;
+        mSystemGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        mSystemGO.transform.position = new Vector3(0,0,5);
+        GPUParticleSystem system = mSystemGO.AddComponent<GPUParticleSystem>();
+        system.EmittMesh = mSystemGO.GetComponent<MeshFilter>().mesh;
         system.EmittParticleLifeTime = 30.0f;
         system.EmittFrequency = 500.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
         system.EmittInitialScale = new Vector2(0.1f, 0.1f);
         system.EmittInitialColor = new Vector3(0.0f, 1.0f, 0.0f);
+
+        mAttractorGO = new GameObject();
+        mAttractorGO.AddComponent<GPUParticleAttractor>();
     }
 
     private void Update()

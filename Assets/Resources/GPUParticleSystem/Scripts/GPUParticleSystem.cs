@@ -350,8 +350,21 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.SetFloat("gConstantDrag", mEmittConstantDrag);
 
         // ACCELERATOR.
-        sComputeShader.SetFloats("gAcceleratorPosition", new float[] { mTMPAcceleratorPosition.x, mTMPAcceleratorPosition.y, mTMPAcceleratorPosition.z });
-        sComputeShader.SetFloat("gAcceleratorPower", mTMPAcceleratorPower);
+        Dictionary<GPUParticleAttractor, GPUParticleAttractor> attractorDictionary = GPUParticleAttractor.GetGPUParticleAttractorDictionary();
+        if (attractorDictionary == null)
+        {
+            sComputeShader.SetInt("gAttractorCount", 0);
+        }
+        else
+        {
+            sComputeShader.SetInt("gAttractorCount", attractorDictionary.Count);
+            foreach (KeyValuePair<GPUParticleAttractor, GPUParticleAttractor> it in attractorDictionary)
+            {
+                GPUParticleAttractor attractor = it.Value;
+                sComputeShader.SetFloats("gAttractorPosition", new float[] { attractor.transform.position.x, attractor.transform.position.y, attractor.transform.position.z });
+                sComputeShader.SetFloat("gAttractorPower", attractor.Power);
+            }
+        }
 
         // DISPATCH.
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
