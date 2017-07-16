@@ -22,8 +22,7 @@ uniform float3 gConstantAcceleration;
 uniform float gConstantDrag;
 
 uniform int gAttractorCount;
-uniform float3 gAttractorPosition;
-uniform float gAttractorPower;
+StructuredBuffer<float4> gAttractorBuffer;
 
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
@@ -54,7 +53,11 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     int attractorCount = gAttractorCount;
     for (int i = 0; i < attractorCount; ++i)
     {
-        float3 acceleratorDirection = gAttractorPosition - pPosition;
+        float4 attractor = gAttractorBuffer[i];
+        float3 aPosition = attractor.xyz;
+        float aPower = attractor.w;
+
+        float3 acceleratorDirection = aPosition - pPosition;
         float distance = length(acceleratorDirection);
 
         if (distance > 0.1f)
@@ -62,7 +65,7 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
             acceleratorDirection = normalize(acceleratorDirection);
 
             float distanceFactor = clamp(1.f / (distance * distance), 0, 1.f);
-            float acceleration = gAttractorPower * distanceFactor;
+            float acceleration = aPower * distanceFactor;
 
             pVelocity = pVelocity + acceleratorDirection * (acceleration * gDeltaTime);
         }
