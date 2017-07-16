@@ -87,6 +87,8 @@ public class GPUParticleSystem : MonoBehaviour
     private int mEmittIndex = 0;
 
     // Emitter.
+    private Vector3 mLastPosition;
+
     private float mEmittTimer = 0.0f;
 
     private float mEmittFrequency = 10.0f; private float mNewEmittFrequency = 10.0f;
@@ -102,6 +104,13 @@ public class GPUParticleSystem : MonoBehaviour
     /// Default: 6
     /// </summary>
     public float EmittParticleLifeTime { get { return mEmittParticleLifetime; } set { mNewmParticleLifetime = value; mApply = true; } }
+
+    private bool mEmittInheritVelocity = true;
+    /// <summary>
+    /// Whether emitted particles inherit velocity from emitter.
+    /// Default: true
+    /// </summary>
+    public bool EmittInheritVelocity { get { return mEmittInheritVelocity; } set { EmittInheritVelocity = value;} }
 
     private bool mActive = true;
     /// <summary>
@@ -209,10 +218,12 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gColorBuffer", mColorBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
+            Vector3 velocity = (transform.position - mLastPosition) / (Time.deltaTime * (mEmittInheritVelocity ? 1 : 0)) + new Vector3(0, 1, 0);
+
             // EMITT INFO.
             sComputeShader.SetInt("gEmittIndex", mEmittIndex);
             sComputeShader.SetFloats("gPosition", new float[] { transform.position.x, transform.position.y, transform.position.z });
-            sComputeShader.SetFloats("gVelocity", new float[] { 0, 1, 0 });
+            sComputeShader.SetFloats("gVelocity", new float[] { velocity.x, velocity.y, velocity.z });
             sComputeShader.SetFloats("gScale", new float[] { 0.1f, 0.1f });
             sComputeShader.SetFloats("gColor", new float[] { 0, 1, 0 });
             sComputeShader.SetFloats("gLifetime", new float[] { mEmittParticleLifetime });
@@ -322,6 +333,8 @@ public class GPUParticleSystem : MonoBehaviour
 
         // Update particles this frame.
         UpdateSystem();
+
+        mLastPosition = transform.position;
     }
 
     // MONOBEHAVIOUR.
