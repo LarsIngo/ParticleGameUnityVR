@@ -14,7 +14,7 @@ public class Main : MonoBehaviour
         mSystemGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         mSystemGO.transform.position = new Vector3(0,0,5);
         GPUParticleSystem system = mSystemGO.AddComponent<GPUParticleSystem>();
-        system.EmittMesh = mSystemGO.GetComponent<MeshFilter>().mesh;
+        //system.EmittMesh = mSystemGO.GetComponent<MeshFilter>().mesh;
         system.EmittParticleLifeTime = 30.0f;
         system.EmittFrequency = 500.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);

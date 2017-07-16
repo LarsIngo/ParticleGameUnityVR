@@ -44,43 +44,28 @@ public class GPUParticleSystem : MonoBehaviour
 
     /// +++ STATIC +++ ///
 
-    static Material sRenderMaterial = null;
-    static ComputeShader sComputeShader = null;
-    static int sKernelUpdate = -1;
-    static int sKernelEmitt = -1;
-    static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
     static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary = null;
-    static ComputeBuffer sGPUParticleAttractorBuffer = null;
+
+    Material sRenderMaterial = null;
+    ComputeShader sComputeShader = null;
+    int sKernelUpdate = -1;
+    int sKernelEmitt = -1;
+    Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
+    ComputeBuffer sGPUParticleAttractorBuffer = null;
     const int sMaxAttractorCount = 64;
 
     // STARTUP.
     public static void StartUp()
     {
-        sRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
-        sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
-        sKernelUpdate = sComputeShader.FindKernel("UPDATE");
-        sKernelEmitt = sComputeShader.FindKernel("EMITT");
-        sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
+
         sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
-        sGPUParticleAttractorBuffer = new ComputeBuffer(sMaxAttractorCount, sizeof(float) * 4);
     }
 
     // SHUTDOWN.
     public static void Shutdown()
     {
-        sRenderMaterial = null;
-        sComputeShader = null;
-        sKernelUpdate = -1;
-        sKernelEmitt = -1;
-        foreach (KeyValuePair<Mesh, EmittMeshInfo> it in sEmittMeshInfoDictionary)
-        {   // Release compute buffers.
-            it.Value.mVertexBuffer.Release();
-            it.Value.mIndexBuffer.Release();
-        }
-        sEmittMeshInfoDictionary.Clear();
         sGPUParticleSystemDictionary.Clear();
         sGPUParticleSystemDictionary = null;
-        sGPUParticleAttractorBuffer.Release();
     }
 
     /// MEMBER
@@ -234,6 +219,14 @@ public class GPUParticleSystem : MonoBehaviour
         mEmittMesh = mNewEmittMesh;
         UpdateMesh();
 
+        // TMP
+        sRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
+        sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
+        sKernelUpdate = sComputeShader.FindKernel("UPDATE");
+        sKernelEmitt = sComputeShader.FindKernel("EMITT");
+        sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
+        sGPUParticleAttractorBuffer = new ComputeBuffer(sMaxAttractorCount, sizeof(float) * 4);
+
     }
 
     // DEINIT.
@@ -244,6 +237,19 @@ public class GPUParticleSystem : MonoBehaviour
         mScaleBuffer.Release();
         mColorBuffer.Release();
         mLifetimeBuffer.Release();
+
+        // TMP
+        sRenderMaterial = null;
+        sComputeShader = null;
+        sKernelUpdate = -1;
+        sKernelEmitt = -1;
+        foreach (KeyValuePair<Mesh, EmittMeshInfo> it in sEmittMeshInfoDictionary)
+        {   // Release compute buffers.
+            it.Value.mVertexBuffer.Release();
+            it.Value.mIndexBuffer.Release();
+        }
+        sEmittMeshInfoDictionary.Clear();
+        sGPUParticleAttractorBuffer.Release();
     }
 
     // EMITT UPDATE.
