@@ -77,6 +77,7 @@ uniform StructuredBuffer<int> gEmittMeshIndexBuffer;
 uniform int gEmittMeshVertexCount;
 uniform int gEmittMeshIndexCount;
 uniform int gEmittMeshRandomIndex;
+uniform float3 gEmittMeshScale;
 
 [numthreads(1, 1, 1)]
 void EMITT(uint3 id : SV_DispatchThreadID)
@@ -85,7 +86,7 @@ void EMITT(uint3 id : SV_DispatchThreadID)
 
     float3 emittPosition = gPosition;
     if (gEmittMeshIndexCount > 0)
-        emittPosition += gEmittMeshVertexBuffer[gEmittMeshIndexBuffer[gEmittMeshRandomIndex]];
+        emittPosition += gEmittMeshVertexBuffer[gEmittMeshIndexBuffer[gEmittMeshRandomIndex]] * gEmittMeshScale;
 
     gPositionBuffer[index] = float4(emittPosition, 0);
     gVelocityBuffer[index] = float4(gVelocity, 0);
