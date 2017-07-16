@@ -15,7 +15,7 @@ public class Main : MonoBehaviour
         GPUParticleSystem system = mGO.AddComponent<GPUParticleSystem>();
         system.EmittMesh = mGO.GetComponent<MeshFilter>().mesh;
         system.EmittParticleLifeTime = 3.0f;
-        system.EmittFrequency = 500.0f;
+        system.EmittFrequency = 50.0f;
 
     }
 

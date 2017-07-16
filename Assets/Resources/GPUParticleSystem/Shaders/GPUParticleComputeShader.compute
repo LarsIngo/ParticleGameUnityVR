@@ -28,9 +28,9 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
     if (tID >= gMaxParticleCount) return;
 
-    float pLifetime = gLifetimeIN[tID].x;
+    float2 pLifetime = gLifetimeIN[tID].xy;
 
-    if (pLifetime < 0.0f) return;
+    if (pLifetime.x < 0.0f) return;
 
     float3 pPosition = gPositionIN[tID].xyz;
     float3 pVelocity = gVelocityIN[tID].xyz;
@@ -47,13 +47,13 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     pVelocity = pVelocity - pVelocity * (gDrag * gDeltaTime);
 
     // Update lifetime.
-    pLifetime = pLifetime - gDeltaTime;
+    pLifetime.x = pLifetime.x - gDeltaTime;
 
     gPositionOUT[tID] = float4(pPosition, 0);
     gVelocityOUT[tID] = float4(pVelocity, 0);
     gScaleOUT[tID] = float4(pScale, 0, 0);
     gColorOUT[tID] = float4(pColor, 0);
-    gLifetimeOUT[tID] = float4(pLifetime, 0, 0, 0);
+    gLifetimeOUT[tID] = float4(pLifetime.xy, 0, 0);
 }
 
 // Emitt kernel
@@ -92,7 +92,9 @@ void EMITT(uint3 id : SV_DispatchThreadID)
     gVelocityBuffer[index] = float4(gVelocity, 0);
     gScaleBuffer[index] = float4(gScale, 0, 0);
     gColorBuffer[index] = float4(gColor, 0);
-    gLifetimeBuffer[index] = float4(gLifetime, 0, 0, 0);
+
+    float lifetime = gLifetime;
+    gLifetimeBuffer[index] = float4(lifetime, lifetime, 0, 0);
 }
 
 ENDCG
