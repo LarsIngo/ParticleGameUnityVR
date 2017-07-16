@@ -18,7 +18,8 @@ public class Main : MonoBehaviour
         system.EmittFrequency = 500.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
         system.EmittInitialScale = new Vector2(0.1f, 0.1f);
-        system.EmittInitialColor = new Vector3(0.0f, 1.0f, 0.0f);
+        system.EmittInitialColor = new Vector3(0.5f, 0.0f, 0.5f);
+        system.EmittInitialHaloColor = new Vector3(0.15f, 0.0f, 0.15f);
     }
 
     private void Update()

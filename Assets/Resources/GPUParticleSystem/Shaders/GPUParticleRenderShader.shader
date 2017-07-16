@@ -23,6 +23,7 @@
             StructuredBuffer<float4> gVelocity;
             StructuredBuffer<float4> gScale;
             StructuredBuffer<float4> gColor;
+			StructuredBuffer<float4> gHaloColor;
             StructuredBuffer<float4> gLifetime;
 
             // ---
@@ -33,6 +34,7 @@
                 float3 velocity : VELOCITY;
                 float2 scale : SCALE;
                 float3 color : COLOR;
+				float3 haloColor : HALO;
                 float2 lifetime : LIFETIME;
             };
 
@@ -44,6 +46,7 @@
                 output.velocity = gVelocity[vID].xyz;
                 output.scale = gScale[vID].xy;
                 output.color = gColor[vID].xyz;
+				output.haloColor = gHaloColor[vID].xyz;
                 output.lifetime = gLifetime[vID].xy;
 
                 return output;
@@ -58,6 +61,7 @@
                 float3 velocity : VELOCITY;
                 float2 scale : SCALE;
                 float3 color : COLOR;
+				float3 haloColor : HALO;
                 float2 lifetime : LIFETIME;
                 float2 uv : UV;
             };
@@ -77,6 +81,7 @@
                 float3 pVelocity = input[0].velocity;
                 float2 pScale = input[0].scale;
                 float3 pColor = input[0].color;
+				float3 pHaloColor = input[0].haloColor;
 
                 float3 pForward = normalize(_WorldSpaceCameraPos - pPosition);
                 float3 pRight = cross(pForward, lensUp);
@@ -95,6 +100,7 @@
                     output.velocity = pVelocity;
                     output.scale = pScale;
                     output.color = pColor;
+					output.haloColor = pHaloColor;
                     output.lifetime = pLifetime;
                     output.uv = float2(x, 1.0f - y);
 
@@ -112,12 +118,13 @@
                 float y = input.uv.y - 0.5f;
                 float r = sqrt(x * x + y * y);
                 float factor = max(1.f - r * 2.f, 0.f); //[1,0]
-                float sinFactor = 1.f - sin(3.14159265f / 2.f * (factor + 1.f));
+
+				float cosFactor = -cos(3.14159265f / 2.f * (factor + 1.f));
 
                 float lifeFactor = input.lifetime.x / input.lifetime.y;
 
-                return float4(input.color, sinFactor);
-            }
+				return float4(factor * input.color + (1 - factor) * input.haloColor, cosFactor);// +float4(input.haloColor, cosRevFactor);
+			}
 
             ENDCG
         }
