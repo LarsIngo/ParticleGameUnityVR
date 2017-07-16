@@ -25,6 +25,14 @@ public class GPUParticleSystem : MonoBehaviour
         public void Swap() { mBufferIndex = (mBufferIndex + 1) % mBufferArray.GetLength(0); }
     }
 
+    private struct EmittMeshInfo
+    {
+        public ComputeBuffer mVertexBuffer;
+        public int mVertexCount;
+        public ComputeBuffer mIndexBuffer;
+        public int mIndexCount;
+    }
+
     /// --- STRUCTS --- ///
 
 
@@ -34,7 +42,7 @@ public class GPUParticleSystem : MonoBehaviour
     static ComputeShader sComputeShader = null;
     static int sKernelUpdate = -1;
     static int sKernelEmitt = -1;
-    static Dictionary<Mesh, ComputeBuffer> sMeshDictionary = null;
+    static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
 
     // STARTUP.
     public static void StartUp()
@@ -43,7 +51,7 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
         sKernelUpdate = sComputeShader.FindKernel("UPDATE");
         sKernelEmitt = sComputeShader.FindKernel("EMITT");
-        sMeshDictionary = new Dictionary<Mesh, ComputeBuffer>();
+        sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
     }
 
     // SHUTDOWN.
@@ -53,8 +61,12 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader = null;
         sKernelUpdate = -1;
         sKernelEmitt = -1;
-        foreach (KeyValuePair<Mesh, ComputeBuffer> it in sMeshDictionary) it.Value.Release(); // Release compute buffers.
-        sMeshDictionary.Clear();
+        foreach (KeyValuePair<Mesh, EmittMeshInfo> it in sEmittMeshInfoDictionary)
+        {   // Release compute buffers.
+            it.Value.mVertexBuffer.Release();
+            it.Value.mIndexBuffer.Release();
+        }
+        sEmittMeshInfoDictionary.Clear();
     }
 
     /// MEMBER
@@ -117,25 +129,22 @@ public class GPUParticleSystem : MonoBehaviour
         if (mEmittMesh == null) return;
 
         // Return early if mesh is loaded.
-        if (sMeshDictionary.ContainsKey(mEmittMesh)) return;
+        if (sEmittMeshInfoDictionary.ContainsKey(mEmittMesh)) return;
 
-        int[] indicesIN = mEmittMesh.triangles;
-        Vector3[] verticesIN = mEmittMesh.vertices;
-        Vector3[] verticesOUT = new Vector3[indicesIN.GetLength(0)];
+        Vector3[] vertices = mEmittMesh.vertices;
+        int[] indices = mEmittMesh.triangles;
 
-        // Create new emitt position buffer from mesh.
-        ComputeBuffer emittPostionBuffer = new ComputeBuffer(indicesIN.GetLength(0), sizeof(float) * 3);
-        for (int i = 0; i < indicesIN.GetLength(0); ++i)
-        {
-            int vID = indicesIN[i];
-            verticesOUT[i] = verticesIN[vID];
-        }
-        
-        // Update buffer.
-        emittPostionBuffer.SetData(verticesOUT);
+        // Create new emitt mesh info from mesh.
+        EmittMeshInfo emittMeshInfo = new EmittMeshInfo();
+        emittMeshInfo.mVertexCount = vertices.GetLength(0);
+        emittMeshInfo.mVertexBuffer = new ComputeBuffer(vertices.GetLength(0), sizeof(float) * 3);
+        emittMeshInfo.mVertexBuffer.SetData(vertices);
+        emittMeshInfo.mIndexCount = indices.GetLength(0);
+        emittMeshInfo.mIndexBuffer = new ComputeBuffer(indices.GetLength(0), sizeof(int));
+        emittMeshInfo.mIndexBuffer.SetData(indices);
 
         // Add to dictionary.
-        sMeshDictionary[mEmittMesh] = emittPostionBuffer;
+        sEmittMeshInfoDictionary[mEmittMesh] = emittMeshInfo;
     }
 
     // INIT.
@@ -203,11 +212,32 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetInt("gEmittIndex", mEmittIndex);
             sComputeShader.SetFloats("gPosition", new float[] { transform.position.x, transform.position.y, transform.position.z });
             sComputeShader.SetFloats("gVelocity", new float[] { 0, 1, 0 });
-            sComputeShader.SetFloats("gScale", new float[] { 1, 1 });
+            sComputeShader.SetFloats("gScale", new float[] { 0.1f, 0.1f });
             sComputeShader.SetFloats("gColor", new float[] { 0, 1, 0 });
             sComputeShader.SetFloats("gLifetime", new float[] { mEmittParticleLifetime });
 
             // EMITT MESH.
+            if (mEmittMesh == null)
+            {
+                // Set count to 0.
+                sComputeShader.SetInt("gEmittMeshVertexCount", 0);
+                sComputeShader.SetInt("gEmittMeshIndexCount", 0);
+                sComputeShader.SetInt("gEmittMeshRandomIndex", 0);
+            }
+            else
+            {
+                Debug.Assert(sEmittMeshInfoDictionary.ContainsKey(mEmittMesh));
+
+                // Set index and vertex buffer.
+                EmittMeshInfo emittMeshInfo = sEmittMeshInfoDictionary[mEmittMesh];
+                sComputeShader.SetBuffer(sKernelEmitt, "gEmittMeshVertexBuffer", emittMeshInfo.mVertexBuffer);
+                sComputeShader.SetBuffer(sKernelEmitt, "gEmittMeshIndexBuffer", emittMeshInfo.mIndexBuffer);
+                sComputeShader.SetInt("gEmittMeshVertexCount", emittMeshInfo.mVertexCount);
+                sComputeShader.SetInt("gEmittMeshIndexCount", emittMeshInfo.mIndexCount);
+                sComputeShader.SetInt("gEmittMeshRandomIndex", Random.Range(0, emittMeshInfo.mIndexCount - 1));
+            }
+            
+
 
             // DISPATCH.
             sComputeShader.Dispatch(sKernelEmitt, 1, 1, 1);

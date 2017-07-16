@@ -72,12 +72,22 @@ uniform float2 gScale;
 uniform float3 gColor;
 uniform float gLifetime;
 
+uniform StructuredBuffer<float3> gEmittMeshVertexBuffer;
+uniform StructuredBuffer<int> gEmittMeshIndexBuffer;
+uniform int gEmittMeshVertexCount;
+uniform int gEmittMeshIndexCount;
+uniform int gEmittMeshRandomIndex;
+
 [numthreads(1, 1, 1)]
 void EMITT(uint3 id : SV_DispatchThreadID)
 {
     int index = gEmittIndex;
 
-    gPositionBuffer[index] = float4(gPosition, 0);
+    float3 emittPosition = gPosition;
+    if (gEmittMeshIndexCount > 0)
+        emittPosition += gEmittMeshVertexBuffer[gEmittMeshIndexBuffer[gEmittMeshRandomIndex]];
+
+    gPositionBuffer[index] = float4(emittPosition, 0);
     gVelocityBuffer[index] = float4(gVelocity, 0);
     gScaleBuffer[index] = float4(gScale, 0, 0);
     gColorBuffer[index] = float4(gColor, 0);

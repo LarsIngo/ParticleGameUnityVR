@@ -10,11 +10,12 @@ public class Main : MonoBehaviour
 
     private void Start ()
     {
-        mGO = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        mGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         mGO.transform.position = new Vector3(0,0,5);
         GPUParticleSystem system = mGO.AddComponent<GPUParticleSystem>();
         system.EmittMesh = mGO.GetComponent<MeshFilter>().mesh;
-        //system.EmittParticleLifeTime = 1.0f;
+        system.EmittParticleLifeTime = 3.0f;
+        system.EmittFrequency = 500.0f;
 
     }
 
