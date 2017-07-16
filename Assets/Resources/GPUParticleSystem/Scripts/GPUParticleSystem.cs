@@ -280,11 +280,17 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
             // Inherit velocity from emitter if true.
-            Vector3 velocity = ((transform.position - mLastPosition) / Time.deltaTime) * (mEmittInheritVelocity ? 1 : 0) + mEmittInitialVelocity;
+            Vector3 emitterVelocity = transform.position - mLastPosition;
+            Vector3 velocity = (emitterVelocity / Time.deltaTime) * (mEmittInheritVelocity ? 1 : 0) + mEmittInitialVelocity;
+
+            
+            Vector3 lerpedParticlePos = mLastPosition;
+            float delta = i / emittCount;
+            lerpedParticlePos += emitterVelocity * delta;
 
             // EMITT INFO.
             sComputeShader.SetInt("gEmittIndex", mEmittIndex);
-            sComputeShader.SetFloats("gPosition", new float[] { transform.position.x, transform.position.y, transform.position.z });
+            sComputeShader.SetFloats("gPosition", new float[] { lerpedParticlePos.x, lerpedParticlePos.y, lerpedParticlePos.z });
             sComputeShader.SetFloats("gVelocity", new float[] { velocity.x, velocity.y, velocity.z });
             sComputeShader.SetFloats("gScale", new float[] { mEmittInitialScale.x, mEmittInitialScale.y });
             sComputeShader.SetFloats("gColor", new float[] { mEmittInitialColor.x, mEmittInitialColor.y, mEmittInitialColor.z });
