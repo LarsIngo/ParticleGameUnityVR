@@ -14,9 +14,11 @@ public class Main : MonoBehaviour
         mGO.transform.position = new Vector3(0,0,5);
         GPUParticleSystem system = mGO.AddComponent<GPUParticleSystem>();
         system.EmittMesh = mGO.GetComponent<MeshFilter>().mesh;
-        system.EmittParticleLifeTime = 3.0f;
-        system.EmittFrequency = 50.0f;
-
+        system.EmittParticleLifeTime = 30.0f;
+        system.EmittFrequency = 500.0f;
+        system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
+        system.EmittInitialScale = new Vector2(0.1f, 0.1f);
+        system.EmittInitialColor = new Vector3(0.0f, 1.0f, 0.0f);
     }
 
     private void Update()

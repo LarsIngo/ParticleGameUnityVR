@@ -18,8 +18,11 @@ RWStructuredBuffer<float4> gLifetimeOUT;
 uniform int gMaxParticleCount;
 uniform float gDeltaTime;
 
-uniform float3 gForce;
-uniform float gDrag;
+uniform float3 gConstantAcceleration;
+uniform float gConstantDrag;
+
+uniform float3 gAcceleratorPosition;
+uniform float gAcceleratorPower;
 
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
@@ -40,11 +43,25 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     // Update position.
     pPosition = pPosition + pVelocity * gDeltaTime;
 
-    // Update velocity (acceleration).
-    pVelocity = pVelocity + gForce * gDeltaTime;
+    // Update velocity (constant forces).
+    pVelocity = pVelocity + gConstantAcceleration * gDeltaTime;
 
     // Update velocity (retardation).
-    pVelocity = pVelocity - pVelocity * (gDrag * gDeltaTime);
+    pVelocity = pVelocity - pVelocity * (gConstantDrag * gDeltaTime);
+
+    // Update velocity (accelerators).
+    float3 acceleratorDirection = gAcceleratorPosition - pPosition;
+    float distance = length(acceleratorDirection);
+
+    if (distance > 0.1f)
+    {
+        acceleratorDirection = normalize(acceleratorDirection);
+
+        float distanceFactor = clamp(1.f / (distance * distance), 0, 1.f);
+        float acceleration = gAcceleratorPower * distanceFactor;
+
+        pVelocity = pVelocity + acceleratorDirection * (acceleration * gDeltaTime);
+    }
 
     // Update lifetime.
     pLifetime.x = pLifetime.x - gDeltaTime;

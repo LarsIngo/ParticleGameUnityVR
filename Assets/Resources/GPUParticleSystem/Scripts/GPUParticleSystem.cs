@@ -112,6 +112,41 @@ public class GPUParticleSystem : MonoBehaviour
     /// </summary>
     public bool EmittInheritVelocity { get { return mEmittInheritVelocity; } set { EmittInheritVelocity = value;} }
 
+    private Vector3 mEmittConstantAcceleration = Vector3.zero;
+    /// <summary>
+    /// Constant acceleration applyed to particles.
+    /// Default: 0,0,0
+    /// </summary>
+    public Vector3 EmittConstantAcceleration { get { return mEmittConstantAcceleration; } set { mEmittConstantAcceleration = value; } }
+
+    private float mEmittConstantDrag = 1.0f;
+    /// <summary>
+    /// Constant drag applyed to particles.
+    /// Default: 1
+    /// </summary>
+    public float EmittConstantDrag { get { return mEmittConstantDrag; } set { mEmittConstantDrag = value; } }
+
+    private Vector3 mEmittInitialVelocity = Vector3.zero;
+    /// <summary>
+    /// Initial velocity of emitted particle.
+    /// Default: 0,0,0
+    /// </summary>
+    public Vector3 EmittInitialVelocity { get { return mEmittInitialVelocity; } set { mEmittInitialVelocity = value; } }
+
+    private Vector2 mEmittInitialScale = Vector2.one;
+    /// <summary>
+    /// Initial scale of emitted particle.
+    /// Default: 1,1
+    /// </summary>
+    public Vector2 EmittInitialScale { get { return mEmittInitialScale; } set { mEmittInitialScale = value; } }
+
+    private Vector3 mEmittInitialColor = Vector3.one;
+    /// <summary>
+    /// Initial color of emitted particle.
+    /// Default: 1,1,1
+    /// </summary>
+    public Vector3 EmittInitialColor { get { return mEmittInitialColor; } set { mEmittInitialColor = value; } }
+
     private bool mActive = true;
     /// <summary>
     /// Whether emitter should emitt particles.
@@ -163,6 +198,7 @@ public class GPUParticleSystem : MonoBehaviour
         mEmittFrequency = mNewEmittFrequency;
         mEmittParticleLifetime = mNewmParticleLifetime;
         mMaxParticleCount = (int)Mathf.Ceil(mEmittFrequency * mEmittParticleLifetime);
+        mLastPosition = transform.position;
 
         // BUFFERS.
         mPositionBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
@@ -218,14 +254,15 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gColorBuffer", mColorBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
-            Vector3 velocity = (transform.position - mLastPosition) / (Time.deltaTime * (mEmittInheritVelocity ? 1 : 0)) + new Vector3(0, 1, 0);
+            // Inherit velocity from emitter if true.
+            Vector3 velocity = (transform.position - mLastPosition) / (Time.deltaTime * (mEmittInheritVelocity ? 1 : 0)) + mEmittInitialVelocity;
 
             // EMITT INFO.
             sComputeShader.SetInt("gEmittIndex", mEmittIndex);
             sComputeShader.SetFloats("gPosition", new float[] { transform.position.x, transform.position.y, transform.position.z });
             sComputeShader.SetFloats("gVelocity", new float[] { velocity.x, velocity.y, velocity.z });
-            sComputeShader.SetFloats("gScale", new float[] { 0.1f, 0.1f });
-            sComputeShader.SetFloats("gColor", new float[] { 0, 1, 0 });
+            sComputeShader.SetFloats("gScale", new float[] { mEmittInitialScale.x, mEmittInitialScale.y });
+            sComputeShader.SetFloats("gColor", new float[] { mEmittInitialColor.x, mEmittInitialColor.y, mEmittInitialColor.z });
             sComputeShader.SetFloats("gLifetime", new float[] { mEmittParticleLifetime });
 
             // EMITT MESH.
@@ -250,8 +287,6 @@ public class GPUParticleSystem : MonoBehaviour
                 sComputeShader.SetFloats("gEmittMeshScale", new float[] { transform.localScale.x, transform.localScale.y, transform.localScale.z });
             }
             
-
-
             // DISPATCH.
             sComputeShader.Dispatch(sKernelEmitt, 1, 1, 1);
 
@@ -288,8 +323,15 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.SetInt("gMaxParticleCount", mMaxParticleCount);
         sComputeShader.SetFloat("gDeltaTime", Time.deltaTime);
 
-        sComputeShader.SetFloats("gForce", new float[] { 0, -9.82f, 0 });
-        sComputeShader.SetFloat("gDrag", 0);
+        sComputeShader.SetFloats("gConstantAcceleration", new float[] {mEmittConstantAcceleration.x, mEmittConstantAcceleration.y, mEmittConstantAcceleration.z });
+        sComputeShader.SetFloat("gConstantDrag", mEmittConstantDrag);
+
+        Vector3 mAcceleratorPosition = new Vector3(3,1,5);
+        float mAcceleratorPower = 100.0f;
+
+        // ACCELERATOR.
+        sComputeShader.SetFloats("gAcceleratorPosition", new float[] { mAcceleratorPosition.x, mAcceleratorPosition.y, mAcceleratorPosition.z });
+        sComputeShader.SetFloat("gAcceleratorPower", mAcceleratorPower);
 
         // DISPATCH.
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
