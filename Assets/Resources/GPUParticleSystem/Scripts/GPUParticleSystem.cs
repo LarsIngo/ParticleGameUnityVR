@@ -94,14 +94,14 @@ public class GPUParticleSystem : MonoBehaviour
     /// How many partices to emitt per second.
     /// Default: 10
     /// </summary>
-    public float EmittFrequency{ get { return mEmittFrequency; } set { mNewEmittFrequency = value; /*mApply = true;*/ } }
+    public float EmittFrequency{ get { return mEmittFrequency; } set { mNewEmittFrequency = value; mApply = true; } }
 
-    private float mEmittParticleLifetime = 6.0f; private float mNewEmittParticleLifetime = 6.0f;
+    private float mEmittParticleLifetime = 6.0f; private float mNewmParticleLifetime = 6.0f;
     /// <summary>
     /// How long a particle live in seconds.
     /// Default: 6
     /// </summary>
-    public float EmittParticleLifeTime { get { return mEmittParticleLifetime; } set { mNewEmittParticleLifetime = value; /*mApply = true;*/ } }
+    public float EmittParticleLifeTime { get { return mEmittParticleLifetime; } set { mNewmParticleLifetime = value; mApply = true; } }
 
     private bool mActive = true;
     /// <summary>
@@ -110,10 +110,10 @@ public class GPUParticleSystem : MonoBehaviour
     /// </summary>
     public bool Active { get { return mActive; } set { mActive = value; } }
 
-    //private bool mApply = true;
+    private bool mApply = true;
 
     // APPLY.
-    private void Apply() { DeInitSystem(); InitSystem(); /*mApply = false;*/ }
+    private void Apply() { DeInitSystem(); InitSystem(); mApply = false; }
 
     // MESH.
     private Mesh mEmittMesh = null; private Mesh mNewEmittMesh = null;
@@ -122,7 +122,7 @@ public class GPUParticleSystem : MonoBehaviour
     /// If set to null, particles are emitted at emitter position.
     /// Default: null.
     /// </summary>
-    public Mesh EmittMesh { get { return mEmittMesh; } set { mNewEmittMesh = value; /*mApply = true;*/ } }
+    public Mesh EmittMesh { get { return mEmittMesh; } set { mNewEmittMesh = value; mApply = true; } }
 
     private void UpdateMesh()
     {
@@ -152,7 +152,7 @@ public class GPUParticleSystem : MonoBehaviour
     private void InitSystem()
     {
         mEmittFrequency = mNewEmittFrequency;
-        mEmittParticleLifetime = mNewEmittParticleLifetime;
+        mEmittParticleLifetime = mNewmParticleLifetime;
         mMaxParticleCount = (int)Mathf.Ceil(mEmittFrequency * mEmittParticleLifetime);
 
         // BUFFERS.
@@ -312,8 +312,8 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Update()
     {
-        // Update GPU particle if needed (updated).
-        if (mNewEmittFrequency != mEmittFrequency || mNewEmittParticleLifetime != mEmittParticleLifetime || mNewEmittMesh != mEmittMesh)
+        // Update buffers if needed (updated).
+        if (mApply)
             Apply();
 
         // Emitt new particles this frame if active.
@@ -339,5 +339,5 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     /// --- MEMBERS --- ///
-
+    /// 
 }
