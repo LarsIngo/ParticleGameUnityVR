@@ -24,6 +24,18 @@ uniform float gConstantDrag;
 uniform int gAttractorCount;
 StructuredBuffer<float4> gAttractorBuffer;
 
+
+struct VectorField
+{
+
+    float3 mPosition;
+    float mRadius;
+    float4 mVector;
+
+};
+uniform int gVectorFieldCount;
+StructuredBuffer<VectorField> gVectorFieldBuffer;
+
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
 {
@@ -69,6 +81,27 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
             pVelocity = pVelocity + acceleratorDirection * (acceleration * gDeltaTime);
         }
+    }
+
+    // Update velocity (vector fields).
+    int vectorFieldCount = gVectorFieldCount;
+    for (int i = 0; i < vectorFieldCount; ++i)
+    {
+        VectorField vectorField = gVectorFieldBuffer[i];
+        float3 vPosition = vectorField.mPosition;
+        float vRadius = vectorField.mRadius;
+        float3 vVector = vectorField.mVector;
+
+        float3 vectorFieldDirection = vPosition - pPosition;
+        float distance = length(vectorFieldDirection);
+
+        if(distance < vRadius)
+        {
+        
+            pVelocity = pVelocity + vVector * gDeltaTime;
+        
+        }
+
     }
 
     // Update lifetime.

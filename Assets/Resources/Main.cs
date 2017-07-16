@@ -8,6 +8,7 @@ public class Main : MonoBehaviour
 
     GameObject mSystemGO;
     GameObject mAttractorGO;
+    GameObject mVectorFieldGO;
 
     private void Start ()
     {
@@ -23,6 +24,12 @@ public class Main : MonoBehaviour
 
         mAttractorGO = new GameObject();
         mAttractorGO.AddComponent<GPUParticleAttractor>();
+
+        mVectorFieldGO = new GameObject();
+        mVectorFieldGO.AddComponent<GPUParticleVectorField>().Vector *= 100;
+
+        mVectorFieldGO.transform.position += Vector3.right * 3;
+
     }
 
     private void Update()
