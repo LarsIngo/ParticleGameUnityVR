@@ -44,31 +44,34 @@ public class GPUParticleSystem : MonoBehaviour
 
     /// +++ STATIC +++ ///
 
-    static Material sRenderMaterial = null;
+    static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary = null;
+
     static ComputeShader sComputeShader = null;
     static int sKernelUpdate = -1;
     static int sKernelEmitt = -1;
     static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
-    static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary = null;
     static ComputeBuffer sGPUParticleAttractorBuffer = null;
-    const int sMaxAttractorCount = 64;
+    public const int sMaxAttractorCount = 64;
 
     // STARTUP.
     public static void StartUp()
     {
-        sRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
+
+        sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
+
         sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
         sKernelUpdate = sComputeShader.FindKernel("UPDATE");
         sKernelEmitt = sComputeShader.FindKernel("EMITT");
         sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
-        sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
         sGPUParticleAttractorBuffer = new ComputeBuffer(sMaxAttractorCount, sizeof(float) * 4);
     }
 
     // SHUTDOWN.
     public static void Shutdown()
     {
-        sRenderMaterial = null;
+        sGPUParticleSystemDictionary.Clear();
+        sGPUParticleSystemDictionary = null;
+
         sComputeShader = null;
         sKernelUpdate = -1;
         sKernelEmitt = -1;
@@ -78,8 +81,6 @@ public class GPUParticleSystem : MonoBehaviour
             it.Value.mIndexBuffer.Release();
         }
         sEmittMeshInfoDictionary.Clear();
-        sGPUParticleSystemDictionary.Clear();
-        sGPUParticleSystemDictionary = null;
         sGPUParticleAttractorBuffer.Release();
     }
 
@@ -88,6 +89,9 @@ public class GPUParticleSystem : MonoBehaviour
     /// --- STATIC --- ///
 
     /// +++ MEMBERS +++ ///
+
+    // Material.
+    private Material mRenderMaterial = null;
 
     // Particle.
     private SwapBuffer mPositionBuffer;
@@ -234,6 +238,9 @@ public class GPUParticleSystem : MonoBehaviour
         mEmittMesh = mNewEmittMesh;
         UpdateMesh();
 
+        // MATERIAL.
+        mRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
+
     }
 
     // DEINIT.
@@ -244,6 +251,8 @@ public class GPUParticleSystem : MonoBehaviour
         mScaleBuffer.Release();
         mColorBuffer.Release();
         mLifetimeBuffer.Release();
+
+        mRenderMaterial = null;
     }
 
     // EMITT UPDATE.
@@ -373,14 +382,14 @@ public class GPUParticleSystem : MonoBehaviour
     // RENDER.
     private void RenderSystem()
     {
-        sRenderMaterial.SetPass(0);
+        mRenderMaterial.SetPass(0);
 
         // BIND BUFFERS.
-        sRenderMaterial.SetBuffer("gPosition", mPositionBuffer.GetOutputBuffer());
-        sRenderMaterial.SetBuffer("gVelocity", mVelocityBuffer.GetOutputBuffer());
-        sRenderMaterial.SetBuffer("gScale", mScaleBuffer.GetOutputBuffer());
-        sRenderMaterial.SetBuffer("gColor", mColorBuffer.GetOutputBuffer());
-        sRenderMaterial.SetBuffer("gLifetime", mLifetimeBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gPosition", mPositionBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gVelocity", mVelocityBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gScale", mScaleBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gColor", mColorBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gLifetime", mLifetimeBuffer.GetOutputBuffer());
 
         // DRAW.
         Graphics.DrawProcedural(MeshTopology.Points, mMaxParticleCount, 1);
