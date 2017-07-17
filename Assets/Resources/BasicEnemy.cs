@@ -12,26 +12,28 @@ public class BasicEnemy : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-        Health = 100;
+        Health = 10000;
         startHealth = mHealth;
         TempVisuals(gameObject, PrimitiveType.Sphere, Color.green);
 
-        
+        gameObject.AddComponent<GPUParticleSphereCollider>();
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
+        Debug.Log(Health);
         if(Health < 0)
         {
 
-            Destroy(this);
+            Destroy(gameObject);
 
         }
 
-        GetComponent<Renderer>().material.color = Color.Lerp(Color.green, Color.red, Health / startHealth);
-        		
+        GetComponent<Renderer>().material.color = Color.Lerp(Color.green, Color.red, 1 - ((float)Health / startHealth));
+
+        mHealth -= GetComponent<GPUParticleSphereCollider>().CollisionsThisFrame;
+        	
 	}
 
     void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
