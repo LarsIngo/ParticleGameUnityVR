@@ -17,8 +17,14 @@ public class AttractorWand : MonoBehaviour {
     string mRodMaterialPath;
     string mTipMaterialPath;
 
+    public bool rightHand;
+    public float power;
+
     // Use this for initialization
     void Start () {
+
+        rightHand = true;
+        power = 20;
 
         //We create the various parts.
         InitGameObjects();
@@ -96,12 +102,16 @@ public class AttractorWand : MonoBehaviour {
         if (VrInput.controllersFound)
         {
 
-            float leftTrigger = VrInput.LeftTrigger();
-            attractor.Power = 20 * leftTrigger;
+            float trigger = 0;
+            if(rightHand)
+                trigger = VrInput.RightTrigger();
+            else trigger = VrInput.RightTrigger();
 
-            if(leftTrigger == 1.0f)
+            attractor.Power = power * trigger;
+
+            if(trigger == 1.0f)
                 system.Active = true;
-            else system.Active = true;
+            else system.Active = false;
 
         }
         else

@@ -17,8 +17,6 @@ public class VrInput : MonoBehaviour {
         leftController = left.GetComponent<SteamVR_TrackedObject>();
         rightController = right.GetComponent<SteamVR_TrackedObject>();
 
-
-
         controllersFound = leftController && rightController;
 
     }
@@ -30,6 +28,16 @@ public class VrInput : MonoBehaviour {
             return -1;
 
         SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)leftController.index);
+        return controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
+
+    }
+    public static float RightTrigger()
+    {
+
+        if (!controllersFound)
+            return -1;
+
+        SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)rightController.index);
         return controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
 
     }
