@@ -49,8 +49,6 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
     float2 pLifetime = gLifetimeIN[tID].xy;
 
-    //TMP
-    if(pLifetime.x / pLifetime.y > 0.8 || pLifetime.x / pLifetime.y < 0.2) return;
     if (pLifetime.x < -0.3f) return;
 
     float3 pPosition = gPositionIN[tID].xyz;
