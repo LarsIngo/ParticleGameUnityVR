@@ -49,6 +49,7 @@ public class GPUParticleSystem : MonoBehaviour
     static ComputeShader sComputeShader = null;
     static int sKernelUpdate = -1;
     static int sKernelEmitt = -1;
+    static int sKernelResult = -1;
     static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
 
     static ComputeBuffer sGPUParticleAttractorBuffer = null;
@@ -60,6 +61,11 @@ public class GPUParticleSystem : MonoBehaviour
     static ComputeBuffer sGPUParticleSphereColliderBuffer = null;
     const int sMaxSphereColliderCount = 64;
 
+    static SwapBuffer sGPUColliderResultSwapBuffer = null;
+    const int sMaxGPUColliderCount = sMaxSphereColliderCount;
+
+    static bool sLateUpdate;
+
     // STARTUP.
     public static void StartUp()
     {
@@ -69,10 +75,12 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
         sKernelUpdate = sComputeShader.FindKernel("UPDATE");
         sKernelEmitt = sComputeShader.FindKernel("EMITT");
+        sKernelResult = sComputeShader.FindKernel("RESULT");
         sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
         sGPUParticleAttractorBuffer = new ComputeBuffer(sMaxAttractorCount, sizeof(float) * 4);
         sGPUParticleVectorFieldBuffer = new ComputeBuffer(sMaxVectorFieldCount, sizeof(float) * 8);
         sGPUParticleSphereColliderBuffer = new ComputeBuffer(sMaxSphereColliderCount, sizeof(float) * 4);
+        sGPUColliderResultSwapBuffer = new SwapBuffer(2, sMaxGPUColliderCount, sizeof(int));
     }
 
     // SHUTDOWN.
@@ -93,9 +101,49 @@ public class GPUParticleSystem : MonoBehaviour
         sGPUParticleAttractorBuffer.Release();
         sGPUParticleVectorFieldBuffer.Release();
         sGPUParticleSphereColliderBuffer.Release();
+        sGPUColliderResultSwapBuffer.Release();
     }
 
-    /// MEMBER
+    // FETCH COLLISION RESULTS.
+    private static void FetchCollisionResults()
+    {
+        Dictionary<GPUParticleSphereCollider, GPUParticleSphereCollider> sphereColliderDictionary = GPUParticleSphereCollider.GetGPUParticleSphereColliderDictionary();
+
+        // Return early if null or zero GPUParticleSphereCollider.
+        if (sphereColliderDictionary == null) return;
+        if (sphereColliderDictionary.Count == 0) return;
+
+        Debug.Assert(sphereColliderDictionary.Count < sMaxSphereColliderCount);
+
+        bool initZero = true;
+        foreach (KeyValuePair<GPUParticleSystem, GPUParticleSystem> it in sGPUParticleSystemDictionary)
+        {
+            GPUParticleSystem system = it.Value;
+
+            // TMP
+            int[] r = new int[1];
+            system.GetSphereColliderResultBuffer().GetData(r);
+            Debug.Log(r[0]);
+
+            sGPUColliderResultSwapBuffer.Swap();
+            sComputeShader.SetBuffer(sKernelResult, "gGPUColliderResultBufferIN", sGPUColliderResultSwapBuffer.GetInputBuffer());
+            sComputeShader.SetBuffer(sKernelResult, "gGPUColliderResultBufferOUT", sGPUColliderResultSwapBuffer.GetOutputBuffer());
+
+            sComputeShader.SetInt("gGPUColliderCount", sphereColliderDictionary.Count);
+            sComputeShader.SetBuffer(sKernelResult, "gSphereColliderResultBufferREAD", system.GetSphereColliderResultBuffer());
+
+            sComputeShader.SetBool("gInitZero", initZero);
+            initZero = false;
+
+            // DISPATCH.
+            sComputeShader.Dispatch(sKernelResult, (int)Mathf.Ceil(sMaxSphereColliderCount / 64.0f), 1, 1);
+        }
+
+        // GET DATA FRPM GPU TO CPU.
+        int[] collisionData = new int[sphereColliderDictionary.Count];
+        sGPUColliderResultSwapBuffer.GetOutputBuffer().GetData(collisionData);
+        Debug.Log(collisionData[0]);
+    }
 
     /// --- STATIC --- ///
 
@@ -103,9 +151,6 @@ public class GPUParticleSystem : MonoBehaviour
 
     // Material.
     private Material mRenderMaterial = null;
-
-    // Collisons.
-    private ComputeBuffer mSphereColliderResultBuffer = null;
 
     // Particle.
     private SwapBuffer mPositionBuffer;
@@ -116,6 +161,10 @@ public class GPUParticleSystem : MonoBehaviour
 
     private int mMaxParticleCount;
     private int mEmittIndex = 0;
+
+    // Collisons.
+    private ComputeBuffer mSphereColliderResultBuffer = null;
+    public ComputeBuffer GetSphereColliderResultBuffer() { return mSphereColliderResultBuffer; }
 
     // Emitter.
     private Vector3 mLastPosition = Vector3.zero;
@@ -185,9 +234,8 @@ public class GPUParticleSystem : MonoBehaviour
     /// </summary>
     public bool Active { get { return mActive; } set { mActive = value; } }
 
-    private bool mApply = true;
-
     // APPLY.
+    private bool mApply = true;
     private void Apply() { DeInitSystem(); InitSystem(); mApply = false; }
 
     // MESH.
@@ -454,18 +502,19 @@ public class GPUParticleSystem : MonoBehaviour
 
             sComputeShader.SetInt("gSphereColliderCount", sphereColliderDictionary.Count);
             sComputeShader.SetBuffer(sKernelUpdate, "gSphereColliderBuffer", sGPUParticleSphereColliderBuffer);
-            sComputeShader.SetBuffer(sKernelUpdate, "gSphereColliderResultBuffer", mSphereColliderResultBuffer);
+            sComputeShader.SetBuffer(sKernelUpdate, "gSphereColliderResultBufferWRITE", mSphereColliderResultBuffer);
         }
 
         // DISPATCH.
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
 
-        // FETCH RESULTS.
-        if (sphereColliderDictionary != null && sphereColliderDictionary.Count > 0)
-        {
-            int[] r = new int[1];
-            mSphereColliderResultBuffer.GetData(r, 0, 0, 1);
-        }
+        // FETCH COLLISION RESULTS. TMP
+        //if (sphereColliderDictionary != null && sphereColliderDictionary.Count > 0)
+        //{
+        //    int[] r = new int[1];
+        //    mSphereColliderResultBuffer.GetData(r);
+        //    Debug.Log(r[0]);
+        //}
 
     }
 
@@ -498,6 +547,9 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Update()
     {
+        // Used to make static function get called once in LateUpdate();
+        sLateUpdate = true;
+
         // Update buffers if needed (updated).
         if (mApply)
             Apply();
@@ -511,6 +563,17 @@ public class GPUParticleSystem : MonoBehaviour
 
         // Update last position.
         mLastPosition = transform.position;
+    }
+
+    private void LateUpdate()
+    {
+        // Enter once per frame to get data from GPU to CPU.
+        if (sLateUpdate)
+        {
+            sLateUpdate = false;
+            // Get collisions from this frame.
+            FetchCollisionResults();
+        }
     }
 
     // MONOBEHAVIOUR.
