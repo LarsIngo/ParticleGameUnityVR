@@ -9,7 +9,7 @@ public class VrInput : MonoBehaviour {
 
     static SteamVR_TrackedObject leftController;
     static SteamVR_TrackedObject rightController;
-    public static bool controllersFound;
+    public static bool controllersFound { get { return leftController.isActiveAndEnabled && rightController.isActiveAndEnabled; } }
 
     // Use this for initialization
     void Start () {
@@ -17,14 +17,12 @@ public class VrInput : MonoBehaviour {
         leftController = left.GetComponent<SteamVR_TrackedObject>();
         rightController = right.GetComponent<SteamVR_TrackedObject>();
 
-        controllersFound = leftController && rightController;
-
     }
 
     public static float LeftTrigger()
     {
 
-        if (!controllersFound)
+        if (!leftController.isActiveAndEnabled)
             return -1;
 
         SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)leftController.index);
@@ -34,12 +32,33 @@ public class VrInput : MonoBehaviour {
     public static float RightTrigger()
     {
 
-        if (!controllersFound)
+        if (!rightController.isActiveAndEnabled)
             return -1;
 
         SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)rightController.index);
         return controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
 
     }
+    public static bool LeftGrip()
+    {
+
+        if (!leftController.isActiveAndEnabled)
+            return false;
+
+        SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)leftController.index);
+        return controller.GetPressDown(SteamVR_Controller.ButtonMask.Grip);
+
+    }
+    public static bool RightGrip()
+    {
+
+        if (!rightController.isActiveAndEnabled)
+            return false;
+
+        SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)rightController.index);
+        return controller.GetPressDown(SteamVR_Controller.ButtonMask.Grip);
+
+    }
+
 
 }
