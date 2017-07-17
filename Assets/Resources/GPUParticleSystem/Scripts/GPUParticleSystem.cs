@@ -97,7 +97,7 @@ public class GPUParticleSystem : MonoBehaviour
     /// How many partices to emitt per second.
     /// Default: 10
     /// </summary>
-    public float EmittFrequency{ get { return mEmittFrequency; } set { mNewEmittFrequency = value; mApply = true; } }
+    public float EmittFrequency { get { return mEmittFrequency; } set { mNewEmittFrequency = value; mApply = true; } }
 
     private float mEmittParticleLifetime = 6.0f; private float mNewmParticleLifetime = 6.0f;
     /// <summary>
@@ -111,7 +111,7 @@ public class GPUParticleSystem : MonoBehaviour
     /// Whether emitted particles inherit velocity from emitter.
     /// Default: true
     /// </summary>
-    public bool EmittInheritVelocity { get { return mEmittInheritVelocity; } set { EmittInheritVelocity = value;} }
+    public bool EmittInheritVelocity { get { return mEmittInheritVelocity; } set { EmittInheritVelocity = value; } }
 
     private Vector3 mEmittConstantAcceleration = Vector3.zero;
     /// <summary>
@@ -148,12 +148,13 @@ public class GPUParticleSystem : MonoBehaviour
     /// </summary>
     public Vector3 EmittInitialColor { get { return mEmittInitialColor; } set { mEmittInitialColor = value; } }
 
-    private Vector3 mEmittInitialHaloColor = Vector3.zero;
+    private Vector4[] mHaloLifetimePoints = new Vector4[] { new Vector4(1, 1, 1, 0), new Vector4(0, 1, 0, 1) };
+    private Vector4[] mNewHaloLifetimePoints = new Vector4[] { new Vector4(1, 1, 1, 0), new Vector4(0, 1, 0, 1) };
     /// <summary>
     /// Initial bordercolor of emitted particle.
-    /// Default: 0,0,0
+    /// Default: 1,1,1,0 to 0,1,0,1
     /// </summary>
-    public Vector3 EmittInitialHaloColor { get { return mEmittInitialHaloColor; } set { mEmittInitialHaloColor = value; } }
+    public Vector4[] HaloColorLifetimePoints { get { return mHaloLifetimePoints; } set { mNewHaloLifetimePoints = value; mApply = true; } }
 
     private Vector3 mTMPAcceleratorPosition = Vector3.zero;
     /// <summary>
@@ -221,6 +222,7 @@ public class GPUParticleSystem : MonoBehaviour
         mEmittParticleLifetime = mNewmParticleLifetime;
         mMaxParticleCount = (int)Mathf.Ceil(mEmittFrequency * mEmittParticleLifetime);
         mLastPosition = transform.position;
+        mHaloLifetimePoints = mNewHaloLifetimePoints;
 
         // BUFFERS.
         mPositionBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
@@ -269,6 +271,8 @@ public class GPUParticleSystem : MonoBehaviour
 
         mEmittTimer -= emittCount * 1.0f / mEmittFrequency;
 
+        Vector3 emitterVelocity = transform.position - mLastPosition;
+
         for (int i = 0; i < emittCount; ++i)
         {
             // BIND PARTICLE BUFFERS.
@@ -280,17 +284,16 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
             // Inherit velocity from emitter if true.
-            Vector3 emitterVelocity = transform.position - mLastPosition;
             Vector3 velocity = (emitterVelocity / Time.deltaTime) * (mEmittInheritVelocity ? 1 : 0) + mEmittInitialVelocity;
 
             
-            Vector3 lerpedParticlePos = mLastPosition;
+            Vector3 newInitPos = mLastPosition;
             float delta = i / emittCount;
-            lerpedParticlePos += emitterVelocity * delta;
+            newInitPos += emitterVelocity * delta;
 
             // EMITT INFO.
             sComputeShader.SetInt("gEmittIndex", mEmittIndex);
-            sComputeShader.SetFloats("gPosition", new float[] { lerpedParticlePos.x, lerpedParticlePos.y, lerpedParticlePos.z });
+            sComputeShader.SetFloats("gPosition", new float[] { newInitPos.x, newInitPos.y, newInitPos.z });
             sComputeShader.SetFloats("gVelocity", new float[] { velocity.x, velocity.y, velocity.z });
             sComputeShader.SetFloats("gScale", new float[] { mEmittInitialScale.x, mEmittInitialScale.y });
             sComputeShader.SetFloats("gColor", new float[] { mEmittInitialColor.x, mEmittInitialColor.y, mEmittInitialColor.z });

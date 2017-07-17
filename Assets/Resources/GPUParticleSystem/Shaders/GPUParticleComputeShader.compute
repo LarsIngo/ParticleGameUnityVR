@@ -3,6 +3,18 @@
 // Update kernel
 #pragma kernel UPDATE
 
+cbuffer LifetimeDependentDimensions
+{
+    uint nrOfScalePoints;
+    uint nrOfColorPoints;
+    uint nrOfHaloColorPoints;
+    uint padding;
+};
+
+uniform int gColorpointCount;
+StructuredBuffer<float4> gColorpointBuffer;
+
+
 StructuredBuffer<float4> gPositionIN;
 StructuredBuffer<float4> gVelocityIN;
 StructuredBuffer<float4> gScaleIN;
