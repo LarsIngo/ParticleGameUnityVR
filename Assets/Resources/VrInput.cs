@@ -7,20 +7,31 @@ public class VrInput : MonoBehaviour {
     public GameObject left;
     public GameObject right;
 
-    public static SteamVR_TrackedController leftController;
-    public static SteamVR_TrackedController rightController;
+    static SteamVR_TrackedObject leftController;
+    static SteamVR_TrackedObject rightController;
     public static bool controllersFound;
+
     // Use this for initialization
     void Start () {
-        leftController = left.GetComponent<SteamVR_TrackedController>();
-        rightController = right.GetComponent<SteamVR_TrackedController>();
+
+        leftController = left.GetComponent<SteamVR_TrackedObject>();
+        rightController = right.GetComponent<SteamVR_TrackedObject>();
+
+
 
         controllersFound = leftController && rightController;
 
     }
 
-    // Update is called once per frame
-    void Update () {
-		
-	}
+    public static float LeftTrigger()
+    {
+
+        if (!controllersFound)
+            return -1;
+
+        SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)leftController.index);
+        return controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
+
+    }
+
 }

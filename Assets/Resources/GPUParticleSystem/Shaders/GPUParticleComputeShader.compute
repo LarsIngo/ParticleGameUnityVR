@@ -3,16 +3,17 @@
 // Update kernel
 #pragma kernel UPDATE
 
+
 StructuredBuffer<float4> gPositionIN;
 StructuredBuffer<float4> gVelocityIN;
 StructuredBuffer<float4> gScaleIN;
-StructuredBuffer<float4> gColorIN;
+StructuredBuffer<float4> gAmbientIN;
 StructuredBuffer<float4> gLifetimeIN;
 
 RWStructuredBuffer<float4> gPositionOUT;
 RWStructuredBuffer<float4> gVelocityOUT;
 RWStructuredBuffer<float4> gScaleOUT;
-RWStructuredBuffer<float4> gColorOUT;
+RWStructuredBuffer<float4> gAmbientOUT;
 RWStructuredBuffer<float4> gLifetimeOUT;
 
 uniform int gMaxParticleCount;
@@ -49,12 +50,12 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
     float2 pLifetime = gLifetimeIN[tID].xy;
 
-    if (pLifetime.x < 0.0f) return;
+    if (pLifetime.x < 0.01f) return;
 
     float3 pPosition = gPositionIN[tID].xyz;
     float3 pVelocity = gVelocityIN[tID].xyz;
     float2 pScale = gScaleIN[tID].xy;
-    float3 pColor = gColorIN[tID].xyz;
+    float3 pAmbient = gAmbientIN[tID].xyz;
 
     // Update position.
     pPosition = pPosition + pVelocity * gDeltaTime;
@@ -139,10 +140,11 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     // Update lifetime.
     pLifetime.x = pLifetime.x - gDeltaTime;
 
+
     gPositionOUT[tID] = float4(pPosition, 0);
     gVelocityOUT[tID] = float4(pVelocity, 0);
     gScaleOUT[tID] = float4(pScale, 0, 0);
-    gColorOUT[tID] = float4(pColor, 0);
+    gAmbientOUT[tID] = float4(pAmbient, 0);
     gLifetimeOUT[tID] = float4(pLifetime.xy, 0, 0);
 }
 
@@ -152,14 +154,14 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 RWStructuredBuffer<float4> gPositionBuffer;
 RWStructuredBuffer<float4> gVelocityBuffer;
 RWStructuredBuffer<float4> gScaleBuffer;
-RWStructuredBuffer<float4> gColorBuffer;
+RWStructuredBuffer<float4> gAmbientBuffer;
 RWStructuredBuffer<float4> gLifetimeBuffer;
 
 uniform int gEmittIndex;
 uniform float3 gPosition;
 uniform float3 gVelocity;
 uniform float2 gScale;
-uniform float3 gColor;
+uniform float3 gAmbient;
 uniform float gLifetime;
 
 uniform StructuredBuffer<float3> gEmittMeshVertexBuffer;
@@ -181,7 +183,7 @@ void EMITT(uint3 id : SV_DispatchThreadID)
     gPositionBuffer[index] = float4(emittPosition, 0);
     gVelocityBuffer[index] = float4(gVelocity, 0);
     gScaleBuffer[index] = float4(gScale, 0, 0);
-    gColorBuffer[index] = float4(gColor, 0);
+    gAmbientBuffer[index] = float4(gAmbient, 0);
 
     float lifetime = gLifetime;
     gLifetimeBuffer[index] = float4(lifetime, lifetime, 0, 0);

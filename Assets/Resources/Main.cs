@@ -29,26 +29,7 @@ public class Main : MonoBehaviour
             mRightController.transform.position = new Vector3(3, 0, 5);
         }
 
-        GPUParticleVectorField leftVectorField = mLeftController.AddComponent<GPUParticleVectorField>();
-        leftVectorField.Radius = 2.0f;
-        leftVectorField.Vector = Vector3.up * 20.0f;
-        leftVectorField.RelativeVectorField = true;
-
-        GPUParticleAttractor rightAttractor = mRightController.AddComponent<GPUParticleAttractor>();
-        rightAttractor.Power = 100;
-
-        mParticleSystem = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        mParticleSystem.name = "Emitter";
-        mParticleSystem.transform.position = new Vector3(0, 1, 0);
-        mParticleSystem.transform.localScale *= 0.1f;
-        GPUParticleSystem system = mParticleSystem.AddComponent<GPUParticleSystem>();
-        system.EmittMesh = mParticleSystem.GetComponent<MeshFilter>().mesh;
-        system.EmittParticleLifeTime = 30.0f;
-        system.EmittFrequency = 500.0f;
-        system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-        system.EmittInitialScale = new Vector2(0.01f, 0.01f);
-        system.EmittInitialColor = new Vector3(0.0f, 1.0f, 0.0f);
-        system.EmittInheritVelocity = true;
+        mRightController.AddComponent<AttractorWand>();
 
     }
 

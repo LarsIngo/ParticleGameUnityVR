@@ -26,16 +26,23 @@ public class AttractorWand : MonoBehaviour {
         //We add the emitter to the tip.
         system = mTipGO.AddComponent<GPUParticleSystem>();
         system.EmittMesh = mTipGO.GetComponent<MeshFilter>().mesh;
-        system.EmittParticleLifeTime = 10.0f;
-        system.EmittFrequency = 1500.0f;
+        system.EmittParticleLifeTime = 5.0f;
+        system.EmittFrequency = 500.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
         system.EmittInitialScale = new Vector2(0.01f, 0.01f);
-        system.EmittInitialColor = new Vector3(0.0f, 1.0f, 0.0f);
-        system.EmittInheritVelocity = false;
+        system.EmittInitialAmbient = new Vector3(1.0f, 1.0f, 1.0f);
+
+        Vector4[] colorControlpoints = { new Vector4(0, 1, 0, 0), new Vector4(1, 1, 0, 0.1f), new Vector4(0, 1, 0, 0.2f), new Vector4(1, 0, 0, 0.3f), new Vector4(0, 1, 0, 0.4f),
+            new Vector4(0, 0, 1, 0.5f), new Vector4(1, 0, 1, 0.6f), new Vector4(0, 1, 1, 0.7f), new Vector4(0, 1, 0, 0.8f), new Vector4(1, 1, 1, 0.9f), new Vector4(1, 1, 0, 1) };
+
+        system.ColorLifetimePoints = colorControlpoints;
+
+        Vector4[] haloControlpoint = { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 0.333f), new Vector4(0, 0, 1, 0.666f), new Vector4(0.5f, 0, 0.5f, 1) };
+        system.HaloLifetimePoints = haloControlpoint;
 
         //We add an attractor to the tip.
         attractor = mTipGO.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 0;
+        attractor.Power = 1;
 
         mWandGO.transform.Rotate(90, 0, 0);
         mWandGO.transform.position += Vector3.forward * 0.2f;
@@ -89,20 +96,12 @@ public class AttractorWand : MonoBehaviour {
         if (VrInput.controllersFound)
         {
 
-            if (VrInput.rightController.triggerPressed)
-            {
+            float leftTrigger = VrInput.LeftTrigger();
+            attractor.Power = 20 * leftTrigger;
 
-                attractor.Power = 20;
-                system.EmittFrequency = 1500f;
-
-            }
-            else
-            {
-
-                attractor.Power = 0;
-                system.EmittFrequency = 0;
-
-            }
+            if(leftTrigger == 1.0f)
+                system.Active = true;
+            else system.Active = true;
 
         }
         else
@@ -111,20 +110,20 @@ public class AttractorWand : MonoBehaviour {
             if (Input.GetKey(KeyCode.Space))
             {
 
-                attractor.Power = 20;
-                system.Active = true;
+                //attractor.Power = 20;
+                system.Active = false;
 
             }
             else
             {
 
-                attractor.Power = 0;
-                system.Active = false;
+                //attractor.Power = 0;
+                system.Active = true;
 
             }
 
         }
 
-		
-	}
+
+    }
 }
