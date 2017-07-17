@@ -60,13 +60,19 @@ public class Main : MonoBehaviour
         {
             SteamVR_Controller.Device device = SteamVR_Controller.Input((int)left.controllerIndex);
 
-            left.GetComponent<GPUParticleVectorField>().Vector = Vector3.up * 20.0f * (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) ? 1 : 0); 
+            if (left.triggerPressed)
+                left.GetComponent<GPUParticleVectorField>().Vector = Vector3.up * 20.0f;
+            else left.GetComponent<GPUParticleVectorField>().Vector = Vector3.up * 20.0f;
+
         }
         if(right != null)
         {
             SteamVR_Controller.Device device = SteamVR_Controller.Input((int)right.controllerIndex);
 
-            right.GetComponent<GPUParticleAttractor>().Power = 100.0f * (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) ? 1 : 0);
+            if(right.triggerPressed)
+                right.GetComponent<GPUParticleAttractor>().Power = 100.0f;
+            else right.GetComponent<GPUParticleAttractor>().Power = 0.0f;
+
         }
     }
 
