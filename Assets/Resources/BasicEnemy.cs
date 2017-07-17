@@ -4,27 +4,34 @@ using UnityEngine;
 
 public class BasicEnemy : MonoBehaviour {
 
-    public int health;
+    private int mHealth;
 
+    public int Health { get { return mHealth; } set { mHealth = value; startHealth = value; } }
+
+    int startHealth;
 	// Use this for initialization
 	void Start () {
 
-        health = 100;
-
+        Health = 100;
+        startHealth = mHealth;
         TempVisuals(gameObject, PrimitiveType.Sphere, Color.green);
+
+        
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        if(health < 0)
+        if(Health < 0)
         {
 
             Destroy(this);
 
         }
-		
+
+        GetComponent<Renderer>().material.color = Color.Lerp(Color.green, Color.red, Health / startHealth);
+        		
 	}
 
     void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
