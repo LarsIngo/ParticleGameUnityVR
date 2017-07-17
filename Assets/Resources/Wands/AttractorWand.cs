@@ -113,7 +113,7 @@ public class AttractorWand : MonoBehaviour {
             float trigger = 0;
             if(rightHand)
                 trigger = VrInput.RightTrigger();
-            else trigger = VrInput.RightTrigger();
+            else trigger = VrInput.LeftTrigger();
 
             attractor.Power = power * trigger;
 
