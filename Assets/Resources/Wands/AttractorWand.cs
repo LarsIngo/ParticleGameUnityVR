@@ -44,9 +44,9 @@ public class AttractorWand : MonoBehaviour {
 
         Vector4[] haloControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 0.333f), new Vector4(0, 0, 1, 0.666f), new Vector4(0.5f, 0, 0.5f, 1) };
         system.HaloLifetimePoints = haloControlpoints;
-
-        Vector4[] scaleControlpoints = { new Vector4(0.1f, 0.1f, 0, 0), new Vector4(0.3f, 0.3f, 0, 0.5f), new Vector4(0.1f, 0, 0.1f, 1) };
-        system.ScaleLifetimePoints = scaleControlpoints;
+        /*
+        Vector4[] scaleControlpoints = { new Vector4(0.1f, 0.1f, 0, 0), new Vector4(0.1f, 0.1f, 0, 0.5f), new Vector4(0.1f, 0, 0.1f, 1) };
+        system.ScaleLifetimePoints = scaleControlpoints;*/
 
         Vector4[] transparencyControlpoints = { new Vector4(0.0f, 0, 0, 0), new Vector4(0.0f, 0, 0, 0.5f), new Vector4(1.0f, 0, 0, 1.0f) };
         system.TransparencyLifetimePoints = transparencyControlpoints;
