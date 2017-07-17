@@ -107,13 +107,13 @@ public class GPUParticleSystem : MonoBehaviour
     // FETCH COLLISION RESULTS.
     private static void FetchCollisionResults()
     {
-        Dictionary<GPUParticleSphereCollider, GPUParticleSphereCollider> sphereColliderDictionary = GPUParticleSphereCollider.GetGPUParticleSphereColliderDictionary();
+        List<GPUParticleSphereCollider> sphereColliderList = GPUParticleSphereCollider.GetGPUParticleSphereColliderList();
 
         // Return early if null or zero GPUParticleSphereCollider.
-        if (sphereColliderDictionary == null) return;
-        if (sphereColliderDictionary.Count == 0) return;
+        if (sphereColliderList == null) return;
+        if (sphereColliderList.Count == 0) return;
 
-        Debug.Assert(sphereColliderDictionary.Count < sMaxSphereColliderCount);
+        Debug.Assert(sphereColliderList.Count < sMaxSphereColliderCount);
 
         bool initZero = true;
         foreach (KeyValuePair<GPUParticleSystem, GPUParticleSystem> it in sGPUParticleSystemDictionary)
@@ -124,7 +124,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelResult, "gGPUColliderResultBufferIN", sGPUColliderResultSwapBuffer.GetInputBuffer());
             sComputeShader.SetBuffer(sKernelResult, "gGPUColliderResultBufferOUT", sGPUColliderResultSwapBuffer.GetOutputBuffer());
 
-            sComputeShader.SetInt("gGPUColliderCount", sphereColliderDictionary.Count);
+            sComputeShader.SetInt("gGPUColliderCount", sphereColliderList.Count);
             sComputeShader.SetBuffer(sKernelResult, "gSphereColliderResultBufferREAD", system.GetSphereColliderResultBuffer());
 
             sComputeShader.SetBool("gInitZero", initZero);
@@ -135,19 +135,19 @@ public class GPUParticleSystem : MonoBehaviour
         }
 
         // GET DATA FRPM GPU TO CPU.
-        int[] collisionData = new int[sphereColliderDictionary.Count];
+        int[] collisionData = new int[sphereColliderList.Count];
         sGPUColliderResultSwapBuffer.GetOutputBuffer().GetData(collisionData);
 
         // UPDATE COLLIDERS.
-        foreach (KeyValuePair<GPUParticleSphereCollider, GPUParticleSphereCollider> it in GPUParticleSphereCollider.GetGPUParticleSphereColliderDictionary())
+        for(int i = 0; i < sphereColliderList.Count; ++i)
         {
-            GPUParticleSphereCollider collider = it.Value;
-            collider.SetCollisionsThisFrame(collisionData[collider.GetIndex]);
+            GPUParticleSphereCollider collider = sphereColliderList[i];
+            collider.SetCollisionsThisFrame(collisionData[i]);
         }
-        Debug.Log(collisionData[0]);
     }
 
     /// --- STATIC --- ///
+
 
     /// +++ MEMBERS +++ ///
 
@@ -306,7 +306,7 @@ public class GPUParticleSystem : MonoBehaviour
         mRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
 
         // COLLISION.
-        mSphereColliderResultBuffer = new ComputeBuffer(1, sizeof(int));
+        mSphereColliderResultBuffer = new ComputeBuffer(sMaxSphereColliderCount, sizeof(int));
 
     }
 
@@ -479,30 +479,31 @@ public class GPUParticleSystem : MonoBehaviour
         }
 
         // SPHERE COLLIDER.
-        Dictionary<GPUParticleSphereCollider, GPUParticleSphereCollider> sphereColliderDictionary = GPUParticleSphereCollider.GetGPUParticleSphereColliderDictionary();
-        if (sphereColliderDictionary == null)
+        List<GPUParticleSphereCollider> sphereColliderList = GPUParticleSphereCollider.GetGPUParticleSphereColliderList();
+        if (sphereColliderList == null)
         {
             sComputeShader.SetInt("gSphereColliderCount", 0);
         }
         else
         {
-            Debug.Assert(sphereColliderDictionary.Count < sMaxSphereColliderCount);
+            Debug.Assert(sphereColliderList.Count < sMaxSphereColliderCount);
 
-            float[] sphereColliderArray = new float[sphereColliderDictionary.Count * 4];
-            int i = 0;
-            foreach (KeyValuePair<GPUParticleSphereCollider, GPUParticleSphereCollider> it in sphereColliderDictionary)
+            float[] sphereColliderArray = new float[sphereColliderList.Count * 4];
+            for (int i = 0, j = 0; i < sphereColliderList.Count; ++i)
             {
-                GPUParticleSphereCollider sphereCollider = it.Value;
+                GPUParticleSphereCollider sphereCollider = sphereColliderList[i];
+
                 float scale = Mathf.Max(Mathf.Max(sphereCollider.transform.localScale.x, sphereCollider.transform.localScale.y), sphereCollider.transform.localScale.z);
 
-                sphereColliderArray[i++] = sphereCollider.transform.position.x;
-                sphereColliderArray[i++] = sphereCollider.transform.position.y;
-                sphereColliderArray[i++] = sphereCollider.transform.position.z;
-                sphereColliderArray[i++] = scale;
+                sphereColliderArray[j++] = sphereCollider.transform.position.x;
+                sphereColliderArray[j++] = sphereCollider.transform.position.y;
+                sphereColliderArray[j++] = sphereCollider.transform.position.z;
+                sphereColliderArray[j++] = scale;
             }
+
             sGPUParticleSphereColliderBuffer.SetData(sphereColliderArray);
 
-            sComputeShader.SetInt("gSphereColliderCount", sphereColliderDictionary.Count);
+            sComputeShader.SetInt("gSphereColliderCount", sphereColliderList.Count);
             sComputeShader.SetBuffer(sKernelUpdate, "gSphereColliderBuffer", sGPUParticleSphereColliderBuffer);
             sComputeShader.SetBuffer(sKernelUpdate, "gSphereColliderResultBufferWRITE", mSphereColliderResultBuffer);
         }

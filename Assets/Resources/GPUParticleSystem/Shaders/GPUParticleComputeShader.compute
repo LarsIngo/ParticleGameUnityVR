@@ -1,6 +1,6 @@
 ﻿CGPROGRAM
 
-// Update kernel
+// TODO: Fix comment: Update kernel
 #pragma kernel UPDATE
 
 StructuredBuffer<float4> gPositionIN;
@@ -60,10 +60,10 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     // Update position.
     pPosition = pPosition + pVelocity * gDeltaTime;
 
-    // Update velocity (constants).
+    // Update velocity (acceleration).
     pVelocity = pVelocity + gConstantAcceleration * gDeltaTime;
 
-    // Update velocity (retardation).
+    // Update velocity (drag).
     pVelocity = pVelocity - pVelocity * (gConstantDrag * gDeltaTime);
 
     // Update velocity (attractors).
@@ -111,7 +111,14 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     int sphereColliderCount = gSphereColliderCount;
     if (sphereColliderCount > 0)
     {
-        int pSphereCollisions = 0;
+
+        if (tID < sphereColliderCount)
+        {
+            gSphereColliderResultBufferWRITE[tID] = 0;
+        }
+
+        //TODO BARRIER!!
+
         for (int i = 0; i < sphereColliderCount; ++i)
         {
             float4 sphereCollider = gSphereColliderBuffer[i];
@@ -123,18 +130,8 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
             if (cDistance < cRadius)
             {
-                pSphereCollisions = pSphereCollisions + 1;
+                InterlockedAdd(gSphereColliderResultBufferWRITE[i], 1);
             }
-        }
-
-        if (tID == 0)
-            gSphereColliderResultBufferWRITE[0] = 0;
-
-        //TODO BARRIER!!
-
-        if (pSphereCollisions > 0)
-        {
-            InterlockedAdd(gSphereColliderResultBufferWRITE[0], pSphereCollisions);
         }
     }
 

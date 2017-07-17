@@ -10,20 +10,20 @@ public class GPUParticleSphereCollider : MonoBehaviour
 {
     /// +++ STATIC +++ ///
 
-    private static Dictionary<GPUParticleSphereCollider, GPUParticleSphereCollider> sGPUParticleSphereColliderDictionary = null;
-    public static Dictionary<GPUParticleSphereCollider, GPUParticleSphereCollider> GetGPUParticleSphereColliderDictionary() { return sGPUParticleSphereColliderDictionary; }
+    private static List<GPUParticleSphereCollider> sGPUParticleSphereColliderList = null;
+    public static List<GPUParticleSphereCollider> GetGPUParticleSphereColliderList() { return sGPUParticleSphereColliderList; }
 
     // STARTUP.
     public static void StartUp()
     {
-        sGPUParticleSphereColliderDictionary = new Dictionary<GPUParticleSphereCollider, GPUParticleSphereCollider>();
+        sGPUParticleSphereColliderList = new List<GPUParticleSphereCollider>();
     }
 
     // SHUTDOWN.
     public static void Shutdown()
     {
-        sGPUParticleSphereColliderDictionary.Clear();
-        sGPUParticleSphereColliderDictionary = null;
+        sGPUParticleSphereColliderList.Clear();
+        sGPUParticleSphereColliderList = null;
     }
 
     /// --- STATIC --- ///
@@ -38,7 +38,7 @@ public class GPUParticleSphereCollider : MonoBehaviour
     public int CollisionsThisFrame { get { return mCollisionsThisFrame; } }
 
     /// <summary>
-    /// Used by GPUParticleSystem to 
+    /// Used by GPUParticleSystem to set collisions this frame.
     /// </summary>
     public void SetCollisionsThisFrame(int collisions)
     {
@@ -67,9 +67,9 @@ public class GPUParticleSphereCollider : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Awake()
     {
-        if (sGPUParticleSphereColliderDictionary == null) StartUp();
+        if (sGPUParticleSphereColliderList == null) StartUp();
         InitAttractor();
-        sGPUParticleSphereColliderDictionary[this] = this;
+        sGPUParticleSphereColliderList.Add(this);
     }
 
     // MONOBEHAVIOUR.
@@ -82,8 +82,8 @@ public class GPUParticleSphereCollider : MonoBehaviour
     private void OnDestroy()
     {
         DeInitAttractor();
-        sGPUParticleSphereColliderDictionary.Remove(this);
-        if (sGPUParticleSphereColliderDictionary.Count == 0) Shutdown();
+        sGPUParticleSphereColliderList.Remove(this);
+        if (sGPUParticleSphereColliderList.Count == 0) Shutdown();
     }
 
     // MONOBEHAVIOUR.

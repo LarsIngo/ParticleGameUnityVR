@@ -42,15 +42,12 @@ public class Main : MonoBehaviour
         mParticleSystem.transform.position = new Vector3(0,0,5);
         GPUParticleSystem system = mParticleSystem.AddComponent<GPUParticleSystem>();
         system.EmittMesh = mParticleSystem.GetComponent<MeshFilter>().mesh;
-        system.EmittParticleLifeTime = 1.0f;
-        system.EmittFrequency = 1.0f;
+        system.EmittParticleLifeTime = 30.0f;
+        system.EmittFrequency = 500.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
         system.EmittInitialScale = new Vector2(0.1f, 0.1f);
         system.EmittInitialColor = new Vector3(0.0f, 1.0f, 0.0f);
         system.EmittInheritVelocity = true;
-
-        GameObject colliderGO = new GameObject();
-        colliderGO.AddComponent<GPUParticleSphereCollider>();
 
     }
 
