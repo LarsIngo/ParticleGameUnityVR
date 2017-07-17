@@ -22,8 +22,8 @@ public class BasicEnemy : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log(Health);
-        if(Health < 0)
+
+        if (Health < 0)
         {
 
             Destroy(gameObject);
