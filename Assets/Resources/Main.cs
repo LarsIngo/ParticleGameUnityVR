@@ -68,9 +68,9 @@ public class Main : MonoBehaviour
     void SpawnEnemies()
     {
 
-        //DestroyImmediate(enemy1);
-        //DestroyImmediate(enemy2);
-        //DestroyImmediate(enemy3);
+        DestroyImmediate(enemy1);
+        DestroyImmediate(enemy2);
+        DestroyImmediate(enemy3);
 
         //Spawn enemies.
         enemy1 = new GameObject("ENEMY1");
