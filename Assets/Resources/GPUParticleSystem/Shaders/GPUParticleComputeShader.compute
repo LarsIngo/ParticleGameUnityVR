@@ -47,107 +47,107 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
     if (tID >= gMaxParticleCount) return;
 
-    float2 pLifetime = gLifetimeIN[tID].xy;
-
-    if (pLifetime.x < -0.3f) return;
-
     float3 pPosition = gPositionIN[tID].xyz;
     float3 pVelocity = gVelocityIN[tID].xyz;
     float3 pAmbient = gAmbientIN[tID].xyz;
-    float dt = gDeltaTime;
+    float2 pLifetime = gLifetimeIN[tID].xy;
 
-    // Update position.
-    pPosition = pPosition + pVelocity * dt;
-
-    // Update velocity (acceleration).
-    pVelocity = pVelocity + gConstantAcceleration * dt;
-
-    // Update velocity (drag).
-    pVelocity = pVelocity - pVelocity * (gConstantDrag * dt);
-
-    // Update velocity (attractors).
-    int attractorCount = gAttractorCount;
-    for (int i = 0; i < attractorCount; ++i)
+    if (pLifetime.x > -0.3f)
     {
-        float4 attractor = gAttractorBuffer[i];
-        float3 aPosition = attractor.xyz;
-        float aPower = attractor.w;
+        float dt = gDeltaTime;
 
-        float3 acceleratorDirection = aPosition - pPosition;
-        float distance = length(acceleratorDirection);
+        // Update position.
+        pPosition = pPosition + pVelocity * dt;
 
-        if (distance > 0.1f)
+        // Update velocity (acceleration).
+        pVelocity = pVelocity + gConstantAcceleration * dt;
+
+        // Update velocity (drag).
+        pVelocity = pVelocity - pVelocity * (gConstantDrag * dt);
+
+        // Update velocity (attractors).
+        int attractorCount = gAttractorCount;
+        for (int i = 0; i < attractorCount; ++i)
         {
-            acceleratorDirection = normalize(acceleratorDirection);
+            float4 attractor = gAttractorBuffer[i];
+            float3 aPosition = attractor.xyz;
+            float aPower = attractor.w;
 
-            float distanceFactor = clamp(1.f / (distance * distance), 0, 1.f);
-            float acceleration = aPower * distanceFactor;
+            float3 acceleratorDirection = aPosition - pPosition;
+            float distance = length(acceleratorDirection);
 
-            pVelocity = pVelocity + acceleratorDirection * (acceleration * dt);
-        }
-    }
-
-    // Update velocity (vector fields).
-    int vectorFieldCount = gVectorFieldCount;
-    for (int i = 0; i < vectorFieldCount; ++i)
-    {
-        VectorField vectorField = gVectorFieldBuffer[i];
-        float3 vPosition = vectorField.mPosition;
-        float vRadius = vectorField.mRadius;
-        float3 vVector = vectorField.mVector.xyz;
-
-        float3 vectorFieldDirection = vPosition - pPosition;
-        float distance = length(vectorFieldDirection);
-
-        if(distance < vRadius)
-        {
-        
-            pVelocity = pVelocity + vVector * dt;
-        }
-    }
-
-    // Update collider (sphere).
-    int sphereColliderCount = gSphereColliderCount;
-    if (sphereColliderCount > 0)
-    {
-
-        if (tID < sphereColliderCount)
-        {
-            gSphereColliderResultBufferWRITE[tID] = 0;
-        }
-
-        //TODO BARRIER!!
-
-        for (int i = 0; i < sphereColliderCount; ++i)
-        {
-            float4 sphereCollider = gSphereColliderBuffer[i];
-            float3 cPosition = sphereCollider.xyz;
-            float cRadius = sphereCollider.w;
-
-            float3 cDirection = cPosition - pPosition;
-            float cDistance = length(cDirection);
-
-            if (cDistance < cRadius)
+            if (distance > 0.1f)
             {
-                // Register collision.
-                InterlockedAdd(gSphereColliderResultBufferWRITE[i], 1);
+                acceleratorDirection = normalize(acceleratorDirection);
 
-                // Bounce vector with collider.
-                float3 oldPosition = pPosition - pVelocity * dt;
-                float3 normal = normalize(oldPosition - cPosition);
+                float distanceFactor = clamp(1.f / (distance * distance), 0, 1.f);
+                float acceleration = aPower * distanceFactor;
 
-                float3 newVelocity = reflect(pVelocity, normal);
-                float3 newPosition = oldPosition + newVelocity * dt;
-
-                pPosition = newPosition;
-                pVelocity = newVelocity;
+                pVelocity = pVelocity + acceleratorDirection * (acceleration * dt);
             }
         }
+
+        // Update velocity (vector fields).
+        int vectorFieldCount = gVectorFieldCount;
+        for (int i = 0; i < vectorFieldCount; ++i)
+        {
+            VectorField vectorField = gVectorFieldBuffer[i];
+            float3 vPosition = vectorField.mPosition;
+            float vRadius = vectorField.mRadius;
+            float3 vVector = vectorField.mVector.xyz;
+
+            float3 vectorFieldDirection = vPosition - pPosition;
+            float distance = length(vectorFieldDirection);
+
+            if (distance < vRadius)
+            {
+
+                pVelocity = pVelocity + vVector * dt;
+            }
+        }
+
+        // Update collider (sphere).
+        int sphereColliderCount = gSphereColliderCount;
+        if (sphereColliderCount > 0)
+        {
+
+            if (tID < sphereColliderCount)
+            {
+                gSphereColliderResultBufferWRITE[tID] = 0;
+            }
+
+            //TODO BARRIER!!
+
+            for (int i = 0; i < sphereColliderCount; ++i)
+            {
+                float4 sphereCollider = gSphereColliderBuffer[i];
+                float3 cPosition = sphereCollider.xyz;
+                float cRadius = sphereCollider.w;
+
+                float3 cDirection = cPosition - pPosition;
+                float cDistance = length(cDirection);
+
+                if (cDistance < cRadius)
+                {
+                    // Register collision.
+                    InterlockedAdd(gSphereColliderResultBufferWRITE[i], 1);
+
+                    // Bounce vector with collider.
+                    float3 oldPosition = pPosition - pVelocity * dt;
+                    float3 normal = normalize(oldPosition - cPosition);
+
+                    float3 newVelocity = reflect(pVelocity, normal);
+                    float3 newPosition = oldPosition + newVelocity * dt;
+
+                    pPosition = newPosition;
+                    pVelocity = newVelocity;
+                }
+            }
+        }
+
+        // Update lifetime.
+        pLifetime.x = pLifetime.x - dt;
     }
-
-    // Update lifetime.
-    pLifetime.x = pLifetime.x - dt;
-
 
     gPositionOUT[tID] = float4(pPosition, 0);
     gVelocityOUT[tID] = float4(pVelocity, 0);

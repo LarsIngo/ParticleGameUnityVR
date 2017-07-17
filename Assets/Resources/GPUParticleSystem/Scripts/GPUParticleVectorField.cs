@@ -96,6 +96,6 @@ public class GPUParticleVectorField : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(0, 1, 0, 0.25f);
-        Gizmos.DrawSphere(transform.position, Mathf.Max(Mathf.Max(transform.localScale.x, transform.localScale.y), transform.localScale.z) * mRadius);
+        Gizmos.DrawSphere(transform.position, Mathf.Max(Mathf.Max(transform.lossyScale.x, transform.lossyScale.y), transform.lossyScale.z) * mRadius);
     }
 }
