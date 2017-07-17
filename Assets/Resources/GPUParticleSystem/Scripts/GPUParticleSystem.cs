@@ -234,7 +234,34 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
 
-    
+    private ComputeBuffer mScaleLifetimePointsBuffer = null;
+    private Vector4[] mScaleLifetimePoints = new Vector4[] { new Vector4(1, 1, 1, 0), new Vector4(0, 1, 0, 1) };
+    private Vector4[] mNewScaleLifetimePoints = new Vector4[] { new Vector4(1, 1, 1, 0), new Vector4(0, 1, 0, 1) };
+    /// <summary>
+    /// Initial bordercolor of emitted particle.
+    /// Default: 1,1,1,0 to 0,1,0,1
+    /// </summary>
+    public Vector4[] ScaleLifetimePoints
+    {
+        get
+        {
+            return mScaleLifetimePoints;
+        }
+        set
+        {
+            Debug.Assert(value.Length >= 2);
+            Debug.Assert(value[0].w == 0);
+            Debug.Assert(value[value.Length - 1].w == 1);
+            for (int i = 1; i < value.Length; ++i)
+            {
+                Debug.Assert(value[i - 1].w < value[i].w);
+            }
+            mNewScaleLifetimePoints = value;
+            mApply = true;
+        }
+    }
+
+
     private bool mActive = true;
     /// <summary>
     /// Whether emitter should emitt particles.

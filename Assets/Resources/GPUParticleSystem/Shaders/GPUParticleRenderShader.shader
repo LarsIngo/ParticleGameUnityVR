@@ -33,6 +33,9 @@
 			uniform int gHaloLifetimeCount;
 			StructuredBuffer<float4> gHaloLifetimeBuffer;
 
+			uniform int gScaleLifetimeCount;
+			StructuredBuffer<float4> gScaleLifetimeBuffer;
+
 			// ---
 
 			struct vsOutput
