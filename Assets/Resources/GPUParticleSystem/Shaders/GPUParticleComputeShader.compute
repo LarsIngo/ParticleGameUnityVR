@@ -54,15 +54,16 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     float3 pPosition = gPositionIN[tID].xyz;
     float3 pVelocity = gVelocityIN[tID].xyz;
     float3 pAmbient = gAmbientIN[tID].xyz;
+    float dt = gDeltaTime;
 
     // Update position.
-    pPosition = pPosition + pVelocity * gDeltaTime;
+    pPosition = pPosition + pVelocity * dt;
 
     // Update velocity (acceleration).
-    pVelocity = pVelocity + gConstantAcceleration * gDeltaTime;
+    pVelocity = pVelocity + gConstantAcceleration * dt;
 
     // Update velocity (drag).
-    pVelocity = pVelocity - pVelocity * (gConstantDrag * gDeltaTime);
+    pVelocity = pVelocity - pVelocity * (gConstantDrag * dt);
 
     // Update velocity (attractors).
     int attractorCount = gAttractorCount;
@@ -82,7 +83,7 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
             float distanceFactor = clamp(1.f / (distance * distance), 0, 1.f);
             float acceleration = aPower * distanceFactor;
 
-            pVelocity = pVelocity + acceleratorDirection * (acceleration * gDeltaTime);
+            pVelocity = pVelocity + acceleratorDirection * (acceleration * dt);
         }
     }
 
@@ -101,7 +102,7 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
         if(distance < vRadius)
         {
         
-            pVelocity = pVelocity + vVector * gDeltaTime;
+            pVelocity = pVelocity + vVector * dt;
         }
     }
 
@@ -128,13 +129,24 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
             if (cDistance < cRadius)
             {
+                // Register collision.
                 InterlockedAdd(gSphereColliderResultBufferWRITE[i], 1);
+
+                // Bounce vector with collider.
+                float3 oldPosition = pPosition - pVelocity * dt;
+                float3 normal = normalize(oldPosition - cPosition);
+
+                float3 newVelocity = reflect(pVelocity, normal);
+                float3 newPosition = oldPosition + newVelocity * dt;
+
+                pPosition = newPosition;
+                pVelocity = newVelocity;
             }
         }
     }
 
     // Update lifetime.
-    pLifetime.x = pLifetime.x - gDeltaTime;
+    pLifetime.x = pLifetime.x - dt;
 
 
     gPositionOUT[tID] = float4(pPosition, 0);
