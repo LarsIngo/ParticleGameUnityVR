@@ -7,23 +7,17 @@ public class AttractorWand : MonoBehaviour {
     GameObject mWandGO;
 
     GameObject mRodGO;
-    Mesh mRodMesh;
 
     GameObject mTipGO;
-    Mesh mTipMesh;
     GPUParticleAttractor attractor;
     GPUParticleSystem system;
-
-    string mRodMaterialPath;
-    string mTipMaterialPath;
 
     public bool rightHand;
     public float power;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
 
-        rightHand = true;
         power = 20;
 
         //We create the various parts.
@@ -51,8 +45,6 @@ public class AttractorWand : MonoBehaviour {
 
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         system.TransparencyLifetimePoints = transparencyControlpoints;
-
-        system.EmittInheritVelocity = true;
 
         //We add an attractor to the tip.
         attractor = mTipGO.AddComponent<GPUParticleAttractor>();
@@ -106,18 +98,18 @@ public class AttractorWand : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-
+        Debug.Log(rightHand);
         if (VrInput.controllersFound)
         {
 
             float trigger = 0;
-            if(rightHand)
+            if (rightHand)
                 trigger = VrInput.RightTrigger();
             else trigger = VrInput.LeftTrigger();
 
             attractor.Power = power * trigger;
 
-            if(trigger == 1.0f)
+            if (trigger == 1.0f)
                 system.Active = true;
             else system.Active = false;
 
@@ -128,20 +120,19 @@ public class AttractorWand : MonoBehaviour {
             if (Input.GetKey(KeyCode.Space))
             {
 
-                //attractor.Power = 20;
+                attractor.Power = 20;
                 system.Active = false;
 
             }
             else
             {
 
-                //attractor.Power = 0;
+                attractor.Power = 0;
                 system.Active = true;
 
             }
 
         }
-
 
     }
 }

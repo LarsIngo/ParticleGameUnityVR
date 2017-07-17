@@ -34,8 +34,11 @@ public class Main : MonoBehaviour
         }
 
         //Equip a wand.
-        mRightController.AddComponent<AttractorWand>().rightHand = true;
-        mLeftController.AddComponent<AttractorWand>().rightHand = false;
+        AttractorWand rightWand = mRightController.AddComponent<AttractorWand>();
+        AttractorWand leftWand = mLeftController.AddComponent<AttractorWand>();
+
+        rightWand.rightHand = true;
+        leftWand.rightHand = false;
 
         //Spawn enemies.
         SpawnEnemies();
