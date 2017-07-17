@@ -41,9 +41,15 @@ public class GPUParticleVectorField : MonoBehaviour
     private Vector3 mVector = Vector3.up;
     /// <summary>
     /// The vector of the field.
+    /// Not relative to transform rotation.
     /// Default: Up
     /// </summary>
     public Vector3 Vector { get { return mVector; } set { mVector = value; } }
+
+    /// <summary>
+    /// The vector of the field relative to transfrom rotation.
+    /// </summary>
+    public Vector3 VectorRelative { get { return transform.rotation * mVector; } }
 
     private void InitVectorField()
     {

@@ -36,6 +36,10 @@ struct VectorField
 uniform int gVectorFieldCount;
 StructuredBuffer<VectorField> gVectorFieldBuffer;
 
+uniform int gSphereColliderCount;
+StructuredBuffer<float4> gSphereColliderBuffer;
+RWStructuredBuffer<int> gSphereColliderResultBuffer;
+
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
 {
@@ -99,9 +103,37 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
         {
         
             pVelocity = pVelocity + vVector * gDeltaTime;
-        
+        }
+    }
+
+    // Update collider (sphere).
+    int sphereColliderCount = gSphereColliderCount;
+    if (sphereColliderCount > 0)
+    {
+        int pSphereCollisions = 0;
+        for (int i = 0; i < sphereColliderCount; ++i)
+        {
+            float4 sphereCollider = gSphereColliderBuffer[i];
+            float3 cPosition = sphereCollider.xyz;
+            float cRadius = sphereCollider.w;
+
+            float3 cDirection = cPosition - pPosition;
+            float cDistance = length(cDirection);
+
+            if (cDistance < cRadius)
+            {
+                pSphereCollisions = pSphereCollisions + 1;
+            }
         }
 
+        // TODO BATCH
+        if (tID == 0)
+            gSphereColliderResultBuffer[0] = 0;
+
+        if (pSphereCollisions > 0)
+        {
+            InterlockedAdd(gSphereColliderResultBuffer[0], pSphereCollisions);
+        }
     }
 
     // Update lifetime.
