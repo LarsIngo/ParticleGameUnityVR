@@ -24,9 +24,11 @@
 			StructuredBuffer<float4> gPosition;
 			StructuredBuffer<float4> gVelocity;
 			StructuredBuffer<float4> gScale;
-			StructuredBuffer<float4> gColor;
+			StructuredBuffer<float4> gAmbient;
 			StructuredBuffer<float4> gLifetime;
 
+			uniform int gColorLifetimeCount;
+			StructuredBuffer<float4> gColorLifetimeBuffer;
 
 			uniform int gHaloLifetimeCount;
 			StructuredBuffer<float4> gHaloLifetimeBuffer;
@@ -38,8 +40,7 @@
 				float4 svPosition : SV_POSITION;
 				float3 velocity : VELOCITY;
 				float2 scale : SCALE;
-				float3 color : COLOR;
-				float3 haloColor : HALO;
+				float3 ambient : AMBIENT;
 				float2 lifetime : LIFETIME;
 			};
 
@@ -50,7 +51,7 @@
 				output.svPosition = float4(gPosition[vID].xyz, 1);
 				output.velocity = gVelocity[vID].xyz;
 				output.scale = gScale[vID].xy;
-				output.color = gColor[vID].xyz;
+				output.ambient = gAmbient[vID].xyz;
 				output.lifetime = gLifetime[vID].xy;
 
 				return output;
@@ -65,6 +66,7 @@
 				float3 velocity : VELOCITY;
 				float2 scale : SCALE;
 				float3 color : COLOR;
+				float3 ambient : AMBIENT;
 				float3 halo : HALO;
 				float2 lifetime : LIFETIME;
 				float2 uv : UV;
@@ -84,14 +86,32 @@
 				float3 pPosition = input[0].svPosition.xyz;
 				float3 pVelocity = input[0].velocity;
 				float2 pScale = input[0].scale;
-				float3 pColor = input[0].color;
+				float3 pAmbient = input[0].ambient;
 
-
+				float3 pColor;
 				float3 pHalo;
 
 				//update lifetime dependent variables
 				float currentLifetimeFactor = 1 - pLifetime.x / pLifetime.y;//since lifetime starts from zero to one instead of one to zero
+				int pColorLifetimeCount = gColorLifetimeCount;
 				int pHaloLifetimeCount = gHaloLifetimeCount;
+
+
+				for (int i = 1; i < pColorLifetimeCount; ++i)
+				{
+					if (gColorLifetimeBuffer[i].w > currentLifetimeFactor)
+					{
+						float4 c0 = gColorLifetimeBuffer[i - 1];
+						float4 c1 = gColorLifetimeBuffer[i];
+
+						float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
+
+						pColor = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
+
+						//exit
+						break;
+					}
+				}
 
 				for (int i = 1; i < pHaloLifetimeCount; ++i)
 				{
@@ -128,6 +148,7 @@
 					output.velocity = pVelocity;
 					output.scale = pScale;
 					output.color = pColor;
+					output.ambient = pAmbient;
 					output.halo = pHalo;
 					output.lifetime = pLifetime;
 					output.uv = float2(x, 1.0f - y);
@@ -151,7 +172,7 @@
 
 				float lifeFactor = input.lifetime.x / input.lifetime.y;
 
-				return float4(factor * input.color + (1 - factor) * input.halo, cosFactor);
+				return float4(factor * input.color * input.ambient + (1 - factor) * input.halo, cosFactor);
 			}
 
 			ENDCG

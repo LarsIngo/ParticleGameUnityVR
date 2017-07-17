@@ -46,7 +46,12 @@ public class Main : MonoBehaviour
         system.EmittFrequency = 2.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
         system.EmittInitialScale = new Vector2(0.1f, 0.1f);
-        system.EmittInitialAmbient = new Vector3(0.5f, 0.0f, 0.5f);
+        system.EmittInitialAmbient = new Vector3(1.0f, 1.0f, 1.0f);
+
+        Vector4[] colorLerp = { new Vector4(0, 1, 0, 0), new Vector4(0, 0, 0, 0.1f), new Vector4(0, 1, 0, 0.2f), new Vector4(0, 0, 0, 0.3f), new Vector4(0, 1, 0, 0.4f),
+            new Vector4(0, 0, 0, 0.5f), new Vector4(0, 1, 0, 0.6f), new Vector4(0, 0, 0, 0.7f), new Vector4(0, 1, 0, 0.8f), new Vector4(0, 0, 0, 0.9f), new Vector4(0, 1, 0, 1) };
+
+        system.ColorLifetimePoints = colorLerp;
 
         Vector4 [] lerpetylerplerplerp = { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 0.333f), new Vector4(0, 0, 1, 0.666f), new Vector4(0.5f, 0, 0.5f, 1) };
         system.HaloLifetimePoints = lerpetylerplerplerp;

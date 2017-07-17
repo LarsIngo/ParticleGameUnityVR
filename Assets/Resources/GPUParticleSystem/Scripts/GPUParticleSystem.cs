@@ -173,10 +173,38 @@ public class GPUParticleSystem : MonoBehaviour
 
     private Vector3 mEmittInitialAmbient = Vector3.one;
     /// <summary>
-    /// Initial color of emitted particle.
+    /// Initial ambient of emitted particle.
     /// Default: 1,1,1
     /// </summary>
     public Vector3 EmittInitialAmbient { get { return mEmittInitialAmbient; } set { mEmittInitialAmbient = value; } }
+
+    private ComputeBuffer mColorLifetimePointsBuffer = null;
+    private Vector4[] mColorLifetimePoints = new Vector4[] { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 1) };
+    private Vector4[] mNewColorLifetimePoints = new Vector4[] { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 1) };
+    /// <summary>
+    /// Initial color of emitted particle.
+    /// Default: 1,1,1,0 to 0,1,0,1
+    /// </summary>
+    public Vector4[] ColorLifetimePoints
+    {
+        get
+        {
+            return mColorLifetimePoints;
+        }
+        set
+        {
+            Debug.Assert(value.Length >= 2);
+            Debug.Assert(value[0].w == 0);
+            Debug.Assert(value[value.Length - 1].w == 1);
+            for (int i = 1; i < value.Length; ++i)
+            {
+                Debug.Assert(value[i - 1].w < value[i].w);
+            }
+            mNewColorLifetimePoints = value;
+            mApply = true;
+        }
+    }
+
 
     private ComputeBuffer mHaloLifetimePointsBuffer = null;
     private Vector4[] mHaloLifetimePoints = new Vector4[] { new Vector4(1, 1, 1, 0), new Vector4(0, 1, 0, 1) };
@@ -204,6 +232,8 @@ public class GPUParticleSystem : MonoBehaviour
             mApply = true;
         }
     }
+
+
     
     private bool mActive = true;
     /// <summary>
@@ -257,6 +287,7 @@ public class GPUParticleSystem : MonoBehaviour
         mEmittParticleLifetime = mNewmParticleLifetime;
         mMaxParticleCount = (int)Mathf.Ceil(mEmittFrequency * mEmittParticleLifetime);
         mLastPosition = transform.position;
+        mColorLifetimePoints = mNewColorLifetimePoints;
         mHaloLifetimePoints = mNewHaloLifetimePoints;
 
         // BUFFERS.
@@ -287,6 +318,23 @@ public class GPUParticleSystem : MonoBehaviour
 
 
         //LIFETIME POINT BUFFERS
+
+        // ------- Color ------
+        mColorLifetimePointsBuffer = new ComputeBuffer(mColorLifetimePoints.Length, sizeof(float) * 4);
+
+        float[] colorLifetimeArr = new float[mColorLifetimePoints.Length * 4];
+        for (int i = 0, j = 0; i < mColorLifetimePoints.Length; ++i, j += 4)
+        {
+            colorLifetimeArr[j] = mColorLifetimePoints[i].x;
+            colorLifetimeArr[j + 1] = mColorLifetimePoints[i].y;
+            colorLifetimeArr[j + 2] = mColorLifetimePoints[i].z;
+            colorLifetimeArr[j + 3] = mColorLifetimePoints[i].w;
+        }
+        mColorLifetimePointsBuffer.SetData(colorLifetimeArr);
+        mRenderMaterial.SetInt("gColorLifetimeCount", mColorLifetimePoints.Length);
+        mRenderMaterial.SetBuffer("gColorLifetimeBuffer", mColorLifetimePointsBuffer);
+
+        // ------- Halo -------
         mHaloLifetimePointsBuffer = new ComputeBuffer(mHaloLifetimePoints.Length, sizeof(float) * 4);
 
         float[] haloLifetimeArr = new float[mHaloLifetimePoints.Length * 4];
@@ -300,6 +348,7 @@ public class GPUParticleSystem : MonoBehaviour
         mHaloLifetimePointsBuffer.SetData(haloLifetimeArr);
         mRenderMaterial.SetInt("gHaloLifetimeCount", mHaloLifetimePoints.Length);
         mRenderMaterial.SetBuffer("gHaloLifetimeBuffer", mHaloLifetimePointsBuffer);
+
 
         // COLLISION.
         mSphereColliderResultBuffer = new ComputeBuffer(1, sizeof(int));
