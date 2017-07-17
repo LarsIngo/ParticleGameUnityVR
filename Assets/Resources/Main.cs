@@ -46,11 +46,11 @@ public class Main : MonoBehaviour
         system.EmittFrequency = 2.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
         system.EmittInitialScale = new Vector2(0.1f, 0.1f);
-        system.EmittInitialColor = new Vector3(0.5f, 0.0f, 0.5f);
+        system.EmittInitialAmbient = new Vector3(0.5f, 0.0f, 0.5f);
 
         Vector4 [] lerpetylerplerplerp = { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 0.333f), new Vector4(0, 0, 1, 0.666f), new Vector4(0.5f, 0, 0.5f, 1) };
-        system.HaloColorLifetimePoints = lerpetylerplerplerp;
-        //system.EmittInitialHaloColor = new Vector3(0.15f, 0.0f, 0.15f);
+        system.HaloLifetimePoints = lerpetylerplerplerp;
+
         system.EmittInheritVelocity = true;
 
     }

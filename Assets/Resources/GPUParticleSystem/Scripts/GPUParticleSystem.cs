@@ -111,7 +111,7 @@ public class GPUParticleSystem : MonoBehaviour
     private SwapBuffer mPositionBuffer;
     private SwapBuffer mVelocityBuffer;
     private SwapBuffer mScaleBuffer;
-    private SwapBuffer mColorBuffer;
+    private SwapBuffer mAmbientBuffer;
     private SwapBuffer mLifetimeBuffer;
 
     private int mMaxParticleCount;
@@ -171,12 +171,12 @@ public class GPUParticleSystem : MonoBehaviour
     /// </summary>
     public Vector2 EmittInitialScale { get { return mEmittInitialScale; } set { mEmittInitialScale = value; } }
 
-    private Vector3 mEmittInitialColor = Vector3.one;
+    private Vector3 mEmittInitialAmbient = Vector3.one;
     /// <summary>
     /// Initial color of emitted particle.
     /// Default: 1,1,1
     /// </summary>
-    public Vector3 EmittInitialColor { get { return mEmittInitialColor; } set { mEmittInitialColor = value; } }
+    public Vector3 EmittInitialAmbient { get { return mEmittInitialAmbient; } set { mEmittInitialAmbient = value; } }
 
     private ComputeBuffer mHaloLifetimePointsBuffer = null;
     private Vector4[] mHaloLifetimePoints = new Vector4[] { new Vector4(1, 1, 1, 0), new Vector4(0, 1, 0, 1) };
@@ -185,7 +185,7 @@ public class GPUParticleSystem : MonoBehaviour
     /// Initial bordercolor of emitted particle.
     /// Default: 1,1,1,0 to 0,1,0,1
     /// </summary>
-    public Vector4[] HaloColorLifetimePoints
+    public Vector4[] HaloLifetimePoints
     {
         get
         {
@@ -263,7 +263,7 @@ public class GPUParticleSystem : MonoBehaviour
         mPositionBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
         mVelocityBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
         mScaleBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
-        mColorBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
+        mAmbientBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
         mLifetimeBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
 
         
@@ -312,7 +312,7 @@ public class GPUParticleSystem : MonoBehaviour
         mPositionBuffer.Release();
         mVelocityBuffer.Release();
         mScaleBuffer.Release();
-        mColorBuffer.Release();
+        mAmbientBuffer.Release();
         mLifetimeBuffer.Release();
         mHaloLifetimePointsBuffer.Release();
 
@@ -341,7 +341,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gPositionBuffer", mPositionBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gVelocityBuffer", mVelocityBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gScaleBuffer", mScaleBuffer.GetOutputBuffer());
-            sComputeShader.SetBuffer(sKernelEmitt, "gColorBuffer", mColorBuffer.GetOutputBuffer());
+            sComputeShader.SetBuffer(sKernelEmitt, "gAmbientBuffer", mAmbientBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
             // Inherit velocity from emitter if true.
@@ -357,8 +357,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetFloats("gPosition", new float[] { newInitPos.x, newInitPos.y, newInitPos.z });
             sComputeShader.SetFloats("gVelocity", new float[] { velocity.x, velocity.y, velocity.z });
             sComputeShader.SetFloats("gScale", new float[] { mEmittInitialScale.x, mEmittInitialScale.y });
-            sComputeShader.SetFloats("gColor", new float[] { mEmittInitialColor.x, mEmittInitialColor.y, mEmittInitialColor.z });
-            sComputeShader.SetFloats("gHaloColor", new float[] { 1, 1, 1 });//mEmittInitialHaloColor.x, mEmittInitialHaloColor.y, mEmittInitialHaloColor.z });
+            sComputeShader.SetFloats("gAmbient", new float[] { mEmittInitialAmbient.x, mEmittInitialAmbient.y, mEmittInitialAmbient.z });
             sComputeShader.SetFloats("gLifetime", new float[] { mEmittParticleLifetime });
 
             // EMITT MESH.
@@ -398,21 +397,21 @@ public class GPUParticleSystem : MonoBehaviour
         mPositionBuffer.Swap();
         mVelocityBuffer.Swap();
         mScaleBuffer.Swap();
-        mColorBuffer.Swap();
+        mAmbientBuffer.Swap();
         mLifetimeBuffer.Swap();
 
         // BIND INPUT BUFFERS.
         sComputeShader.SetBuffer(sKernelUpdate, "gPositionIN", mPositionBuffer.GetInputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gVelocityIN", mVelocityBuffer.GetInputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gScaleIN", mScaleBuffer.GetInputBuffer());
-        sComputeShader.SetBuffer(sKernelUpdate, "gColorIN", mColorBuffer.GetInputBuffer());
+        sComputeShader.SetBuffer(sKernelUpdate, "gAmbientIN", mAmbientBuffer.GetInputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gLifetimeIN", mLifetimeBuffer.GetInputBuffer());
 
         // BIND OUTPUT BUFFERS.
         sComputeShader.SetBuffer(sKernelUpdate, "gPositionOUT", mPositionBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gVelocityOUT", mVelocityBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gScaleOUT", mScaleBuffer.GetOutputBuffer());
-        sComputeShader.SetBuffer(sKernelUpdate, "gColorOUT", mColorBuffer.GetOutputBuffer());
+        sComputeShader.SetBuffer(sKernelUpdate, "gAmbientOUT", mAmbientBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gLifetimeOUT", mLifetimeBuffer.GetOutputBuffer());
 
         // SET META DATA.
@@ -533,7 +532,7 @@ public class GPUParticleSystem : MonoBehaviour
         mRenderMaterial.SetBuffer("gPosition", mPositionBuffer.GetOutputBuffer());
         mRenderMaterial.SetBuffer("gVelocity", mVelocityBuffer.GetOutputBuffer());
         mRenderMaterial.SetBuffer("gScale", mScaleBuffer.GetOutputBuffer());
-        mRenderMaterial.SetBuffer("gColor", mColorBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gAmbient", mAmbientBuffer.GetOutputBuffer());
         mRenderMaterial.SetBuffer("gLifetime", mLifetimeBuffer.GetOutputBuffer());
 
         // DRAW.
