@@ -46,6 +46,13 @@ public class GPUParticleVectorField : MonoBehaviour
     /// </summary>
     public Vector3 Vector { get { return mVector; } set { mVector = value; } }
 
+    private bool mRelativeVectorField = false;
+    /// <summary>
+    /// Toggle the vector to cnage with rotation.
+    /// Default: false
+    /// </summary>
+    public bool RelativeVectorField { get { return mRelativeVectorField; } set { mRelativeVectorField = value; } }
+
     /// <summary>
     /// The vector of the field relative to transfrom rotation.
     /// </summary>

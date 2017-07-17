@@ -118,7 +118,7 @@ public class GPUParticleSystem : MonoBehaviour
     private int mEmittIndex = 0;
 
     // Emitter.
-    private Vector3 mLastPosition;
+    private Vector3 mLastPosition = Vector3.zero;
 
     private float mEmittTimer = 0.0f;
 
@@ -141,7 +141,7 @@ public class GPUParticleSystem : MonoBehaviour
     /// Whether emitted particles inherit velocity from emitter.
     /// Default: true
     /// </summary>
-    public bool EmittInheritVelocity { get { return mEmittInheritVelocity; } set { EmittInheritVelocity = value;} }
+    public bool EmittInheritVelocity { get { return mEmittInheritVelocity; } set { mEmittInheritVelocity = value;} }
 
     private Vector3 mEmittConstantAcceleration = Vector3.zero;
     /// <summary>
@@ -410,14 +410,15 @@ public class GPUParticleSystem : MonoBehaviour
             {
                 GPUParticleVectorField vectorField = it.Value;
                 float scale = Mathf.Max(Mathf.Max(vectorField.transform.localScale.x, vectorField.transform.localScale.y), vectorField.transform.localScale.z);
+                Vector3 vector = vectorField.RelativeVectorField ? vectorField.VectorRelative : vectorField.Vector;
 
                 vectorFieldArray[i++] = vectorField.transform.position.x;
                 vectorFieldArray[i++] = vectorField.transform.position.y;
                 vectorFieldArray[i++] = vectorField.transform.position.z;
                 vectorFieldArray[i++] = scale * vectorField.Radius;
-                vectorFieldArray[i++] = vectorField.Vector.x;
-                vectorFieldArray[i++] = vectorField.Vector.y;
-                vectorFieldArray[i++] = vectorField.Vector.z;
+                vectorFieldArray[i++] = vector.x;
+                vectorFieldArray[i++] = vector.y;
+                vectorFieldArray[i++] = vector.z;
                 vectorFieldArray[i++] = 0.0f;
 
             }
@@ -460,11 +461,10 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
 
         // FETCH RESULTS.
-        if (sphereColliderDictionary.Count > 0)
+        if (sphereColliderDictionary != null && sphereColliderDictionary.Count > 0)
         {
             int[] r = new int[1];
             mSphereColliderResultBuffer.GetData(r, 0, 0, 1);
-            Debug.Log(r[0]);
         }
 
     }
@@ -509,6 +509,7 @@ public class GPUParticleSystem : MonoBehaviour
         // Update particles this frame.
         UpdateSystem();
 
+        // Update last position.
         mLastPosition = transform.position;
     }
 
