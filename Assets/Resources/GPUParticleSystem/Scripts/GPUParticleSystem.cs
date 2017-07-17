@@ -634,7 +634,7 @@ public class GPUParticleSystem : MonoBehaviour
             foreach (KeyValuePair<GPUParticleVectorField, GPUParticleVectorField> it in vectorFieldDictionary)
             {
                 GPUParticleVectorField vectorField = it.Value;
-                float scale = Mathf.Max(Mathf.Max(vectorField.transform.localScale.x, vectorField.transform.localScale.y), vectorField.transform.localScale.z);
+                float scale = Mathf.Max(Mathf.Max(vectorField.transform.lossyScale.x, vectorField.transform.lossyScale.y), vectorField.transform.lossyScale.z);
                 Vector3 vector = vectorField.RelativeVectorField ? vectorField.VectorRelative : vectorField.Vector;
 
                 vectorFieldArray[i++] = vectorField.transform.position.x;
@@ -668,12 +668,12 @@ public class GPUParticleSystem : MonoBehaviour
             {
                 GPUParticleSphereCollider sphereCollider = sphereColliderList[i];
 
-                float scale = Mathf.Max(Mathf.Max(sphereCollider.transform.localScale.x, sphereCollider.transform.localScale.y), sphereCollider.transform.localScale.z);
+                float scale = Mathf.Max(Mathf.Max(sphereCollider.transform.lossyScale.x, sphereCollider.transform.lossyScale.y), sphereCollider.transform.lossyScale.z);
 
                 sphereColliderArray[j++] = sphereCollider.transform.position.x;
                 sphereColliderArray[j++] = sphereCollider.transform.position.y;
                 sphereColliderArray[j++] = sphereCollider.transform.position.z;
-                sphereColliderArray[j++] = scale;
+                sphereColliderArray[j++] = scale * sphereCollider.Radius;
             }
 
             sGPUParticleSphereColliderBuffer.SetData(sphereColliderArray);
