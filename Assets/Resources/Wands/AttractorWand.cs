@@ -35,7 +35,6 @@ public class AttractorWand : MonoBehaviour {
         system.EmittParticleLifeTime = 5.0f;
         system.EmittFrequency = 500.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-        system.EmittInitialScale = new Vector2(0.01f, 0.01f);
         system.EmittInitialAmbient = new Vector3(1.0f, 1.0f, 1.0f);
 
         Vector4[] colorControlpoints = { new Vector4(0, 1, 0, 0), new Vector4(1, 1, 0, 0.1f), new Vector4(0, 1, 0, 0.2f), new Vector4(1, 0, 0, 0.3f), new Vector4(0, 1, 0, 0.4f),
@@ -43,8 +42,16 @@ public class AttractorWand : MonoBehaviour {
 
         system.ColorLifetimePoints = colorControlpoints;
 
-        Vector4[] haloControlpoint = { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 0.333f), new Vector4(0, 0, 1, 0.666f), new Vector4(0.5f, 0, 0.5f, 1) };
-        system.HaloLifetimePoints = haloControlpoint;
+        Vector4[] haloControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 0.333f), new Vector4(0, 0, 1, 0.666f), new Vector4(0.5f, 0, 0.5f, 1) };
+        system.HaloLifetimePoints = haloControlpoints;
+        /*
+        Vector4[] scaleControlpoints = { new Vector4(0.1f, 0.1f, 0, 0), new Vector4(0.1f, 0.1f, 0, 0.5f), new Vector4(0.1f, 0, 0.1f, 1) };
+        system.ScaleLifetimePoints = scaleControlpoints;*/
+
+        Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
+        system.TransparencyLifetimePoints = transparencyControlpoints;
+
+        system.EmittInheritVelocity = true;
 
         //We add an attractor to the tip.
         attractor = mTipGO.AddComponent<GPUParticleAttractor>();
