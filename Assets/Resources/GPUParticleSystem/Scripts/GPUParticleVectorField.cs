@@ -41,9 +41,22 @@ public class GPUParticleVectorField : MonoBehaviour
     private Vector3 mVector = Vector3.up;
     /// <summary>
     /// The vector of the field.
+    /// Not relative to transform rotation.
     /// Default: Up
     /// </summary>
     public Vector3 Vector { get { return mVector; } set { mVector = value; } }
+
+    private bool mRelativeVectorField = false;
+    /// <summary>
+    /// Toggle the vector to cnage with rotation.
+    /// Default: false
+    /// </summary>
+    public bool RelativeVectorField { get { return mRelativeVectorField; } set { mRelativeVectorField = value; } }
+
+    /// <summary>
+    /// The vector of the field relative to transfrom rotation.
+    /// </summary>
+    public Vector3 VectorRelative { get { return transform.rotation * mVector; } }
 
     private void InitVectorField()
     {
@@ -77,5 +90,12 @@ public class GPUParticleVectorField : MonoBehaviour
         DeInitVectorField();
         sGPUParticleVectorFieldDictionary.Remove(this);
         if (sGPUParticleVectorFieldDictionary.Count == 0) Shutdown();
+    }
+
+    // MONOBEHAVIOUR.
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(0, 1, 0, 0.25f);
+        Gizmos.DrawSphere(transform.position, Mathf.Max(Mathf.Max(transform.localScale.x, transform.localScale.y), transform.localScale.z) * mRadius);
     }
 }
