@@ -12,6 +12,8 @@ public class Main : MonoBehaviour
     public GameObject mLeftController;
     public GameObject mRightController;
 
+    public UnityEngine.UI.Text highscore;
+
     GameObject enemy1;
     GameObject enemy2;
     GameObject enemy3;
@@ -39,11 +41,22 @@ public class Main : MonoBehaviour
 
     }
 
+    float timer = 0;
     private void Update()
     {
 
-        if (!(enemy1 || enemy2 || enemy3) && VrInput.LeftGrip())
+        if (VrInput.LeftGrip())
+        {
+
             SpawnEnemies();
+            timer = 0;
+
+        }
+
+        if((enemy1 || enemy2 || enemy3))
+            timer += Time.deltaTime;
+
+        highscore.text = timer + "";
 
     }
 
@@ -54,6 +67,10 @@ public class Main : MonoBehaviour
 
     void SpawnEnemies()
     {
+
+        //DestroyImmediate(enemy1);
+        //DestroyImmediate(enemy2);
+        //DestroyImmediate(enemy3);
 
         //Spawn enemies.
         enemy1 = new GameObject("ENEMY1");
