@@ -1,125 +1,208 @@
 ﻿Shader "Custom/BufferShader"
 {
-    SubShader
-    {
-        Pass
-        {
-            ZTest Less
-            Cull Back
-            ZWrite Off
-            Blend SrcAlpha OneMinusSrcAlpha
+	SubShader
+	{
+		Pass
+		{
+			ZTest Less
+			Cull Back
+			ZWrite Off
+			BlendOp Add
+			//Blend SrcAlpha One
+			Blend SrcAlpha OneMinusSrcAlpha
 
-            Fog{ Mode off }
+			Fog	{ Mode off }
 
-            CGPROGRAM
+			CGPROGRAM
 
-            #include "UnityCG.cginc"
-            #pragma target 5.0
-            #pragma vertex vert
-            #pragma geometry geom
-            #pragma fragment frag
+			#include "UnityCG.cginc"
+			#pragma target 5.0
+			#pragma vertex vert
+			#pragma geometry geom
+			#pragma fragment frag
 
-            StructuredBuffer<float4> gPosition;
-            StructuredBuffer<float4> gVelocity;
-            StructuredBuffer<float4> gScale;
-            StructuredBuffer<float4> gColor;
-            StructuredBuffer<float4> gLifetime;
+			StructuredBuffer<float4> gPosition;
+			StructuredBuffer<float4> gVelocity;
+			StructuredBuffer<float4> gAmbient;
+			StructuredBuffer<float4> gLifetime;
 
-            // ---
+			uniform int gColorLifetimeCount;
+			StructuredBuffer<float4> gColorLifetimeBuffer;
 
-            struct vsOutput
-            {
-                float4 svPosition : SV_POSITION;
-                float3 velocity : VELOCITY;
-                float2 scale : SCALE;
-                float3 color : COLOR;
-                float2 lifetime : LIFETIME;
-            };
+			uniform int gHaloLifetimeCount;
+			StructuredBuffer<float4> gHaloLifetimeBuffer;
 
-            vsOutput vert(uint vID : SV_VertexID)
-            {
-                vsOutput output;
+			uniform int gScaleLifetimeCount;
+			StructuredBuffer<float4> gScaleLifetimeBuffer;
 
-                output.svPosition = float4(gPosition[vID].xyz, 1);
-                output.velocity = gVelocity[vID].xyz;
-                output.scale = gScale[vID].xy;
-                output.color = gColor[vID].xyz;
-                output.lifetime = gLifetime[vID].xy;
+			uniform int gTransparencyLifetimeCount;
+			StructuredBuffer<float4> gTransparencyLifetimeBuffer;
 
-                return output;
-            }
+			// ---
 
-            // ---
+			struct vsOutput
+			{
+				float4 svPosition : SV_POSITION;
+				float3 velocity : VELOCITY;
+				float3 ambient : AMBIENT;
+				float2 lifetime : LIFETIME;
+			};
 
-            struct gsOutput
-            {
-                float4 svPosition : SV_POSITION;
-                float3 worldPosition : WORLDPOSITION;
-                float3 velocity : VELOCITY;
-                float2 scale : SCALE;
-                float3 color : COLOR;
-                float2 lifetime : LIFETIME;
-                float2 uv : UV;
-            };
+			vsOutput vert(uint vID : SV_VertexID) 
+			{
+				vsOutput output;
 
-            [maxvertexcount(4)]
-            void geom(point vsOutput input[1], inout TriangleStream<gsOutput> TriStream)
-            {
-                float2 pLifetime = input[0].lifetime;
+				output.svPosition = float4(gPosition[vID].xyz, 1);
+				output.velocity = gVelocity[vID].xyz;
+				output.ambient = gAmbient[vID].xyz;
+				output.lifetime = gLifetime[vID].xy;
 
-                if (pLifetime.x < 0.01f) return;
+				return output;
+			}
 
-                float3 lensRight = UNITY_MATRIX_IT_MV[0].xyz;
-                float3 lensUp = UNITY_MATRIX_IT_MV[1].xyz;
-                float3 lensForward = UNITY_MATRIX_IT_MV[2].xyz;
+			// ---
 
-                float3 pPosition = input[0].svPosition.xyz;
-                float3 pVelocity = input[0].velocity;
-                float2 pScale = input[0].scale;
-                float3 pColor = input[0].color;
+			struct gsOutput 
+			{
+				float4 svPosition : SV_POSITION;
+				float3 color : COLOR;
+				float  transparency : TRANSPARENCY;
+				float3 ambient : AMBIENT;
+				float3 halo : HALO;
+				float2 uv : UV;
+			};
 
-                float3 pForward = normalize(_WorldSpaceCameraPos - pPosition);
-                float3 pRight = cross(pForward, lensUp);
-                float3 pUp = cross(pRight, pForward);
+			[maxvertexcount(4)]
+			void geom(point vsOutput input[1], inout TriangleStream<gsOutput> TriStream) 
+			{
+				float2 pLifetime = input[0].lifetime;
 
-                gsOutput output;
-                for (int vID = 0; vID < 4; ++vID)
-                {
-                    float x = vID == 0 || vID == 1;
-                    float y = vID == 0 || vID == 2;
+				if (pLifetime.x < 0.01f) return;
 
-                    float3 vPosition = pPosition + pRight * ((x * 2.f - 1.f) * pScale.x) + pUp * ((y * 2.f - 1.f) * pScale.y);
+				float3 lensRight = UNITY_MATRIX_IT_MV[0].xyz;
+				float3 lensUp = UNITY_MATRIX_IT_MV[1].xyz;
+				float3 lensForward = UNITY_MATRIX_IT_MV[2].xyz;
 
-                    output.svPosition = UnityObjectToClipPos(float4(vPosition, 1));
-                    output.worldPosition = vPosition;
-                    output.velocity = pVelocity;
-                    output.scale = pScale;
-                    output.color = pColor;
-                    output.lifetime = pLifetime;
-                    output.uv = float2(x, 1.0f - y);
+				float3 pPosition = input[0].svPosition.xyz;
+				float3 pVelocity = input[0].velocity;
+				float3 pAmbient = input[0].ambient;
 
-                    TriStream.Append(output);
-                }
+				float3 pColor;
+				float3 pHalo;
+				float2 pScale;
+				float  pTransparency;
 
-                TriStream.RestartStrip();
-            }
+				//update lifetime dependent variables
+				float currentLifetimeFactor = 1 - pLifetime.x / pLifetime.y;//since lifetime starts from zero to one instead of one to zero
+				
 
-            // ---
 
-            float4 frag(gsOutput input) : SV_TARGET0
-            {
-                float x = input.uv.x - 0.5f;
-                float y = input.uv.y - 0.5f;
-                float r = sqrt(x * x + y * y);
-                float factor = max(1.f - r * 2.f, 0.f); //[1,0]
-                float sinFactor = 1.f - sin(3.14159265f / 2.f * (factor + 1.f));
+				for (int i = 1; i < gColorLifetimeCount; ++i)
+				{
+					if (gColorLifetimeBuffer[i].w > currentLifetimeFactor)
+					{
+						float4 c0 = gColorLifetimeBuffer[i - 1];
+						float4 c1 = gColorLifetimeBuffer[i];
 
-                float lifeFactor = input.lifetime.x / input.lifetime.y;
+						float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
 
-                return float4(input.color, sinFactor);
-            }
+						pColor = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
 
-            ENDCG
-        }
-    }
+						//exit
+						break;
+					}
+				}
+
+				for (int i = 1; i < gHaloLifetimeCount; ++i)
+				{
+					if (gHaloLifetimeBuffer[i].w > currentLifetimeFactor)
+					{
+						float4 c0 = gHaloLifetimeBuffer[i - 1];
+						float4 c1 = gHaloLifetimeBuffer[i];
+
+						float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
+
+						pHalo = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
+
+						//exit
+						break;
+					}
+				}
+
+				for (int i = 1; i < gScaleLifetimeCount; ++i)
+				{
+					if (gScaleLifetimeBuffer[i].w > currentLifetimeFactor)
+					{
+						float4 c0 = gScaleLifetimeBuffer[i - 1];
+						float4 c1 = gScaleLifetimeBuffer[i];
+
+						float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
+
+						pScale = c0.xy * (1 - lerpFactor) + c1.xy * lerpFactor;
+
+						//exit
+						break;
+					}
+				}
+
+				for (int i = 1; i < gTransparencyLifetimeCount; ++i)
+				{
+					if (gTransparencyLifetimeBuffer[i].w > currentLifetimeFactor)
+					{
+						float4 c0 = gTransparencyLifetimeBuffer[i - 1];
+						float4 c1 = gTransparencyLifetimeBuffer[i];
+
+						float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
+
+						pTransparency = c0.x * (1 - lerpFactor) + c1.x * lerpFactor;
+
+						//exit
+						break;
+					}
+				}
+				
+
+				float3 pForward = normalize(_WorldSpaceCameraPos - pPosition);
+				float3 pRight = cross(pForward, lensUp);
+				float3 pUp = cross(pRight, pForward);
+
+				gsOutput output;
+				for (int vID = 0; vID < 4; ++vID)
+				{
+					float x = vID == 0 || vID == 1;
+					float y = vID == 0 || vID == 2;
+
+					float3 vPosition = pPosition + pRight * ((x * 2.f - 1.f) * pScale.x) + pUp * ((y * 2.f - 1.f) * pScale.y);
+
+					output.svPosition = UnityObjectToClipPos(float4(vPosition, 1));
+					output.color = pColor;
+					output.transparency = pTransparency;
+					output.ambient = pAmbient;
+					output.halo = pHalo;
+					output.uv = float2(x, 1.0f - y);
+
+					TriStream.Append(output);
+				}
+
+				TriStream.RestartStrip();
+			}
+
+			// ---
+
+			float4 frag(gsOutput input) : SV_TARGET0
+			{
+				float x = input.uv.x - 0.5f;
+				float y = input.uv.y - 0.5f;
+				float r = sqrt(x * x + y * y);
+				float factor = max(1.f - r * 2.f, 0.f); //[1,0]
+
+				float cosFactor = -cos(3.14159265f / 2.f * (factor + 1.f));
+
+
+				return float4(factor * input.color * input.ambient + (1 - factor) * input.halo, cosFactor) * float4(1, 1, 1, input.transparency);
+			}
+
+			ENDCG
+		}
+	}
 }

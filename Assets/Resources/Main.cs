@@ -9,14 +9,18 @@ public class Main : MonoBehaviour
     GameObject mParticleSystem;
 
     GameObject mHMD;
-    GameObject mLeftController;
-    GameObject mRightController;
+    public GameObject mLeftController;
+    public GameObject mRightController;
+
+    public UnityEngine.UI.Text highscore;
+
+    GameObject enemy1;
+    GameObject enemy2;
+    GameObject enemy3;
 
     private void Start ()
     {
         mHMD = GameObject.Find("Camera (head)");
-        mLeftController = GameObject.Find("Controller (left)");
-        mRightController = GameObject.Find("Controller (right)");
 
         if (mLeftController == null)
         {
@@ -29,49 +33,57 @@ public class Main : MonoBehaviour
             mRightController.transform.position = new Vector3(3, 0, 5);
         }
 
-        GPUParticleVectorField leftVectorField = mLeftController.AddComponent<GPUParticleVectorField>();
-        leftVectorField.Radius = 2.0f;
-        leftVectorField.Vector = Vector3.up * 20.0f;
-        leftVectorField.RelativeVectorField = true;
+        //Equip a wand.
+        mRightController.AddComponent<AttractorWand>();
 
-        GPUParticleAttractor rightAttractor = mRightController.AddComponent<GPUParticleAttractor>();
-        rightAttractor.Power = 100;
-
-        mParticleSystem = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        mParticleSystem.name = "Emitter";
-        mParticleSystem.transform.position = new Vector3(0,0,5);
-        GPUParticleSystem system = mParticleSystem.AddComponent<GPUParticleSystem>();
-        system.EmittMesh = mParticleSystem.GetComponent<MeshFilter>().mesh;
-        system.EmittParticleLifeTime = 30.0f;
-        system.EmittFrequency = 500.0f;
-        system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-        system.EmittInitialScale = new Vector2(0.1f, 0.1f);
-        system.EmittInitialColor = new Vector3(0.0f, 1.0f, 0.0f);
-        system.EmittInheritVelocity = true;
+        //Spawn enemies.
+        SpawnEnemies();
 
     }
 
+    float timer = 0;
     private void Update()
     {
-        SteamVR_TrackedController left = mLeftController.GetComponent<SteamVR_TrackedController>();
-        SteamVR_TrackedController right = mRightController.GetComponent<SteamVR_TrackedController>();
 
-        if (left != null)
+        if (VrInput.LeftGrip())
         {
-            SteamVR_Controller.Device device = SteamVR_Controller.Input((int)left.controllerIndex);
 
-            left.GetComponent<GPUParticleVectorField>().Vector = Vector3.up * 20.0f * (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) ? 1 : 0); 
-        }
-        if(right != null)
-        {
-            SteamVR_Controller.Device device = SteamVR_Controller.Input((int)right.controllerIndex);
+            SpawnEnemies();
+            timer = 0;
 
-            right.GetComponent<GPUParticleAttractor>().Power = 100.0f * (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) ? 1 : 0);
         }
+
+        if((enemy1 || enemy2 || enemy3))
+            timer += Time.deltaTime;
+
+        highscore.text = timer + "";
+
     }
 
     private void OnDestroy()
     {
+
+    }
+
+    void SpawnEnemies()
+    {
+
+        //DestroyImmediate(enemy1);
+        //DestroyImmediate(enemy2);
+        //DestroyImmediate(enemy3);
+
+        //Spawn enemies.
+        enemy1 = new GameObject("ENEMY1");
+        enemy2 = new GameObject("ENEMY2");
+        enemy3 = new GameObject("ENEMY3");
+
+        enemy1.AddComponent<BasicEnemy>();
+        enemy2.AddComponent<BasicEnemy>();
+        enemy3.AddComponent<BasicEnemy>();
+
+        enemy1.transform.position += Vector3.forward * 3 + Vector3.right * 3;
+        enemy2.transform.position += Vector3.forward * 3 + Vector3.right * 0;
+        enemy3.transform.position += Vector3.forward * 3 + Vector3.right * -3;
 
     }
 

@@ -157,8 +157,7 @@ public class GPUParticleSystem : MonoBehaviour
     // Particle.
     private SwapBuffer mPositionBuffer;
     private SwapBuffer mVelocityBuffer;
-    private SwapBuffer mScaleBuffer;
-    private SwapBuffer mColorBuffer;
+    private SwapBuffer mAmbientBuffer;
     private SwapBuffer mLifetimeBuffer;
 
     private int mMaxParticleCount;
@@ -178,7 +177,7 @@ public class GPUParticleSystem : MonoBehaviour
     /// How many partices to emitt per second.
     /// Default: 10
     /// </summary>
-    public float EmittFrequency{ get { return mEmittFrequency; } set { mNewEmittFrequency = value; mApply = true; } }
+    public float EmittFrequency { get { return mEmittFrequency; } set { mNewEmittFrequency = value; mApply = true; } }
 
     private float mEmittParticleLifetime = 6.0f; private float mNewmParticleLifetime = 6.0f;
     /// <summary>
@@ -192,7 +191,7 @@ public class GPUParticleSystem : MonoBehaviour
     /// Whether emitted particles inherit velocity from emitter.
     /// Default: true
     /// </summary>
-    public bool EmittInheritVelocity { get { return mEmittInheritVelocity; } set { mEmittInheritVelocity = value;} }
+    public bool EmittInheritVelocity { get { return mEmittInheritVelocity; } set { mEmittInheritVelocity = value; } }
 
     private Vector3 mEmittConstantAcceleration = Vector3.zero;
     /// <summary>
@@ -215,19 +214,122 @@ public class GPUParticleSystem : MonoBehaviour
     /// </summary>
     public Vector3 EmittInitialVelocity { get { return mEmittInitialVelocity; } set { mEmittInitialVelocity = value; } }
 
-    private Vector2 mEmittInitialScale = Vector2.one;
+    private Vector3 mEmittInitialAmbient = Vector3.one;
     /// <summary>
-    /// Initial scale of emitted particle.
-    /// Default: 1,1
-    /// </summary>
-    public Vector2 EmittInitialScale { get { return mEmittInitialScale; } set { mEmittInitialScale = value; } }
-
-    private Vector3 mEmittInitialColor = Vector3.one;
-    /// <summary>
-    /// Initial color of emitted particle.
+    /// Initial ambient of emitted particle.
     /// Default: 1,1,1
     /// </summary>
-    public Vector3 EmittInitialColor { get { return mEmittInitialColor; } set { mEmittInitialColor = value; } }
+    public Vector3 EmittInitialAmbient { get { return mEmittInitialAmbient; } set { mEmittInitialAmbient = value; } }
+
+    private ComputeBuffer mColorLifetimePointsBuffer = null;
+    private Vector4[] mColorLifetimePoints = new Vector4[] { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 1) };
+    private Vector4[] mNewColorLifetimePoints = new Vector4[] { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 1) };
+    /// <summary>
+    /// colorarray of emitted particle.
+    /// Default: 1,1,1,0 to 0,1,0,1
+    /// </summary>
+    public Vector4[] ColorLifetimePoints
+    {
+        get
+        {
+            return mColorLifetimePoints;
+        }
+        set
+        {
+            Debug.Assert(value.Length >= 2);
+            Debug.Assert(value[0].w == 0);
+            Debug.Assert(value[value.Length - 1].w == 1);
+            for (int i = 1; i < value.Length; ++i)
+            {
+                Debug.Assert(value[i - 1].w < value[i].w);
+            }
+            mNewColorLifetimePoints = value;
+            mApply = true;
+        }
+    }
+
+
+    private ComputeBuffer mHaloLifetimePointsBuffer = null;
+    private Vector4[] mHaloLifetimePoints = new Vector4[] { new Vector4(1, 1, 1, 0), new Vector4(0, 1, 0, 1) };
+    private Vector4[] mNewHaloLifetimePoints = new Vector4[] { new Vector4(1, 1, 1, 0), new Vector4(0, 1, 0, 1) };
+    /// <summary>
+    /// Bordercolorarray of emitted particle.
+    /// Default: 1,1,1,0 to 0,1,0,1
+    /// </summary>
+    public Vector4[] HaloLifetimePoints
+    {
+        get
+        {
+            return mHaloLifetimePoints;
+        }
+        set
+        {
+            Debug.Assert(value.Length >= 2);
+            Debug.Assert(value[0].w == 0);
+            Debug.Assert(value[value.Length - 1].w == 1);
+            for (int i = 1; i < value.Length; ++i)
+            {
+                Debug.Assert(value[i - 1].w < value[i].w);
+            }
+            mNewHaloLifetimePoints = value;
+            mApply = true;
+        }
+    }
+
+
+    private ComputeBuffer mScaleLifetimePointsBuffer = null;
+    private Vector4[] mScaleLifetimePoints = new Vector4[] { new Vector4(0.1f, 0.1f, 0, 0), new Vector4(0.1f, 0.1f, 0, 1) };
+    private Vector4[] mNewScaleLifetimePoints = new Vector4[] { new Vector4(0.1f, 0.1f, 0, 0), new Vector4(0.1f, 0.1f, 0, 1) };
+    /// <summary>
+    /// scale of emitted particle.
+    /// Default: 1,1,1,0 to 0,1,0,1
+    /// </summary>
+    public Vector4[] ScaleLifetimePoints
+    {
+        get
+        {
+            return mScaleLifetimePoints;
+        }
+        set
+        {
+            Debug.Assert(value.Length >= 2);
+            Debug.Assert(value[0].w == 0);
+            Debug.Assert(value[value.Length - 1].w == 1);
+            for (int i = 1; i < value.Length; ++i)
+            {
+                Debug.Assert(value[i - 1].w < value[i].w);
+            }
+            mNewScaleLifetimePoints = value;
+            mApply = true;
+        }
+    }
+
+    private ComputeBuffer mTransparencyLifetimePointsBuffer = null;
+    private Vector4[] mTransparencyLifetimePoints = new Vector4[] { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 1) };
+    private Vector4[] mNewTransparencyLifetimePoints = new Vector4[] { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 1) };
+    /// <summary>
+    /// transparency of emitted particle.
+    /// Default: opaque
+    /// </summary>
+    public Vector4[] TransparencyLifetimePoints
+    {
+        get
+        {
+            return mTransparencyLifetimePoints;
+        }
+        set
+        {
+            Debug.Assert(value.Length >= 2);
+            Debug.Assert(value[0].w == 0);
+            Debug.Assert(value[value.Length - 1].w == 1);
+            for (int i = 1; i < value.Length; ++i)
+            {
+                Debug.Assert(value[i - 1].w < value[i].w);
+            }
+            mNewTransparencyLifetimePoints = value;
+            mApply = true;
+        }
+    }
 
     private bool mActive = true;
     /// <summary>
@@ -280,13 +382,18 @@ public class GPUParticleSystem : MonoBehaviour
         mEmittParticleLifetime = mNewmParticleLifetime;
         mMaxParticleCount = (int)Mathf.Ceil(mEmittFrequency * mEmittParticleLifetime);
         mLastPosition = transform.position;
+        mColorLifetimePoints = mNewColorLifetimePoints;
+        mHaloLifetimePoints = mNewHaloLifetimePoints;
+        mScaleLifetimePoints = mNewScaleLifetimePoints;
+        mTransparencyLifetimePoints = mNewTransparencyLifetimePoints;
 
         // BUFFERS.
         mPositionBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
         mVelocityBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
-        mScaleBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
-        mColorBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
+        mAmbientBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
         mLifetimeBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
+
+        
 
         {   // Set lifetime default (negative)value.
             float[] arr = new float[mMaxParticleCount * 4];
@@ -305,6 +412,69 @@ public class GPUParticleSystem : MonoBehaviour
         // MATERIAL.
         mRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
 
+
+        //LIFETIME POINT BUFFERS
+
+        // ------- Color ------
+        mColorLifetimePointsBuffer = new ComputeBuffer(mColorLifetimePoints.Length, sizeof(float) * 4);
+
+        float[] colorLifetimeArr = new float[mColorLifetimePoints.Length * 4];
+        for (int i = 0, j = 0; i < mColorLifetimePoints.Length; ++i, j += 4)
+        {
+            colorLifetimeArr[j] = mColorLifetimePoints[i].x;
+            colorLifetimeArr[j + 1] = mColorLifetimePoints[i].y;
+            colorLifetimeArr[j + 2] = mColorLifetimePoints[i].z;
+            colorLifetimeArr[j + 3] = mColorLifetimePoints[i].w;
+        }
+        mColorLifetimePointsBuffer.SetData(colorLifetimeArr);
+        mRenderMaterial.SetInt("gColorLifetimeCount", mColorLifetimePoints.Length);
+        mRenderMaterial.SetBuffer("gColorLifetimeBuffer", mColorLifetimePointsBuffer);
+
+        // ------- Halo -------
+        mHaloLifetimePointsBuffer = new ComputeBuffer(mHaloLifetimePoints.Length, sizeof(float) * 4);
+
+        float[] haloLifetimeArr = new float[mHaloLifetimePoints.Length * 4];
+        for (int i = 0, j = 0; i < mHaloLifetimePoints.Length; ++i, j += 4)
+        {
+            haloLifetimeArr[j] = mHaloLifetimePoints[i].x;
+            haloLifetimeArr[j + 1] = mHaloLifetimePoints[i].y;
+            haloLifetimeArr[j + 2] = mHaloLifetimePoints[i].z;
+            haloLifetimeArr[j + 3] = mHaloLifetimePoints[i].w;
+        }
+        mHaloLifetimePointsBuffer.SetData(haloLifetimeArr);
+        mRenderMaterial.SetInt("gHaloLifetimeCount", mHaloLifetimePoints.Length);
+        mRenderMaterial.SetBuffer("gHaloLifetimeBuffer", mHaloLifetimePointsBuffer);
+
+        // ------ Scale ------
+        mScaleLifetimePointsBuffer = new ComputeBuffer(mScaleLifetimePoints.Length, sizeof(float) * 4);
+
+        float[] scaleLifetimeArr = new float[mScaleLifetimePoints.Length * 4];
+        for (int i = 0, j = 0; i < mScaleLifetimePoints.Length; ++i, j += 4)
+        {
+            scaleLifetimeArr[j] = mScaleLifetimePoints[i].x;
+            scaleLifetimeArr[j + 1] = mScaleLifetimePoints[i].y;
+            scaleLifetimeArr[j + 2] = mScaleLifetimePoints[i].z;
+            scaleLifetimeArr[j + 3] = mScaleLifetimePoints[i].w;
+        }
+        mScaleLifetimePointsBuffer.SetData(scaleLifetimeArr);
+        mRenderMaterial.SetInt("gScaleLifetimeCount", mScaleLifetimePoints.Length);
+        mRenderMaterial.SetBuffer("gScaleLifetimeBuffer", mScaleLifetimePointsBuffer);
+
+        // ------ Transparency -
+        mTransparencyLifetimePointsBuffer = new ComputeBuffer(mTransparencyLifetimePoints.Length, sizeof(float) * 4);
+
+        float[] transparencyLifetimeArr = new float[mTransparencyLifetimePoints.Length * 4];
+        for (int i = 0, j = 0; i < mTransparencyLifetimePoints.Length; ++i, j += 4)
+        {
+            transparencyLifetimeArr[j] = mTransparencyLifetimePoints[i].x;
+            transparencyLifetimeArr[j + 1] = mTransparencyLifetimePoints[i].y;
+            transparencyLifetimeArr[j + 2] = mTransparencyLifetimePoints[i].z;
+            transparencyLifetimeArr[j + 3] = mTransparencyLifetimePoints[i].w;
+        }
+        mTransparencyLifetimePointsBuffer.SetData(transparencyLifetimeArr);
+        mRenderMaterial.SetInt("gTransparencyLifetimeCount", mTransparencyLifetimePoints.Length);
+        mRenderMaterial.SetBuffer("gTransparencyLifetimeBuffer", mTransparencyLifetimePointsBuffer);
+
         // COLLISION.
         mSphereColliderResultBuffer = new ComputeBuffer(sMaxSphereColliderCount, sizeof(int));
 
@@ -315,9 +485,12 @@ public class GPUParticleSystem : MonoBehaviour
     {
         mPositionBuffer.Release();
         mVelocityBuffer.Release();
-        mScaleBuffer.Release();
-        mColorBuffer.Release();
+        mAmbientBuffer.Release();
         mLifetimeBuffer.Release();
+        mColorLifetimePointsBuffer.Release();
+        mHaloLifetimePointsBuffer.Release();
+        mScaleLifetimePointsBuffer.Release();
+        mTransparencyLifetimePointsBuffer.Release();
 
         mRenderMaterial = null;
 
@@ -336,24 +509,29 @@ public class GPUParticleSystem : MonoBehaviour
 
         mEmittTimer -= emittCount * 1.0f / mEmittFrequency;
 
+        Vector3 emitterVelocity = transform.position - mLastPosition;
+
         for (int i = 0; i < emittCount; ++i)
         {
             // BIND PARTICLE BUFFERS.
             sComputeShader.SetBuffer(sKernelEmitt, "gPositionBuffer", mPositionBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gVelocityBuffer", mVelocityBuffer.GetOutputBuffer());
-            sComputeShader.SetBuffer(sKernelEmitt, "gScaleBuffer", mScaleBuffer.GetOutputBuffer());
-            sComputeShader.SetBuffer(sKernelEmitt, "gColorBuffer", mColorBuffer.GetOutputBuffer());
+            sComputeShader.SetBuffer(sKernelEmitt, "gAmbientBuffer", mAmbientBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
             // Inherit velocity from emitter if true.
-            Vector3 velocity = ((transform.position - mLastPosition) / Time.deltaTime) * (mEmittInheritVelocity ? 1 : 0) + mEmittInitialVelocity;
+            Vector3 velocity = (emitterVelocity / Time.deltaTime) * (mEmittInheritVelocity ? 1 : 0) + mEmittInitialVelocity;
+
+            
+            Vector3 newInitPos = mLastPosition;
+            float delta = i / emittCount;
+            newInitPos += emitterVelocity * delta;
 
             // EMITT INFO.
             sComputeShader.SetInt("gEmittIndex", mEmittIndex);
-            sComputeShader.SetFloats("gPosition", new float[] { transform.position.x, transform.position.y, transform.position.z });
+            sComputeShader.SetFloats("gPosition", new float[] { newInitPos.x, newInitPos.y, newInitPos.z });
             sComputeShader.SetFloats("gVelocity", new float[] { velocity.x, velocity.y, velocity.z });
-            sComputeShader.SetFloats("gScale", new float[] { mEmittInitialScale.x, mEmittInitialScale.y });
-            sComputeShader.SetFloats("gColor", new float[] { mEmittInitialColor.x, mEmittInitialColor.y, mEmittInitialColor.z });
+            sComputeShader.SetFloats("gAmbient", new float[] { mEmittInitialAmbient.x, mEmittInitialAmbient.y, mEmittInitialAmbient.z });
             sComputeShader.SetFloats("gLifetime", new float[] { mEmittParticleLifetime });
 
             // EMITT MESH.
@@ -375,7 +553,7 @@ public class GPUParticleSystem : MonoBehaviour
                 sComputeShader.SetInt("gEmittMeshVertexCount", emittMeshInfo.mVertexCount);
                 sComputeShader.SetInt("gEmittMeshIndexCount", emittMeshInfo.mIndexCount);
                 sComputeShader.SetInt("gEmittMeshRandomIndex", Random.Range(0, emittMeshInfo.mIndexCount - 1));
-                sComputeShader.SetFloats("gEmittMeshScale", new float[] { transform.localScale.x, transform.localScale.y, transform.localScale.z });
+                sComputeShader.SetFloats("gEmittMeshScale", new float[] { transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z });
             }
             
             // DISPATCH.
@@ -392,22 +570,19 @@ public class GPUParticleSystem : MonoBehaviour
         // SWAP INPUT/OUTPUT.
         mPositionBuffer.Swap();
         mVelocityBuffer.Swap();
-        mScaleBuffer.Swap();
-        mColorBuffer.Swap();
+        mAmbientBuffer.Swap();
         mLifetimeBuffer.Swap();
 
         // BIND INPUT BUFFERS.
         sComputeShader.SetBuffer(sKernelUpdate, "gPositionIN", mPositionBuffer.GetInputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gVelocityIN", mVelocityBuffer.GetInputBuffer());
-        sComputeShader.SetBuffer(sKernelUpdate, "gScaleIN", mScaleBuffer.GetInputBuffer());
-        sComputeShader.SetBuffer(sKernelUpdate, "gColorIN", mColorBuffer.GetInputBuffer());
+        sComputeShader.SetBuffer(sKernelUpdate, "gAmbientIN", mAmbientBuffer.GetInputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gLifetimeIN", mLifetimeBuffer.GetInputBuffer());
 
         // BIND OUTPUT BUFFERS.
         sComputeShader.SetBuffer(sKernelUpdate, "gPositionOUT", mPositionBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gVelocityOUT", mVelocityBuffer.GetOutputBuffer());
-        sComputeShader.SetBuffer(sKernelUpdate, "gScaleOUT", mScaleBuffer.GetOutputBuffer());
-        sComputeShader.SetBuffer(sKernelUpdate, "gColorOUT", mColorBuffer.GetOutputBuffer());
+        sComputeShader.SetBuffer(sKernelUpdate, "gAmbientOUT", mAmbientBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gLifetimeOUT", mLifetimeBuffer.GetOutputBuffer());
 
         // SET META DATA.
@@ -520,8 +695,7 @@ public class GPUParticleSystem : MonoBehaviour
         // BIND BUFFERS.
         mRenderMaterial.SetBuffer("gPosition", mPositionBuffer.GetOutputBuffer());
         mRenderMaterial.SetBuffer("gVelocity", mVelocityBuffer.GetOutputBuffer());
-        mRenderMaterial.SetBuffer("gScale", mScaleBuffer.GetOutputBuffer());
-        mRenderMaterial.SetBuffer("gColor", mColorBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gAmbient", mAmbientBuffer.GetOutputBuffer());
         mRenderMaterial.SetBuffer("gLifetime", mLifetimeBuffer.GetOutputBuffer());
 
         // DRAW.
