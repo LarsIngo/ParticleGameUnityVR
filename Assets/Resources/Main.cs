@@ -27,8 +27,9 @@ public class Main : MonoBehaviour
         mAttractorGO.AddComponent<GPUParticleAttractor>();
 
         mVectorFieldGO = new GameObject();
-        mVectorFieldGO.AddComponent<GPUParticleVectorField>().Vector *= 100;
         mVectorFieldGO.transform.position += Vector3.right * 3;
+        GPUParticleVectorField vectorField = mVectorFieldGO.AddComponent<GPUParticleVectorField>();
+        vectorField.Vector *= 100;
 
         mSphereColliderGO = new GameObject();
         mSphereColliderGO.AddComponent<GPUParticleSphereCollider>();

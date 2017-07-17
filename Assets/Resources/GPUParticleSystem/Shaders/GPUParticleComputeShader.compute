@@ -90,7 +90,7 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
         VectorField vectorField = gVectorFieldBuffer[i];
         float3 vPosition = vectorField.mPosition;
         float vRadius = vectorField.mRadius;
-        float3 vVector = vectorField.mVector;
+        float3 vVector = vectorField.mVector.xyz;
 
         float3 vectorFieldDirection = vPosition - pPosition;
         float distance = length(vectorFieldDirection);

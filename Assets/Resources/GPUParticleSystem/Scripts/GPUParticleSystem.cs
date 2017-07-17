@@ -395,15 +395,16 @@ public class GPUParticleSystem : MonoBehaviour
             foreach (KeyValuePair<GPUParticleVectorField, GPUParticleVectorField> it in vectorFieldDictionary)
             {
                 GPUParticleVectorField vectorField = it.Value;
+                float scale = Mathf.Max(Mathf.Max(vectorField.transform.localScale.x, vectorField.transform.localScale.y), vectorField.transform.localScale.z);
 
                 vectorFieldArray[i++] = vectorField.transform.position.x;
                 vectorFieldArray[i++] = vectorField.transform.position.y;
                 vectorFieldArray[i++] = vectorField.transform.position.z;
-                vectorFieldArray[i++] = vectorField.Radius;
+                vectorFieldArray[i++] = scale * vectorField.Radius;
                 vectorFieldArray[i++] = vectorField.Vector.x;
                 vectorFieldArray[i++] = vectorField.Vector.y;
                 vectorFieldArray[i++] = vectorField.Vector.z;
-                vectorFieldArray[i++] = vectorField.Radius;
+                vectorFieldArray[i++] = 0.0f;
 
             }
             sGPUParticleVectorFieldBuffer.SetData(vectorFieldArray);
