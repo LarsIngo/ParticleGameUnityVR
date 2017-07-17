@@ -9,6 +9,7 @@ public class Main : MonoBehaviour
     GameObject mSystemGO;
     GameObject mAttractorGO;
     GameObject mVectorFieldGO;
+    GameObject mSphereColliderGO;
 
     private void Start ()
     {
@@ -27,8 +28,10 @@ public class Main : MonoBehaviour
 
         mVectorFieldGO = new GameObject();
         mVectorFieldGO.AddComponent<GPUParticleVectorField>().Vector *= 100;
-
         mVectorFieldGO.transform.position += Vector3.right * 3;
+
+        mSphereColliderGO = new GameObject();
+        mSphereColliderGO.AddComponent<GPUParticleSphereCollider>();
 
     }
 
