@@ -193,7 +193,6 @@ void EMITT(uint3 id : SV_DispatchThreadID)
 // Update kernel
 #pragma kernel RESULT
 
-
 StructuredBuffer<int> gGPUColliderResultBufferIN;
 RWStructuredBuffer<int> gGPUColliderResultBufferOUT;
 

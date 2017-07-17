@@ -120,11 +120,6 @@ public class GPUParticleSystem : MonoBehaviour
         {
             GPUParticleSystem system = it.Value;
 
-            // TMP
-            int[] r = new int[1];
-            system.GetSphereColliderResultBuffer().GetData(r);
-            Debug.Log(r[0]);
-
             sGPUColliderResultSwapBuffer.Swap();
             sComputeShader.SetBuffer(sKernelResult, "gGPUColliderResultBufferIN", sGPUColliderResultSwapBuffer.GetInputBuffer());
             sComputeShader.SetBuffer(sKernelResult, "gGPUColliderResultBufferOUT", sGPUColliderResultSwapBuffer.GetOutputBuffer());
@@ -142,6 +137,13 @@ public class GPUParticleSystem : MonoBehaviour
         // GET DATA FRPM GPU TO CPU.
         int[] collisionData = new int[sphereColliderDictionary.Count];
         sGPUColliderResultSwapBuffer.GetOutputBuffer().GetData(collisionData);
+
+        // UPDATE COLLIDERS.
+        foreach (KeyValuePair<GPUParticleSphereCollider, GPUParticleSphereCollider> it in GPUParticleSphereCollider.GetGPUParticleSphereColliderDictionary())
+        {
+            GPUParticleSphereCollider collider = it.Value;
+            collider.SetCollisionsThisFrame(collisionData[collider.GetIndex]);
+        }
         Debug.Log(collisionData[0]);
     }
 
@@ -507,15 +509,6 @@ public class GPUParticleSystem : MonoBehaviour
 
         // DISPATCH.
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
-
-        // FETCH COLLISION RESULTS. TMP
-        //if (sphereColliderDictionary != null && sphereColliderDictionary.Count > 0)
-        //{
-        //    int[] r = new int[1];
-        //    mSphereColliderResultBuffer.GetData(r);
-        //    Debug.Log(r[0]);
-        //}
-
     }
 
     // RENDER.

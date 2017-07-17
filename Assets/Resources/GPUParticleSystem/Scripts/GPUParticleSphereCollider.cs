@@ -13,7 +13,6 @@ public class GPUParticleSphereCollider : MonoBehaviour
     private static Dictionary<GPUParticleSphereCollider, GPUParticleSphereCollider> sGPUParticleSphereColliderDictionary = null;
     public static Dictionary<GPUParticleSphereCollider, GPUParticleSphereCollider> GetGPUParticleSphereColliderDictionary() { return sGPUParticleSphereColliderDictionary; }
 
-
     // STARTUP.
     public static void StartUp()
     {
@@ -31,6 +30,20 @@ public class GPUParticleSphereCollider : MonoBehaviour
 
 
     /// +++ MEMBERS +++ ///
+
+    private int mCollisionsThisFrame = 0;
+    /// <summary>
+    /// Number of particles that collieded with this collider during this frame.
+    /// </summary>
+    public int CollisionsThisFrame { get { return mCollisionsThisFrame; } }
+
+    /// <summary>
+    /// Used by GPUParticleSystem to 
+    /// </summary>
+    public void SetCollisionsThisFrame(int collisions)
+    {
+        mCollisionsThisFrame = collisions;
+    }
 
     private float mRadius = 1.0f;
     /// <summary>
