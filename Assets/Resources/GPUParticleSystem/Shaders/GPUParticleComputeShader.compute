@@ -52,7 +52,7 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     float3 pAmbient = gAmbientIN[tID].xyz;
     float2 pLifetime = gLifetimeIN[tID].xy;
 
-    if (pLifetime.x < -0.3f)
+    if (pLifetime.x > -0.3f)
     {
         float dt = gDeltaTime;
 
