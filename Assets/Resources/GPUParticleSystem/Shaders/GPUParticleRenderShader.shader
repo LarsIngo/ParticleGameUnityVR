@@ -65,13 +65,9 @@
 			struct gsOutput 
 			{
 				float4 svPosition : SV_POSITION;
-				float3 worldPosition : WORLDPOSITION;
-				float3 velocity : VELOCITY;
-				float2 scale : SCALE;
 				float3 color : COLOR;
 				float3 ambient : AMBIENT;
 				float3 halo : HALO;
-				float2 lifetime : LIFETIME;
 				float2 uv : UV;
 			};
 
@@ -147,13 +143,9 @@
 					float3 vPosition = pPosition + pRight * ((x * 2.f - 1.f) * pScale.x) + pUp * ((y * 2.f - 1.f) * pScale.y);
 
 					output.svPosition = UnityObjectToClipPos(float4(vPosition, 1));
-					output.worldPosition = vPosition;
-					output.velocity = pVelocity;
-					output.scale = pScale;
 					output.color = pColor;
 					output.ambient = pAmbient;
 					output.halo = pHalo;
-					output.lifetime = pLifetime;
 					output.uv = float2(x, 1.0f - y);
 
 					TriStream.Append(output);
@@ -173,7 +165,6 @@
 
 				float cosFactor = -cos(3.14159265f / 2.f * (factor + 1.f));
 
-				float lifeFactor = input.lifetime.x / input.lifetime.y;
 
 				return float4(factor * input.color * input.ambient + (1 - factor) * input.halo, cosFactor);
 			}
