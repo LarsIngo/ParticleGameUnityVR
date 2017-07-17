@@ -1,6 +1,6 @@
 ﻿CGPROGRAM
 
-// Update kernel
+// TODO: Fix comment: Update kernel
 #pragma kernel UPDATE
 
 
@@ -37,7 +37,8 @@ StructuredBuffer<VectorField> gVectorFieldBuffer;
 
 uniform int gSphereColliderCount;
 StructuredBuffer<float4> gSphereColliderBuffer;
-RWStructuredBuffer<int> gSphereColliderResultBuffer;
+
+RWStructuredBuffer<int> gSphereColliderResultBufferWRITE;
 
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
@@ -57,10 +58,10 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     // Update position.
     pPosition = pPosition + pVelocity * gDeltaTime;
 
-    // Update velocity (constants).
+    // Update velocity (acceleration).
     pVelocity = pVelocity + gConstantAcceleration * gDeltaTime;
 
-    // Update velocity (retardation).
+    // Update velocity (drag).
     pVelocity = pVelocity - pVelocity * (gConstantDrag * gDeltaTime);
 
     // Update velocity (attractors).
@@ -108,7 +109,14 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     int sphereColliderCount = gSphereColliderCount;
     if (sphereColliderCount > 0)
     {
-        int pSphereCollisions = 0;
+
+        if (tID < sphereColliderCount)
+        {
+            gSphereColliderResultBufferWRITE[tID] = 0;
+        }
+
+        //TODO BARRIER!!
+
         for (int i = 0; i < sphereColliderCount; ++i)
         {
             float4 sphereCollider = gSphereColliderBuffer[i];
@@ -120,17 +128,8 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
             if (cDistance < cRadius)
             {
-                pSphereCollisions = pSphereCollisions + 1;
+                InterlockedAdd(gSphereColliderResultBufferWRITE[i], 1);
             }
-        }
-
-        // TODO BATCH
-        if (tID == 0)
-            gSphereColliderResultBuffer[0] = 0;
-
-        if (pSphereCollisions > 0)
-        {
-            InterlockedAdd(gSphereColliderResultBuffer[0], pSphereCollisions);
         }
     }
 
@@ -180,6 +179,39 @@ void EMITT(uint3 id : SV_DispatchThreadID)
 
     float lifetime = gLifetime;
     gLifetimeBuffer[index] = float4(lifetime, lifetime, 0, 0);
+}
+
+
+// Update kernel
+#pragma kernel RESULT
+
+StructuredBuffer<int> gGPUColliderResultBufferIN;
+RWStructuredBuffer<int> gGPUColliderResultBufferOUT;
+
+StructuredBuffer<int> gSphereColliderResultBufferREAD;
+
+uniform int gGPUColliderCount;
+uniform bool gInitZero;
+
+[numthreads(64, 1, 1)]
+void RESULT(uint3 id : SV_DispatchThreadID)
+{
+    int tID = (int)id.x;
+
+    int gpuColliderCount = gGPUColliderCount;
+
+    if (tID >= gpuColliderCount) return;
+
+    int value = gSphereColliderResultBufferREAD[tID];
+    
+    if (gInitZero)
+    {
+        gGPUColliderResultBufferOUT[tID] = value;
+    }
+    else
+    {
+        gGPUColliderResultBufferOUT[tID] = gGPUColliderResultBufferIN[tID] + value;
+    }
 }
 
 ENDCG
