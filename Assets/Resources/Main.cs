@@ -39,13 +39,14 @@ public class Main : MonoBehaviour
 
         mParticleSystem = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         mParticleSystem.name = "Emitter";
-        mParticleSystem.transform.position = new Vector3(0,0,5);
+        mParticleSystem.transform.position = new Vector3(0, 1, 0);
+        mParticleSystem.transform.localScale *= 0.1f;
         GPUParticleSystem system = mParticleSystem.AddComponent<GPUParticleSystem>();
         system.EmittMesh = mParticleSystem.GetComponent<MeshFilter>().mesh;
         system.EmittParticleLifeTime = 30.0f;
         system.EmittFrequency = 500.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-        system.EmittInitialScale = new Vector2(0.1f, 0.1f);
+        system.EmittInitialScale = new Vector2(0.01f, 0.01f);
         system.EmittInitialColor = new Vector3(0.0f, 1.0f, 0.0f);
         system.EmittInheritVelocity = true;
 
@@ -59,10 +60,10 @@ public class Main : MonoBehaviour
         if (left != null)
         {
             SteamVR_Controller.Device device = SteamVR_Controller.Input((int)left.controllerIndex);
-
+            
             if (left.triggerPressed)
                 left.GetComponent<GPUParticleVectorField>().Vector = Vector3.up * 20.0f;
-            else left.GetComponent<GPUParticleVectorField>().Vector = Vector3.up * 20.0f;
+            else left.GetComponent<GPUParticleVectorField>().Vector = Vector3.up * 0.0f;
 
         }
         if(right != null)
@@ -70,7 +71,7 @@ public class Main : MonoBehaviour
             SteamVR_Controller.Device device = SteamVR_Controller.Input((int)right.controllerIndex);
 
             if(right.triggerPressed)
-                right.GetComponent<GPUParticleAttractor>().Power = 100.0f;
+                right.GetComponent<GPUParticleAttractor>().Power = 20.0f;
             else right.GetComponent<GPUParticleAttractor>().Power = 0.0f;
 
         }
