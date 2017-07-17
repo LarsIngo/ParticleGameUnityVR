@@ -149,7 +149,7 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     float currentLifetimeFactor = 1 - pLifetime.x / pLifetime.y;//since lifetime starts from zero to one instead of one to zero
     int pHaloLifetimeCount = gHaloLifetimeCount;
 
-    for (int i = 0; i < pHaloLifetimeCount; ++i)
+/*    for (int i = 0; i < pHaloLifetimeCount; ++i)
     {
         if (gHaloLifetimeBuffer[i].w > currentLifetimeFactor)
         {
@@ -162,8 +162,14 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
             break;
         }
-    }
-    
+    }*/
+
+    float4 c0 = gHaloLifetimeBuffer[0];
+    float4 c1 = float4(0, 1, 0, 1);
+    float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
+            
+    pHaloColor = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
+
     gPositionOUT[tID] = float4(pPosition, 0);
     gVelocityOUT[tID] = float4(pVelocity, 0);
     gScaleOUT[tID] = float4(pScale, 0, 0);

@@ -142,7 +142,7 @@ public class GPUParticleSystem : MonoBehaviour
     /// Whether emitted particles inherit velocity from emitter.
     /// Default: true
     /// </summary>
-    public bool EmittInheritVelocity { get { return mEmittInheritVelocity; } set { EmittInheritVelocity = value; } }
+    public bool EmittInheritVelocity { get { return mEmittInheritVelocity; } set { mEmittInheritVelocity = value; } }
 
     private Vector3 mEmittConstantAcceleration = Vector3.zero;
     /// <summary>
@@ -272,12 +272,12 @@ public class GPUParticleSystem : MonoBehaviour
         mHaloLifetimePointsBuffer = new ComputeBuffer(mHaloLifetimePoints.Length, sizeof(float) * 4);
 
         float[] haloLifetimeArr = new float[mHaloLifetimePoints.Length * 4];
-        for (int i = 0; i < mHaloLifetimePoints.Length; ++i)
+        for (int i = 0, j = 0; i < mHaloLifetimePoints.Length; ++i, j += 4)
         {
-            haloLifetimeArr[i] = mHaloLifetimePoints[i].x;
-            haloLifetimeArr[i + 1] = mHaloLifetimePoints[i].y;
-            haloLifetimeArr[i + 2] = mHaloLifetimePoints[i].z;
-            haloLifetimeArr[i + 3] = mHaloLifetimePoints[i].w;
+            haloLifetimeArr[j] = mHaloLifetimePoints[i].x;
+            haloLifetimeArr[j + 1] = mHaloLifetimePoints[i].y;
+            haloLifetimeArr[j + 2] = mHaloLifetimePoints[i].z;
+            haloLifetimeArr[j + 3] = mHaloLifetimePoints[i].w;
         }
         mHaloLifetimePointsBuffer.SetData(haloLifetimeArr);
         sComputeShader.SetInt("gHaloLifetimeCount", mHaloLifetimePoints.Length);
