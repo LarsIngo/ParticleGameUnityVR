@@ -503,7 +503,7 @@ public class GPUParticleSystem : MonoBehaviour
                 sComputeShader.SetInt("gEmittMeshVertexCount", emittMeshInfo.mVertexCount);
                 sComputeShader.SetInt("gEmittMeshIndexCount", emittMeshInfo.mIndexCount);
                 sComputeShader.SetInt("gEmittMeshRandomIndex", Random.Range(0, emittMeshInfo.mIndexCount - 1));
-                sComputeShader.SetFloats("gEmittMeshScale", new float[] { transform.localScale.x, transform.localScale.y, transform.localScale.z });
+                sComputeShader.SetFloats("gEmittMeshScale", new float[] { transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z });
             }
             
             // DISPATCH.
