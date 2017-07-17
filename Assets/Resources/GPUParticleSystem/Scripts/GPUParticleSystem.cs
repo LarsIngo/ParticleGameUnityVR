@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/// <summary>
+/// Particle System on the GPU.
+/// Each system acts like an emitter.
+/// Config Emitt values to change the behaviour of the particles.
+/// </summary>
 public class GPUParticleSystem : MonoBehaviour
 {
     /// +++ STRUCTS +++ ///
@@ -39,26 +44,43 @@ public class GPUParticleSystem : MonoBehaviour
 
     /// +++ STATIC +++ ///
 
-    static Material sRenderMaterial = null;
+    static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary = null;
+
     static ComputeShader sComputeShader = null;
     static int sKernelUpdate = -1;
     static int sKernelEmitt = -1;
     static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
 
+    static ComputeBuffer sGPUParticleAttractorBuffer = null;
+    const int sMaxAttractorCount = 64;
+
+    static ComputeBuffer sGPUParticleVectorFieldBuffer = null;
+    const int sMaxVectorFieldCount = 64;
+
+    static ComputeBuffer sGPUParticleSphereColliderBuffer = null;
+    const int sMaxSphereColliderCount = 64;
+
     // STARTUP.
     public static void StartUp()
     {
-        sRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
+
+        sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
+
         sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
         sKernelUpdate = sComputeShader.FindKernel("UPDATE");
         sKernelEmitt = sComputeShader.FindKernel("EMITT");
         sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
+        sGPUParticleAttractorBuffer = new ComputeBuffer(sMaxAttractorCount, sizeof(float) * 4);
+        sGPUParticleVectorFieldBuffer = new ComputeBuffer(sMaxVectorFieldCount, sizeof(float) * 8);
+        sGPUParticleSphereColliderBuffer = new ComputeBuffer(sMaxSphereColliderCount, sizeof(float) * 4);
     }
 
     // SHUTDOWN.
     public static void Shutdown()
     {
-        sRenderMaterial = null;
+        sGPUParticleSystemDictionary.Clear();
+        sGPUParticleSystemDictionary = null;
+
         sComputeShader = null;
         sKernelUpdate = -1;
         sKernelEmitt = -1;
@@ -68,6 +90,9 @@ public class GPUParticleSystem : MonoBehaviour
             it.Value.mIndexBuffer.Release();
         }
         sEmittMeshInfoDictionary.Clear();
+        sGPUParticleAttractorBuffer.Release();
+        sGPUParticleVectorFieldBuffer.Release();
+        sGPUParticleSphereColliderBuffer.Release();
     }
 
     /// MEMBER
@@ -75,6 +100,12 @@ public class GPUParticleSystem : MonoBehaviour
     /// --- STATIC --- ///
 
     /// +++ MEMBERS +++ ///
+
+    // Material.
+    private Material mRenderMaterial = null;
+
+    // Collisons.
+    private ComputeBuffer mSphereColliderResultBuffer = null;
 
     // Particle.
     private SwapBuffer mPositionBuffer;
@@ -88,7 +119,7 @@ public class GPUParticleSystem : MonoBehaviour
     private int mEmittIndex = 0;
 
     // Emitter.
-    private Vector3 mLastPosition;
+    private Vector3 mLastPosition = Vector3.zero;
 
     private float mEmittTimer = 0.0f;
 
@@ -148,28 +179,33 @@ public class GPUParticleSystem : MonoBehaviour
     /// </summary>
     public Vector3 EmittInitialColor { get { return mEmittInitialColor; } set { mEmittInitialColor = value; } }
 
+    private ComputeBuffer mHaloLifetimePointsBuffer = null;
     private Vector4[] mHaloLifetimePoints = new Vector4[] { new Vector4(1, 1, 1, 0), new Vector4(0, 1, 0, 1) };
     private Vector4[] mNewHaloLifetimePoints = new Vector4[] { new Vector4(1, 1, 1, 0), new Vector4(0, 1, 0, 1) };
     /// <summary>
     /// Initial bordercolor of emitted particle.
     /// Default: 1,1,1,0 to 0,1,0,1
     /// </summary>
-    public Vector4[] HaloColorLifetimePoints { get { return mHaloLifetimePoints; } set { mNewHaloLifetimePoints = value; mApply = true; } }
-
-    private Vector3 mTMPAcceleratorPosition = Vector3.zero;
-    /// <summary>
-    /// TMP Position of accelerator.
-    /// Default: 0,0,0
-    /// </summary>
-    public Vector3 TMPAcceleratorPosition { get { return mTMPAcceleratorPosition; } set { mTMPAcceleratorPosition = value; } }
-
-    private float mTMPAcceleratorPower = 100.0f;
-    /// <summary>
-    /// TMP Power of accelerator.
-    /// Default: 100
-    /// </summary>
-    public float TMPAcceleratorPower { get { return mTMPAcceleratorPower; } set { mTMPAcceleratorPower = value; } }
-
+    public Vector4[] HaloColorLifetimePoints
+    {
+        get
+        {
+            return mHaloLifetimePoints;
+        }
+        set
+        {
+            Debug.Assert(value.Length >= 2);
+            Debug.Assert(value[0].w == 0);
+            Debug.Assert(value[value.Length - 1].w == 1);
+            for (int i = 1; i < value.Length; ++i)
+            {
+                Debug.Assert(value[i - 1].w < value[i].w);
+            }
+            mNewHaloLifetimePoints = value;
+            mApply = true;
+        }
+    }
+    
     private bool mActive = true;
     /// <summary>
     /// Whether emitter should emitt particles.
@@ -232,6 +268,21 @@ public class GPUParticleSystem : MonoBehaviour
         mHaloColorBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
         mLifetimeBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
 
+        //LIFETIME POINT BUFFERS
+        mHaloLifetimePointsBuffer = new ComputeBuffer(mHaloLifetimePoints.Length, sizeof(float) * 4);
+
+        float[] haloLifetimeArr = new float[mHaloLifetimePoints.Length * 4];
+        for (int i = 0; i < mHaloLifetimePoints.Length; ++i)
+        {
+            haloLifetimeArr[i] = mHaloLifetimePoints[i].x;
+            haloLifetimeArr[i + 1] = mHaloLifetimePoints[i].y;
+            haloLifetimeArr[i + 2] = mHaloLifetimePoints[i].z;
+            haloLifetimeArr[i + 3] = mHaloLifetimePoints[i].w;
+        }
+        mHaloLifetimePointsBuffer.SetData(haloLifetimeArr);
+        sComputeShader.SetInt("gHaloLifetimeCount", mHaloLifetimePoints.Length);
+        sComputeShader.SetBuffer(sKernelUpdate, "gHaloLifetimeBuffer", mHaloLifetimePointsBuffer);
+
         {   // Set lifetime default (negative)value.
             float[] arr = new float[mMaxParticleCount * 4];
             for (int i = 0; i < mMaxParticleCount * 4; ++i)
@@ -246,6 +297,12 @@ public class GPUParticleSystem : MonoBehaviour
         mEmittMesh = mNewEmittMesh;
         UpdateMesh();
 
+        // MATERIAL.
+        mRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
+
+        // COLLISION.
+        mSphereColliderResultBuffer = new ComputeBuffer(1, sizeof(int));
+
     }
 
     // DEINIT.
@@ -257,6 +314,11 @@ public class GPUParticleSystem : MonoBehaviour
         mColorBuffer.Release();
         mHaloColorBuffer.Release();
         mLifetimeBuffer.Release();
+        mHaloLifetimePointsBuffer.Release();
+
+        mRenderMaterial = null;
+
+        mSphereColliderResultBuffer.Release();
     }
 
     // EMITT UPDATE.
@@ -297,7 +359,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetFloats("gVelocity", new float[] { velocity.x, velocity.y, velocity.z });
             sComputeShader.SetFloats("gScale", new float[] { mEmittInitialScale.x, mEmittInitialScale.y });
             sComputeShader.SetFloats("gColor", new float[] { mEmittInitialColor.x, mEmittInitialColor.y, mEmittInitialColor.z });
-            sComputeShader.SetFloats("gHaloColor", new float[] { mEmittInitialHaloColor.x, mEmittInitialHaloColor.y, mEmittInitialHaloColor.z });
+            sComputeShader.SetFloats("gHaloColor", new float[] { 1, 1, 1 });//mEmittInitialHaloColor.x, mEmittInitialHaloColor.y, mEmittInitialHaloColor.z });
             sComputeShader.SetFloats("gLifetime", new float[] { mEmittParticleLifetime });
 
             // EMITT MESH.
@@ -365,25 +427,119 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.SetFloat("gConstantDrag", mEmittConstantDrag);
 
         // ACCELERATOR.
-        sComputeShader.SetFloats("gAcceleratorPosition", new float[] { mTMPAcceleratorPosition.x, mTMPAcceleratorPosition.y, mTMPAcceleratorPosition.z });
-        sComputeShader.SetFloat("gAcceleratorPower", mTMPAcceleratorPower);
+        Dictionary<GPUParticleAttractor, GPUParticleAttractor> attractorDictionary = GPUParticleAttractor.GetGPUParticleAttractorDictionary();
+        if (attractorDictionary == null)
+        {
+            sComputeShader.SetInt("gAttractorCount", 0);
+        }
+        else
+        {
+            Debug.Assert(attractorDictionary.Count < sMaxAttractorCount);
+
+            float[] attractorArray = new float[attractorDictionary.Count * 4];
+            int i = 0;
+            foreach (KeyValuePair<GPUParticleAttractor, GPUParticleAttractor> it in attractorDictionary)
+            {
+                GPUParticleAttractor attractor = it.Value;
+
+                attractorArray[i++] = attractor.transform.position.x;
+                attractorArray[i++] = attractor.transform.position.y;
+                attractorArray[i++] = attractor.transform.position.z;
+                attractorArray[i++] = attractor.Power;
+            }
+            sGPUParticleAttractorBuffer.SetData(attractorArray);
+
+            sComputeShader.SetInt("gAttractorCount", attractorDictionary.Count);
+            sComputeShader.SetBuffer(sKernelUpdate, "gAttractorBuffer", sGPUParticleAttractorBuffer);
+        }
+
+        // Vector Fields.
+        Dictionary<GPUParticleVectorField, GPUParticleVectorField> vectorFieldDictionary = GPUParticleVectorField.GetGPUParticleAttractorDictionary();
+        if (vectorFieldDictionary == null)
+        {
+            sComputeShader.SetInt("gVectorFieldCount", 0);
+        }
+        else
+        {
+            Debug.Assert(vectorFieldDictionary.Count < sMaxVectorFieldCount);
+
+            float[] vectorFieldArray = new float[vectorFieldDictionary.Count * 8];
+            int i = 0;
+            foreach (KeyValuePair<GPUParticleVectorField, GPUParticleVectorField> it in vectorFieldDictionary)
+            {
+                GPUParticleVectorField vectorField = it.Value;
+                float scale = Mathf.Max(Mathf.Max(vectorField.transform.localScale.x, vectorField.transform.localScale.y), vectorField.transform.localScale.z);
+                Vector3 vector = vectorField.RelativeVectorField ? vectorField.VectorRelative : vectorField.Vector;
+
+                vectorFieldArray[i++] = vectorField.transform.position.x;
+                vectorFieldArray[i++] = vectorField.transform.position.y;
+                vectorFieldArray[i++] = vectorField.transform.position.z;
+                vectorFieldArray[i++] = scale * vectorField.Radius;
+                vectorFieldArray[i++] = vector.x;
+                vectorFieldArray[i++] = vector.y;
+                vectorFieldArray[i++] = vector.z;
+                vectorFieldArray[i++] = 0.0f;
+
+            }
+            sGPUParticleVectorFieldBuffer.SetData(vectorFieldArray);
+
+            sComputeShader.SetInt("gVectorFieldCount", vectorFieldDictionary.Count);
+            sComputeShader.SetBuffer(sKernelUpdate, "gVectorFieldBuffer", sGPUParticleVectorFieldBuffer);
+        }
+
+        // SPHERE COLLIDER.
+        Dictionary<GPUParticleSphereCollider, GPUParticleSphereCollider> sphereColliderDictionary = GPUParticleSphereCollider.GetGPUParticleSphereColliderDictionary();
+        if (sphereColliderDictionary == null)
+        {
+            sComputeShader.SetInt("gSphereColliderCount", 0);
+        }
+        else
+        {
+            Debug.Assert(sphereColliderDictionary.Count < sMaxSphereColliderCount);
+
+            float[] sphereColliderArray = new float[sphereColliderDictionary.Count * 4];
+            int i = 0;
+            foreach (KeyValuePair<GPUParticleSphereCollider, GPUParticleSphereCollider> it in sphereColliderDictionary)
+            {
+                GPUParticleSphereCollider sphereCollider = it.Value;
+                float scale = Mathf.Max(Mathf.Max(sphereCollider.transform.localScale.x, sphereCollider.transform.localScale.y), sphereCollider.transform.localScale.z);
+
+                sphereColliderArray[i++] = sphereCollider.transform.position.x;
+                sphereColliderArray[i++] = sphereCollider.transform.position.y;
+                sphereColliderArray[i++] = sphereCollider.transform.position.z;
+                sphereColliderArray[i++] = scale;
+            }
+            sGPUParticleSphereColliderBuffer.SetData(sphereColliderArray);
+
+            sComputeShader.SetInt("gSphereColliderCount", sphereColliderDictionary.Count);
+            sComputeShader.SetBuffer(sKernelUpdate, "gSphereColliderBuffer", sGPUParticleSphereColliderBuffer);
+            sComputeShader.SetBuffer(sKernelUpdate, "gSphereColliderResultBuffer", mSphereColliderResultBuffer);
+        }
 
         // DISPATCH.
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
+
+        // FETCH RESULTS.
+        if (sphereColliderDictionary != null && sphereColliderDictionary.Count > 0)
+        {
+            int[] r = new int[1];
+            mSphereColliderResultBuffer.GetData(r, 0, 0, 1);
+        }
+
     }
 
     // RENDER.
     private void RenderSystem()
     {
-        sRenderMaterial.SetPass(0);
+        mRenderMaterial.SetPass(0);
 
         // BIND BUFFERS.
-        sRenderMaterial.SetBuffer("gPosition", mPositionBuffer.GetOutputBuffer());
-        sRenderMaterial.SetBuffer("gVelocity", mVelocityBuffer.GetOutputBuffer());
-        sRenderMaterial.SetBuffer("gScale", mScaleBuffer.GetOutputBuffer());
-        sRenderMaterial.SetBuffer("gColor", mColorBuffer.GetOutputBuffer());
-        sRenderMaterial.SetBuffer("gHaloColor", mHaloColorBuffer.GetOutputBuffer());
-        sRenderMaterial.SetBuffer("gLifetime", mLifetimeBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gPosition", mPositionBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gVelocity", mVelocityBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gScale", mScaleBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gColor", mColorBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gHaloColor", mHaloColorBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gLifetime", mLifetimeBuffer.GetOutputBuffer());
 
         // DRAW.
         Graphics.DrawProcedural(MeshTopology.Points, mMaxParticleCount, 1);
@@ -394,8 +550,9 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Awake()
     {
-        if (sRenderMaterial == null) StartUp();
+        if (sGPUParticleSystemDictionary == null) StartUp();
         InitSystem();
+        sGPUParticleSystemDictionary[this] = this;
     }
 
     // MONOBEHAVIOUR.
@@ -412,6 +569,7 @@ public class GPUParticleSystem : MonoBehaviour
         // Update particles this frame.
         UpdateSystem();
 
+        // Update last position.
         mLastPosition = transform.position;
     }
 
@@ -426,9 +584,10 @@ public class GPUParticleSystem : MonoBehaviour
     private void OnDestroy()
     {
         DeInitSystem();
-        if (sRenderMaterial != null) Shutdown();
+        sGPUParticleSystemDictionary.Remove(this);
+        if (sGPUParticleSystemDictionary.Count == 0) Shutdown();
     }
 
     /// --- MEMBERS --- ///
-    /// 
+    
 }

@@ -126,7 +126,7 @@
 
 			float lifeFactor = input.lifetime.x / input.lifetime.y;
 
-			return float4(factor * input.color + (1 - factor) * input.haloColor, cosFactor);
+			return float4(input.haloColor, 1);// float4(factor * input.color + (1 - factor) * input.haloColor, cosFactor);
 		}
 			//return float4(factor * input.color + (1 - factor) * input.haloColor, cosFactor);// +float4(input.haloColor, cosRevFactor);
 
