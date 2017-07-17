@@ -112,7 +112,6 @@ public class GPUParticleSystem : MonoBehaviour
     private SwapBuffer mVelocityBuffer;
     private SwapBuffer mScaleBuffer;
     private SwapBuffer mColorBuffer;
-    private SwapBuffer mHaloColorBuffer;
     private SwapBuffer mLifetimeBuffer;
 
     private int mMaxParticleCount;
@@ -265,23 +264,9 @@ public class GPUParticleSystem : MonoBehaviour
         mVelocityBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
         mScaleBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
         mColorBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
-        mHaloColorBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
         mLifetimeBuffer = new SwapBuffer(2, mMaxParticleCount, sizeof(float) * 4);
 
-        //LIFETIME POINT BUFFERS
-        mHaloLifetimePointsBuffer = new ComputeBuffer(mHaloLifetimePoints.Length, sizeof(float) * 4);
-
-        float[] haloLifetimeArr = new float[mHaloLifetimePoints.Length * 4];
-        for (int i = 0, j = 0; i < mHaloLifetimePoints.Length; ++i, j += 4)
-        {
-            haloLifetimeArr[j] = mHaloLifetimePoints[i].x;
-            haloLifetimeArr[j + 1] = mHaloLifetimePoints[i].y;
-            haloLifetimeArr[j + 2] = mHaloLifetimePoints[i].z;
-            haloLifetimeArr[j + 3] = mHaloLifetimePoints[i].w;
-        }
-        mHaloLifetimePointsBuffer.SetData(haloLifetimeArr);
-        sComputeShader.SetInt("gHaloLifetimeCount", mHaloLifetimePoints.Length);
-        sComputeShader.SetBuffer(sKernelUpdate, "gHaloLifetimeBuffer", mHaloLifetimePointsBuffer);
+        
 
         {   // Set lifetime default (negative)value.
             float[] arr = new float[mMaxParticleCount * 4];
@@ -300,6 +285,22 @@ public class GPUParticleSystem : MonoBehaviour
         // MATERIAL.
         mRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
 
+
+        //LIFETIME POINT BUFFERS
+        mHaloLifetimePointsBuffer = new ComputeBuffer(mHaloLifetimePoints.Length, sizeof(float) * 4);
+
+        float[] haloLifetimeArr = new float[mHaloLifetimePoints.Length * 4];
+        for (int i = 0, j = 0; i < mHaloLifetimePoints.Length; ++i, j += 4)
+        {
+            haloLifetimeArr[j] = mHaloLifetimePoints[i].x;
+            haloLifetimeArr[j + 1] = mHaloLifetimePoints[i].y;
+            haloLifetimeArr[j + 2] = mHaloLifetimePoints[i].z;
+            haloLifetimeArr[j + 3] = mHaloLifetimePoints[i].w;
+        }
+        mHaloLifetimePointsBuffer.SetData(haloLifetimeArr);
+        mRenderMaterial.SetInt("gHaloLifetimeCount", mHaloLifetimePoints.Length);
+        mRenderMaterial.SetBuffer("gHaloLifetimeBuffer", mHaloLifetimePointsBuffer);
+
         // COLLISION.
         mSphereColliderResultBuffer = new ComputeBuffer(1, sizeof(int));
 
@@ -312,7 +313,6 @@ public class GPUParticleSystem : MonoBehaviour
         mVelocityBuffer.Release();
         mScaleBuffer.Release();
         mColorBuffer.Release();
-        mHaloColorBuffer.Release();
         mLifetimeBuffer.Release();
         mHaloLifetimePointsBuffer.Release();
 
@@ -342,7 +342,6 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gVelocityBuffer", mVelocityBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gScaleBuffer", mScaleBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gColorBuffer", mColorBuffer.GetOutputBuffer());
-            sComputeShader.SetBuffer(sKernelEmitt, "gHaloColorBuffer", mHaloColorBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
             // Inherit velocity from emitter if true.
@@ -400,7 +399,6 @@ public class GPUParticleSystem : MonoBehaviour
         mVelocityBuffer.Swap();
         mScaleBuffer.Swap();
         mColorBuffer.Swap();
-        mHaloColorBuffer.Swap();
         mLifetimeBuffer.Swap();
 
         // BIND INPUT BUFFERS.
@@ -408,7 +406,6 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.SetBuffer(sKernelUpdate, "gVelocityIN", mVelocityBuffer.GetInputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gScaleIN", mScaleBuffer.GetInputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gColorIN", mColorBuffer.GetInputBuffer());
-        sComputeShader.SetBuffer(sKernelUpdate, "gHaloColorIN", mHaloColorBuffer.GetInputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gLifetimeIN", mLifetimeBuffer.GetInputBuffer());
 
         // BIND OUTPUT BUFFERS.
@@ -416,7 +413,6 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.SetBuffer(sKernelUpdate, "gVelocityOUT", mVelocityBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gScaleOUT", mScaleBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gColorOUT", mColorBuffer.GetOutputBuffer());
-        sComputeShader.SetBuffer(sKernelUpdate, "gHaloColorOUT", mHaloColorBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelUpdate, "gLifetimeOUT", mLifetimeBuffer.GetOutputBuffer());
 
         // SET META DATA.
@@ -538,7 +534,6 @@ public class GPUParticleSystem : MonoBehaviour
         mRenderMaterial.SetBuffer("gVelocity", mVelocityBuffer.GetOutputBuffer());
         mRenderMaterial.SetBuffer("gScale", mScaleBuffer.GetOutputBuffer());
         mRenderMaterial.SetBuffer("gColor", mColorBuffer.GetOutputBuffer());
-        mRenderMaterial.SetBuffer("gHaloColor", mHaloColorBuffer.GetOutputBuffer());
         mRenderMaterial.SetBuffer("gLifetime", mLifetimeBuffer.GetOutputBuffer());
 
         // DRAW.

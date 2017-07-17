@@ -3,21 +3,17 @@
 // Update kernel
 #pragma kernel UPDATE
 
-uniform int gHaloLifetimeCount;
-StructuredBuffer<float4> gHaloLifetimeBuffer;
 
 StructuredBuffer<float4> gPositionIN;
 StructuredBuffer<float4> gVelocityIN;
 StructuredBuffer<float4> gScaleIN;
 StructuredBuffer<float4> gColorIN;
-StructuredBuffer<float4> gHaloColorIN;
 StructuredBuffer<float4> gLifetimeIN;
 
 RWStructuredBuffer<float4> gPositionOUT;
 RWStructuredBuffer<float4> gVelocityOUT;
 RWStructuredBuffer<float4> gScaleOUT;
 RWStructuredBuffer<float4> gColorOUT;
-RWStructuredBuffer<float4> gHaloColorOUT;
 RWStructuredBuffer<float4> gLifetimeOUT;
 
 uniform int gMaxParticleCount;
@@ -60,7 +56,6 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     float3 pVelocity = gVelocityIN[tID].xyz;
     float2 pScale = gScaleIN[tID].xy;
     float3 pColor = gColorIN[tID].xyz;
-    float3 pHaloColor = gHaloColorIN[tID].xyz;
 
     // Update position.
     pPosition = pPosition + pVelocity * gDeltaTime;
@@ -145,32 +140,11 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     // Update lifetime.
     pLifetime.x = pLifetime.x - gDeltaTime;
 
-    //update lifetime dependent variables
-    float currentLifetimeFactor = 1 - pLifetime.x / pLifetime.y;//since lifetime starts from zero to one instead of one to zero
-    int pHaloLifetimeCount = gHaloLifetimeCount;
-
-    for (int i = 1; i < pHaloLifetimeCount; ++i)
-    {
-        if (gHaloLifetimeBuffer[i].w > currentLifetimeFactor)
-        {
-            float4 c0 = gHaloLifetimeBuffer[i - 1];
-            float4 c1 = gHaloLifetimeBuffer[i];
-
-            float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
-            
-            pHaloColor = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
-
-            //exit
-            i = pHaloLifetimeCount;
-        }
-    }
-
 
     gPositionOUT[tID] = float4(pPosition, 0);
     gVelocityOUT[tID] = float4(pVelocity, 0);
     gScaleOUT[tID] = float4(pScale, 0, 0);
     gColorOUT[tID] = float4(pColor, 0);
-    gHaloColorOUT[tID] = float4(pHaloColor, 0);
     gLifetimeOUT[tID] = float4(pLifetime.xy, 0, 0);
 }
 
@@ -181,7 +155,6 @@ RWStructuredBuffer<float4> gPositionBuffer;
 RWStructuredBuffer<float4> gVelocityBuffer;
 RWStructuredBuffer<float4> gScaleBuffer;
 RWStructuredBuffer<float4> gColorBuffer;
-RWStructuredBuffer<float4> gHaloColorBuffer;
 RWStructuredBuffer<float4> gLifetimeBuffer;
 
 uniform int gEmittIndex;
@@ -189,7 +162,6 @@ uniform float3 gPosition;
 uniform float3 gVelocity;
 uniform float2 gScale;
 uniform float3 gColor;
-uniform float3 gHaloColor;
 uniform float gLifetime;
 
 uniform StructuredBuffer<float3> gEmittMeshVertexBuffer;
@@ -212,7 +184,6 @@ void EMITT(uint3 id : SV_DispatchThreadID)
     gVelocityBuffer[index] = float4(gVelocity, 0);
     gScaleBuffer[index] = float4(gScale, 0, 0);
     gColorBuffer[index] = float4(gColor, 0);
-    gHaloColorBuffer[index] = float4(gHaloColor, 0);
 
     float lifetime = gLifetime;
     gLifetimeBuffer[index] = float4(lifetime, lifetime, 0, 0);

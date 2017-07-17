@@ -29,6 +29,10 @@
 		StructuredBuffer<float4> gHaloColor;
 		StructuredBuffer<float4> gLifetime;
 
+
+		uniform int gHaloLifetimeCount;
+		StructuredBuffer<float4> gHaloLifetimeBuffer;
+
 		// ---
 
 		struct vsOutput
@@ -84,7 +88,31 @@
 			float3 pVelocity = input[0].velocity;
 			float2 pScale = input[0].scale;
 			float3 pColor = input[0].color;
-			float3 pHaloColor = input[0].haloColor;
+
+
+			float3 pHaloColor;
+
+			//update lifetime dependent variables
+			float currentLifetimeFactor = 1 - pLifetime.x / pLifetime.y;//since lifetime starts from zero to one instead of one to zero
+			int pHaloLifetimeCount = gHaloLifetimeCount;
+
+			for (int i = 1; i < pHaloLifetimeCount; ++i)
+			{
+				if (gHaloLifetimeBuffer[i].w > currentLifetimeFactor)
+				{
+					float4 c0 = gHaloLifetimeBuffer[i - 1];
+					float4 c1 = gHaloLifetimeBuffer[i];
+
+					float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
+
+					pHaloColor = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
+
+					//exit
+					break;
+				}
+			}
+
+
 
 			float3 pForward = normalize(_WorldSpaceCameraPos - pPosition);
 			float3 pRight = cross(pForward, lensUp);
@@ -126,7 +154,7 @@
 
 			float lifeFactor = input.lifetime.x / input.lifetime.y;
 
-			return float4(input.haloColor, 1);// float4(factor * input.color + (1 - factor) * input.haloColor, cosFactor);
+			return float4(factor * input.color + (1 - factor) * input.haloColor, cosFactor);
 		}
 			//return float4(factor * input.color + (1 - factor) * input.haloColor, cosFactor);// +float4(input.haloColor, cosRevFactor);
 
