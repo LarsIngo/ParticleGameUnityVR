@@ -6,13 +6,11 @@
 
 StructuredBuffer<float4> gPositionIN;
 StructuredBuffer<float4> gVelocityIN;
-StructuredBuffer<float4> gScaleIN;
 StructuredBuffer<float4> gAmbientIN;
 StructuredBuffer<float4> gLifetimeIN;
 
 RWStructuredBuffer<float4> gPositionOUT;
 RWStructuredBuffer<float4> gVelocityOUT;
-RWStructuredBuffer<float4> gScaleOUT;
 RWStructuredBuffer<float4> gAmbientOUT;
 RWStructuredBuffer<float4> gLifetimeOUT;
 
@@ -54,7 +52,6 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
     float3 pPosition = gPositionIN[tID].xyz;
     float3 pVelocity = gVelocityIN[tID].xyz;
-    float2 pScale = gScaleIN[tID].xy;
     float3 pAmbient = gAmbientIN[tID].xyz;
 
     // Update position.
@@ -143,7 +140,6 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
     gPositionOUT[tID] = float4(pPosition, 0);
     gVelocityOUT[tID] = float4(pVelocity, 0);
-    gScaleOUT[tID] = float4(pScale, 0, 0);
     gAmbientOUT[tID] = float4(pAmbient, 0);
     gLifetimeOUT[tID] = float4(pLifetime.xy, 0, 0);
 }
@@ -153,14 +149,12 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
 RWStructuredBuffer<float4> gPositionBuffer;
 RWStructuredBuffer<float4> gVelocityBuffer;
-RWStructuredBuffer<float4> gScaleBuffer;
 RWStructuredBuffer<float4> gAmbientBuffer;
 RWStructuredBuffer<float4> gLifetimeBuffer;
 
 uniform int gEmittIndex;
 uniform float3 gPosition;
 uniform float3 gVelocity;
-uniform float2 gScale;
 uniform float3 gAmbient;
 uniform float gLifetime;
 
@@ -182,7 +176,6 @@ void EMITT(uint3 id : SV_DispatchThreadID)
 
     gPositionBuffer[index] = float4(emittPosition, 0);
     gVelocityBuffer[index] = float4(gVelocity, 0);
-    gScaleBuffer[index] = float4(gScale, 0, 0);
     gAmbientBuffer[index] = float4(gAmbient, 0);
 
     float lifetime = gLifetime;
