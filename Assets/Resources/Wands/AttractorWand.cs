@@ -48,7 +48,7 @@ public class AttractorWand : MonoBehaviour {
         Vector4[] scaleControlpoints = { new Vector4(0.1f, 0.1f, 0, 0), new Vector4(0.1f, 0.1f, 0, 0.5f), new Vector4(0.1f, 0, 0.1f, 1) };
         system.ScaleLifetimePoints = scaleControlpoints;*/
 
-        Vector4[] transparencyControlpoints = { new Vector4(0.0f, 0, 0, 0), new Vector4(0.0f, 0, 0, 0.5f), new Vector4(1.0f, 0, 0, 1.0f) };
+        Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         system.TransparencyLifetimePoints = transparencyControlpoints;
 
         system.EmittInheritVelocity = true;
