@@ -48,7 +48,7 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
     float2 pLifetime = gLifetimeIN[tID].xy;
 
-    if (pLifetime.x < 0.01f) return;
+    if (pLifetime.x < -0.3f) return;
 
     float3 pPosition = gPositionIN[tID].xyz;
     float3 pVelocity = gVelocityIN[tID].xyz;
