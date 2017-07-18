@@ -116,7 +116,7 @@ public class GPUParticleSystem : MonoBehaviour
         sGPUParticleSphereColliderBuffer = new ComputeBuffer(sMaxSphereColliderCount, sizeof(float) * 4);
         sGPUColliderResultSwapBuffer = new SwapBuffer(2, sMaxGPUColliderCount, sizeof(int));
 
-        sMergedPositionBuffer = new SwapBuffer(2, 1, sizeof(float) * 4); // TMP WORK?
+        sMergedPositionBuffer = new SwapBuffer(2, 1, sizeof(float) * 4);
         sMergedVelocityBuffer = new SwapBuffer(2, 1, sizeof(float) * 4);
         sMergedLifetimeBuffer = new SwapBuffer(2, 1, sizeof(float) * 4);
 
@@ -383,7 +383,7 @@ public class GPUParticleSystem : MonoBehaviour
     {
         mEmittFrequency = mNewEmittFrequency;
         mEmittParticleLifetime = mNewmParticleLifetime;
-        mMaxParticleCount = Mathf.NextPowerOfTwo((int)Mathf.Ceil(mEmittFrequency * mEmittParticleLifetime));
+        mMaxParticleCount = (int)Mathf.Ceil(mEmittFrequency * mEmittParticleLifetime);  // TMP NO POWER OF 2?
         mLastPosition = transform.position;
         mColorLifetimePoints = mNewColorLifetimePoints;
         mHaloLifetimePoints = mNewHaloLifetimePoints;
@@ -709,22 +709,21 @@ public class GPUParticleSystem : MonoBehaviour
     // MERGE.
     private static void Merge()
     {
-        if (sMergedParticleCount != sTotalParticleCount)
+        if (sMergedParticleCount < sTotalParticleCount)
         {
+            sMergedParticleCount = Mathf.NextPowerOfTwo(sTotalParticleCount);
+
             // Resize buffers.
-            sMergedPositionBuffer.Resize(sTotalParticleCount);
-            sMergedVelocityBuffer.Resize(sTotalParticleCount);
-            sMergedLifetimeBuffer.Resize(sTotalParticleCount);
+            sMergedPositionBuffer.Resize(sMergedParticleCount);
+            sMergedVelocityBuffer.Resize(sMergedParticleCount);
+            sMergedLifetimeBuffer.Resize(sMergedParticleCount);
 
-            sMergedColorBuffer.Resize(sTotalParticleCount);
-            sMergedHaloBuffer.Resize(sTotalParticleCount);
-            sMergedScaleBuffer.Resize(sTotalParticleCount);
-            sMergedTransperancyBuffer.Resize(sTotalParticleCount);
+            sMergedColorBuffer.Resize(sMergedParticleCount);
+            sMergedHaloBuffer.Resize(sMergedParticleCount);
+            sMergedScaleBuffer.Resize(sMergedParticleCount);
+            sMergedTransperancyBuffer.Resize(sMergedParticleCount);
 
-            sSortElementSwapBuffer.Resize(sTotalParticleCount);
-
-            // Update Merged Particle Count.
-            sMergedParticleCount = sTotalParticleCount;
+            sSortElementSwapBuffer.Resize(sMergedParticleCount);
         }
 
         // SET BUFFERS.
@@ -738,10 +737,11 @@ public class GPUParticleSystem : MonoBehaviour
 
         sComputeShader.SetBuffer(sKernelMergeInitSort, "gSortElementBufferOUT", sSortElementSwapBuffer.GetOutputBuffer());
 
-        int offset = 0;
+
         Vector3 cForward = Camera.main.transform.forward;
         sComputeShader.SetFloats("gCameraForward", new float[] { cForward.x, cForward.y, cForward.z });
 
+        int offset = 0;
         foreach (KeyValuePair<GPUParticleSystem,GPUParticleSystem> it in sGPUParticleSystemDictionary)
         {
             GPUParticleSystem system = it.Value;
@@ -766,8 +766,8 @@ public class GPUParticleSystem : MonoBehaviour
     // SORT.
     private static void Sort()
     {
-        Debug.Assert(sTotalParticleCount == sMergedParticleCount);
-        Debug.Assert(Mathf.IsPowerOfTwo(sTotalParticleCount)); // TMP TODO mParticles not power of 2, only merged need power of 2.
+        Debug.Assert(sTotalParticleCount <= sMergedParticleCount);
+        Debug.Assert(Mathf.IsPowerOfTwo(sMergedParticleCount));
 
         // DISPATCH SORT BUFFER.
         for (int k = 2; k <= sMergedParticleCount; k <<= 1) // Major steps.
@@ -810,7 +810,7 @@ public class GPUParticleSystem : MonoBehaviour
         sRenderMaterial.SetBuffer("gSortedParticleIndexBuffer", sSortElementSwapBuffer.GetOutputBuffer());
 
         // DRAW.
-        Graphics.DrawProcedural(MeshTopology.Points, sMergedParticleCount, 1);
+        Graphics.DrawProcedural(MeshTopology.Points, sTotalParticleCount, 1);
     }
 
     public int Count { get { return mMaxParticleCount; } }
