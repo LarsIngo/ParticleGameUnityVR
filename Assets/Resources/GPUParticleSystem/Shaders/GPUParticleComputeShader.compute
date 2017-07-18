@@ -20,16 +20,28 @@ uniform float gDeltaTime;
 uniform float3 gConstantAcceleration;
 uniform float gConstantDrag;
 
+struct Attractor
+{
+
+    float3 mPosition;
+    float mPower;
+    float mMin;
+    float mMax;
+    float2 padding;
+
+};
+
 uniform int gAttractorCount;
-StructuredBuffer<float4> gAttractorBuffer;
+StructuredBuffer<Attractor> gAttractorBuffer;
 
 
 struct VectorField
 {
 
     float3 mPosition;
-    float mRadius;
-    float4 mVector;
+    float3 mVector;
+    float mMin;
+    float mMax;
 
 };
 uniform int gVectorFieldCount;
@@ -69,14 +81,16 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     int attractorCount = gAttractorCount;
     for (int i = 0; i < attractorCount; ++i)
     {
-        float4 attractor = gAttractorBuffer[i];
-        float3 aPosition = attractor.xyz;
-        float aPower = attractor.w;
+        Attractor attractor = gAttractorBuffer[i];
+        float3 aPosition = attractor.mPosition;
+        float aPower = attractor.mPower;
+        float aMin = attractor.mMin;
+        float aMax = attractor.mMax;
 
         float3 acceleratorDirection = aPosition - pPosition;
         float distance = length(acceleratorDirection);
 
-        if (distance > 0.1f)
+        if (distance > aMin && distance < aMax)
         {
             acceleratorDirection = normalize(acceleratorDirection);
 
@@ -93,15 +107,15 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
     {
         VectorField vectorField = gVectorFieldBuffer[i];
         float3 vPosition = vectorField.mPosition;
-        float vRadius = vectorField.mRadius;
-        float3 vVector = vectorField.mVector.xyz;
+        float3 vVector = vectorField.mVector;
+        float vMin = vectorField.mMin;
+        float vMax = vectorField.mMax;
 
         float3 vectorFieldDirection = vPosition - pPosition;
         float distance = length(vectorFieldDirection);
 
-        if(distance < vRadius)
+        if(distance > vMin && distance < vMax)
         {
-        
             pVelocity = pVelocity + vVector * dt;
         }
     }
