@@ -8,9 +8,10 @@ public class DebugSceneMain : MonoBehaviour
     //GameObject emitter;
     //https://gist.github.com/mre/1392067#file-bitonic_sort-cu-L50
 
-    const int THREADS = 2; // 2^9
-    const int BLOCKS = 2; // 2^15
-    const int NUM_VALS = THREADS * BLOCKS;
+    const int MAX_NUM_VALS = 4;
+    const int PARTICLE_COUNT = 4;
+    const int THREADS = MAX_NUM_VALS; // 2^9
+    const int BLOCKS = 1; // 2^15
 
     struct SORTELEMENT
     {
@@ -18,113 +19,136 @@ public class DebugSceneMain : MonoBehaviour
         public int mIndex;
     }
 
-    SORTELEMENT[] dev_values = new SORTELEMENT[NUM_VALS];
-    Vector3[] particles = new Vector3[NUM_VALS];
+    SORTELEMENT[] dev_values = new SORTELEMENT[MAX_NUM_VALS];
+    Vector3[] particles = new Vector3[MAX_NUM_VALS];
 
-    void Start()
+    void CPU()
     {
-        //emitter = new GameObject("emitter");
-        //emitter.transform.position = new Vector3(0,0,5);
-        //GPUParticleSystem system = emitter.AddComponent<GPUParticleSystem>();
-        //system.EmittFrequency = 10.0f;
-        //system.EmittParticleLifeTime = 5.0f;
-
-        //GameObject attractor = new GameObject("attractor");
-        //attractor.transform.position = new Vector3(0, 0, 0);
-        //GPUParticleAttractor a = attractor.AddComponent<GPUParticleAttractor>();
-
-        //GameObject vf = new GameObject("vector field");
-        //vf.transform.position = new Vector3(5, 0, 5);
-        //GPUParticleVectorField b = vf.AddComponent<GPUParticleVectorField>();
-
-        //GameObject collider0 = new GameObject("collider0");
-        //collider0.transform.position = new Vector3(5, 0, 0);
-        //collider0.AddComponent<GPUParticleSphereCollider>();
-
-        //GameObject collider1 = new GameObject("collider1");
-        //collider1.transform.position = new Vector3(-5, 0, 0);
-        //collider1.AddComponent<GPUParticleSphereCollider>();
-
         // Fill array
-        for (int i = 0; i < NUM_VALS; ++i)
+        for (int i = 0; i < MAX_NUM_VALS; ++i)
         {
-            particles[i].x = Random.Range(0, 100);
-            particles[i].y = Random.Range(0, 100);
-            particles[i].z = Random.Range(0, 100);
-            dev_values[i].mValue = particles[i].z;
-            dev_values[i].mIndex = i;
+            if (i < PARTICLE_COUNT)
+            {
+                particles[i].x = Random.Range(0, 100);
+                particles[i].y = Random.Range(0, 100);
+                particles[i].z = i;//Random.Range(0, 100);
+                dev_values[i].mValue = particles[i].z;
+                dev_values[i].mIndex = i;
+            }
+        }
+
+        // Print array
+        Debug.Log("PREINIT");
+        for (int i = 0; i < MAX_NUM_VALS; ++i)
+        {
+            Debug.Log(i + " : " + dev_values[i].mValue);
+        }
+
+        // DISPATCH INIT
+        for (int tID = 0; tID < MAX_NUM_VALS; ++tID)
+        {
+            if (tID >= PARTICLE_COUNT)
+            {
+                Debug.Log("INIT");
+                dev_values[tID].mValue = float.MaxValue;
+            }
         }
 
         //// Print array
-        //Debug.Log("");
-        //for (int i = 0; i < NUM_VALS; ++i)
+        //Debug.Log("POSTINIT");
+        //for (int i = 0; i < MAX_NUM_VALS; ++i)
         //{
-        //    Debug.Log(i + " : " + dev_values[i]);
+        //    Debug.Log(i + " : " + dev_values[i].mValue);
         //}
 
         // Sort
         /* Major step */
-        for (int k = 2; k <= NUM_VALS; k <<= 1)
+        for (int k = 2; k <= MAX_NUM_VALS; k <<= 1)
         {
             /* Minor step */
             for (int j = k >> 1; j > 0; j = j >> 1)
             {
-                //bitonic_sort_step <<< blocks, threads >>> (dev_values, j, k);
-                Sort(j, k);
+                //Sort(j, k);
+                // DISPATCH SORT
+                for (int tID = 0; tID < MAX_NUM_VALS; ++tID)
+                {
+                    int i, ixj; // Sorting partners: i and ixj
+                    i = tID;
+                    ixj = i ^ j;
+
+                    // The threads with the lowest ids sort the array.
+                    if ((ixj) > i)
+                    {
+                        if ((i & k) == 0)
+                        {
+                            // Sort ascending
+                            if (dev_values[i].mValue > dev_values[ixj].mValue)
+                            {
+                                // exchange(i,ixj);
+                                SORTELEMENT temp = dev_values[i];
+                                dev_values[i] = dev_values[ixj];
+                                dev_values[ixj] = temp;
+                            }
+                        }
+                        else if ((i & k) != 0)
+                        {
+                            // Sort descending
+                            if (dev_values[i].mValue < dev_values[ixj].mValue)
+                            {
+                                // exchange(i,ixj);
+                                SORTELEMENT temp = dev_values[i];
+                                dev_values[i] = dev_values[ixj];
+                                dev_values[ixj] = temp;
+                            }
+                        }
+                    }
+                }
+
+                Debug.Log("------");
+                for (int i = 0; i < PARTICLE_COUNT; ++i)
+                {
+                    Debug.Log(i + " : " + dev_values[i].mValue);
+                }
+
             }
         }
 
         // Print array
         Debug.Log("Sorted");
-        for (int i = 0; i < NUM_VALS; ++i)
+        for (int i = 0; i < PARTICLE_COUNT; ++i)
         {
-            //Debug.Log(i + " : " + dev_values[i].value);
-            Debug.Log(i + " : " + particles[dev_values[i].mIndex]);
+            //Debug.Log(i + " : " + particles[dev_values[i].mIndex]);
+            Debug.Log(i + " : " + dev_values[i].mValue);
         }
-
     }
 
-    void Sort(int j, int k)
+    void Start()
     {
-        for (int tID = 0; tID < NUM_VALS; ++tID)
-        {
-            int i, ixj; // Sorting partners: i and ixj
-            i = tID;
-            ixj = i ^ j;
+        //for (int x = 0; x < 4; ++x)
+        //{
+        //    for (int y = 0; y < 4; ++y)
+        //    {
+        //        Debug.Log("(" + x + "," + y + ") ");
+        //        Debug.Log("x & y" + (x & y));
+        //        Debug.Log("x ^ y" + (x ^ y));
+        //    }
+        //}
 
-            // The threads with the lowest ids sort the array.
-            if ((ixj) > i)
-            {
-                if ((i & k) == 0)
-                {
-                    // Sort ascending
-                    if (dev_values[i].mValue > dev_values[ixj].mValue)
-                    {
-                        // exchange(i,ixj);
-                        SORTELEMENT temp = dev_values[i];
-                        dev_values[i] = dev_values[ixj];
-                        dev_values[ixj] = temp;
-                    }
-                }
-                if ((i & k) != 0)
-                {
-                    // Sort descending
-                    if (dev_values[i].mValue < dev_values[ixj].mValue)
-                    {
-                        // exchange(i,ixj);
-                        SORTELEMENT temp = dev_values[i];
-                        dev_values[i] = dev_values[ixj];
-                        dev_values[ixj] = temp;
-                    }
-                }
-            }
-        }
+        GPU();
     }
 	
 	void Update ()
     {
 
 
+    }
+
+    void GPU()
+    {
+        GameObject emitter = new GameObject("emitter");
+        GPUParticleSystem system = emitter.AddComponent<GPUParticleSystem>();
+        system.EmittParticleLifeTime = 4.0f;
+        system.EmittFrequency = 4.0f;
     }
 
 }
