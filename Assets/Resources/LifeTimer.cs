@@ -23,7 +23,7 @@ public class LifeTimer : MonoBehaviour {
 
         if (mLifeTime < 0.0f)
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
 	}
 }
