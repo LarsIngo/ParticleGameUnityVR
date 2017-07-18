@@ -51,7 +51,7 @@ public class Main : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space))
         {
-            Factory.CreateMichaelBayEffect(enemy1.GetComponent<MeshFilter>().mesh, enemy1.transform);
+            Factory.CreateMichaelBayEffect(enemy1.GetComponent<MeshFilter>().mesh, enemy1.transform, enemy1.GetComponent<Renderer>().material.color);
         }
 
         if (VrInput.LeftGrip())
