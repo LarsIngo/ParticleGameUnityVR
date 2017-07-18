@@ -792,7 +792,7 @@ public class GPUParticleSystem : MonoBehaviour
     // RENDER.
     private static void RenderSystem()
     {
-        Debug.Assert(sMergedParticleCount == sTotalParticleCount);
+        Debug.Assert(sTotalParticleCount <= sMergedParticleCount);
 
         sRenderMaterial.SetPass(0);
 

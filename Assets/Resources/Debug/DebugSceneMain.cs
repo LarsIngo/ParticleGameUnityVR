@@ -149,13 +149,13 @@ public class DebugSceneMain : MonoBehaviour
         emitter1.transform.position = new Vector3(2,0,0);
         GPUParticleSystem system1 = emitter1.AddComponent<GPUParticleSystem>();
         system1.EmittParticleLifeTime = 2;
-        system1.EmittFrequency = 2;
+        system1.EmittFrequency = 200;
 
         GameObject emitter2 = new GameObject("emitter2");
         emitter2.transform.position = new Vector3(-2, 0, 0);
         GPUParticleSystem system2 = emitter2.AddComponent<GPUParticleSystem>();
         system2.EmittParticleLifeTime = 2;
-        system2.EmittFrequency = 2;
+        system2.EmittFrequency = 300;
 
         //GameObject emitter3 = new GameObject("emitter3");
         //emitter3.transform.position = new Vector3(-4, 0, 0);
