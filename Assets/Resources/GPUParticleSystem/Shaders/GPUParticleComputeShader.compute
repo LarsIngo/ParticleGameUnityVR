@@ -226,4 +226,96 @@ void RESULT(uint3 id : SV_DispatchThreadID)
     }
 }
 
-ENDCG
+
+// SORT 
+struct SortElement
+{
+    float value;
+    int index;
+};
+
+StructuredBuffer<SortElement> gSortElementBufferIN;
+RWStructuredBuffer<SortElement> gSortElementBufferOUT;
+
+uniform int gOffsetIndex;
+uniform float3 gCameraForward;
+
+// InitSort kernel.
+#pragma kernel INITSORT
+
+[numthreads(64, 1, 1)]
+void INITSORT(uint3 id : SV_DispatchThreadID)
+{
+    int tID = (int)id.x;
+
+    if (tID >= gMaxParticleCount) return;
+
+    int offsetIndex = gOffsetIndex;
+
+    SortElement sortElement;
+    sortElement.value = dot(gPositionIN[tID].xyz, -gCameraForward); //Project particle positon on camera forward vector.
+    sortElement.index = tID;
+
+    gSortElementBufferOUT[tID + offsetIndex] = sortElement;
+}
+
+uniform int gJ;
+uniform int gK;
+
+// Sort kernel
+#pragma kernel SORT
+
+[numthreads(64, 1, 1)]
+void SORT(uint3 id : SV_DispatchThreadID)
+{
+    int tID = (int)id.x;
+
+    if (tID >= gMaxParticleCount) return; // Only true if count is less then block size.
+
+    // [Source] https://gist.github.com/mre/1392067#file-bitonic_sort-cu-L50
+
+    int j = gJ;
+    int k = gK;
+
+    // Sorting partners: i and ixj
+    int i = tID;
+    int ixj = (i^j);
+
+    //// The threads with the lowest ids sort the array.
+    if (i < ixj)
+    {
+        SortElement self = gSortElementBufferIN[i];
+        SortElement other = gSortElementBufferIN[ixj];
+
+        if ((i & k) == 0)
+        {
+            // Sort ascending
+            if (self.value > other.value)
+            {
+                // exchange(i,ixj);
+                gSortElementBufferOUT[i] = other;
+                gSortElementBufferOUT[ixj] = self;
+            }
+            else
+            {
+                gSortElementBufferOUT[i] = self;
+                gSortElementBufferOUT[ixj] = other;
+            }
+        }
+        else
+        {
+            // Sort descending
+            if (self.value < other.value)
+            {
+                // exchange(i,ixj);
+                gSortElementBufferOUT[i] = other;
+                gSortElementBufferOUT[ixj] = self;
+            }
+            else
+            {
+                gSortElementBufferOUT[i] = self;
+                gSortElementBufferOUT[ixj] = other;
+            }
+        }
+    }
+}

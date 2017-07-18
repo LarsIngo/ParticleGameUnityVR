@@ -26,6 +26,13 @@
 			StructuredBuffer<float4> gAmbient;
 			StructuredBuffer<float4> gLifetime;
 
+            struct SortElement
+            {
+                float value;
+                int index;
+            };
+            StructuredBuffer<SortElement> gSortedParticleIndexBuffer;
+
 			uniform int gColorLifetimeCount;
 			StructuredBuffer<float4> gColorLifetimeBuffer;
 
@@ -52,10 +59,13 @@
 			{
 				vsOutput output;
 
-				output.svPosition = float4(gPosition[vID].xyz, 1);
-				output.velocity = gVelocity[vID].xyz;
-				output.ambient = gAmbient[vID].xyz;
-				output.lifetime = gLifetime[vID].xy;
+                SortElement sortElement = gSortedParticleIndexBuffer[vID];
+                int index = sortElement.index;
+
+				output.svPosition = float4(gPosition[index].xyz, 1);
+				output.velocity = gVelocity[index].xyz;
+				output.ambient = gAmbient[index].xyz;
+				output.lifetime = gLifetime[index].xy;
 
 				return output;
 			}
