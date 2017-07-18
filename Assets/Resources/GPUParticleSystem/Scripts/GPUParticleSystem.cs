@@ -803,6 +803,9 @@ public class GPUParticleSystem : MonoBehaviour
         mRenderMaterial.SetBuffer("gAmbient", mAmbientBuffer.GetOutputBuffer());
         mRenderMaterial.SetBuffer("gLifetime", mLifetimeBuffer.GetOutputBuffer());
 
+        // BIND SORTED BUFFER AND USE AS INDEX BUFFER TO RENDER BACK TO FRONT.
+        mRenderMaterial.SetBuffer("gSortedParticleIndexBuffer", mSortElementSwapBuffer.GetOutputBuffer());
+
         // DRAW.
         Graphics.DrawProcedural(MeshTopology.Points, mMaxParticleCount, 1);
     }
