@@ -15,10 +15,26 @@ public static class Factory {
         exp.ExplosionColor = meshColor;
 
         GPUParticleAttractor attractor = michael.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 10.0f;
+        attractor.Power = 5.0f;
 
         LifeTimer lifetimer = michael.AddComponent<LifeTimer>();
         lifetimer.LifeTime = 1.2f;
+
+        GameObject particleDebris = new GameObject();
+
+        GPUParticleSystem particles = particleDebris.AddComponent<GPUParticleSystem>();
+        particles.EmittParticleLifeTime = 7.0f;
+        particles.EmittFrequency = 50.0f;
+        
+        particleDebris.AddComponent<LifeTimer>().LifeTime = 7.0f;
+        
+
+        Vector4 [] colorLife = new Vector4[2];
+        colorLife[0] = meshColor;
+        colorLife[1] = new Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+        particles.ColorLifetimePoints = colorLife;
+
+
 
 
 

@@ -12,7 +12,7 @@
 		#include "UnityCG.cginc"
 
 		uniform float gAmbientRed;
-		float gAmbientGreen;
+		uniform float gAmbientGreen;
 		uniform float gAmbientBlue;
 		uniform float gOffset;
 		

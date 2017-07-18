@@ -40,7 +40,6 @@ public class GeometryExplosion : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Awake()
     {
-
         this.gameObject.AddComponent<MeshFilter>();
         MeshRenderer renderer = this.gameObject.AddComponent<MeshRenderer>();
         
@@ -49,15 +48,14 @@ public class GeometryExplosion : MonoBehaviour
         
 
         renderer.material = mRenderMaterial;
-
         
 
         mCurrentOffset = 0.0f;
         
         mRenderMaterial.SetFloat("gOffset", mCurrentOffset);
         mRenderMaterial.SetFloat("gAmbientRed", 1.0f);
-        mRenderMaterial.SetFloat("gAmbientGreen", 0.1f);
-        mRenderMaterial.SetFloat("gAmbientBlue", 0.1f);
+        mRenderMaterial.SetFloat("gAmbientGreen", 1.0f);
+        mRenderMaterial.SetFloat("gAmbientBlue", 1.0f);
     }
 
     public void Explode()
@@ -71,7 +69,6 @@ public class GeometryExplosion : MonoBehaviour
         if (mActive)
         {
             mCurrentOffset += mExplosionSpeed * Time.deltaTime;
-
             
             mRenderMaterial.SetFloat("gOffset", mCurrentOffset);
             
