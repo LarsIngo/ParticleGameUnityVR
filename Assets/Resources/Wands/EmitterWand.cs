@@ -50,6 +50,7 @@ public class EmitterWand : MonoBehaviour {
     {
 
         mEmitDish = new GameObject("EmitDish");
+        mEmitDish.transform.parent = transform;
         mEmitDish.transform.localScale -= Vector3.up * 0.9f;
         TempVisuals(mEmitDish, PrimitiveType.Sphere, Color.black);
 
