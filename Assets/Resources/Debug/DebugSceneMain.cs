@@ -6,13 +6,20 @@ public class DebugSceneMain : MonoBehaviour
 {
 
     //GameObject emitter;
+    //https://gist.github.com/mre/1392067#file-bitonic_sort-cu-L50
 
     const int THREADS = 2; // 2^9
     const int BLOCKS = 2; // 2^15
     const int NUM_VALS = THREADS * BLOCKS;
-    float[] dev_values = new float[NUM_VALS];
 
-    //Vector3[] valueArray = new Vector3[NUM_VALS];
+    struct SORTELEMENT
+    {
+        public float mValue;
+        public int mIndex;
+    }
+
+    SORTELEMENT[] dev_values = new SORTELEMENT[NUM_VALS];
+    Vector3[] particles = new Vector3[NUM_VALS];
 
     void Start()
     {
@@ -41,7 +48,11 @@ public class DebugSceneMain : MonoBehaviour
         // Fill array
         for (int i = 0; i < NUM_VALS; ++i)
         {
-            dev_values[i] = Random.Range(0, 100);
+            particles[i].x = Random.Range(0, 100);
+            particles[i].y = Random.Range(0, 100);
+            particles[i].z = Random.Range(0, 100);
+            dev_values[i].mValue = particles[i].z;
+            dev_values[i].mIndex = i;
         }
 
         //// Print array
@@ -67,7 +78,8 @@ public class DebugSceneMain : MonoBehaviour
         Debug.Log("Sorted");
         for (int i = 0; i < NUM_VALS; ++i)
         {
-            Debug.Log(i + " : " + dev_values[i]);
+            //Debug.Log(i + " : " + dev_values[i].value);
+            Debug.Log(i + " : " + particles[dev_values[i].mIndex]);
         }
 
     }
@@ -86,10 +98,10 @@ public class DebugSceneMain : MonoBehaviour
                 if ((i & k) == 0)
                 {
                     // Sort ascending
-                    if (dev_values[i] > dev_values[ixj])
+                    if (dev_values[i].mValue > dev_values[ixj].mValue)
                     {
                         // exchange(i,ixj);
-                        float temp = dev_values[i];
+                        SORTELEMENT temp = dev_values[i];
                         dev_values[i] = dev_values[ixj];
                         dev_values[ixj] = temp;
                     }
@@ -97,10 +109,10 @@ public class DebugSceneMain : MonoBehaviour
                 if ((i & k) != 0)
                 {
                     // Sort descending
-                    if (dev_values[i] < dev_values[ixj])
+                    if (dev_values[i].mValue < dev_values[ixj].mValue)
                     {
                         // exchange(i,ixj);
-                        float temp = dev_values[i];
+                        SORTELEMENT temp = dev_values[i];
                         dev_values[i] = dev_values[ixj];
                         dev_values[ixj] = temp;
                     }
