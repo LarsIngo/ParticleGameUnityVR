@@ -134,12 +134,12 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.Dispatch(sKernelResult, (int)Mathf.Ceil(sMaxSphereColliderCount / 64.0f), 1, 1);
         }
 
-        // GET DATA FRPM GPU TO CPU.
+        // GET DATA FROM GPU TO CPU.
         int[] collisionData = new int[sphereColliderList.Count];
         sGPUColliderResultSwapBuffer.GetOutputBuffer().GetData(collisionData);
 
         // UPDATE COLLIDERS.
-        for(int i = 0; i < sphereColliderList.Count; ++i)
+        for (int i = 0; i < sphereColliderList.Count; ++i)
         {
             GPUParticleSphereCollider collider = sphereColliderList[i];
             collider.SetCollisionsThisFrame(collisionData[i]);
@@ -668,17 +668,26 @@ public class GPUParticleSystem : MonoBehaviour
         {
             Debug.Assert(sphereColliderList.Count < sMaxSphereColliderCount);
 
+            // Reset result buffer.
+            int[] resetArray = new int[sphereColliderList.Count];
+            for (int i = 0; i < sphereColliderList.Count; ++i)
+            {
+                resetArray[i] = 0;
+            }
+            mSphereColliderResultBuffer.SetData(resetArray);
+
+            // Update sphere collider buffer.
             float[] sphereColliderArray = new float[sphereColliderList.Count * 4];
             for (int i = 0, j = 0; i < sphereColliderList.Count; ++i)
             {
                 GPUParticleSphereCollider sphereCollider = sphereColliderList[i];
 
-                float scale = Mathf.Max(Mathf.Max(sphereCollider.transform.localScale.x, sphereCollider.transform.localScale.y), sphereCollider.transform.localScale.z);
+                float scale = Mathf.Max(Mathf.Max(sphereCollider.transform.lossyScale.x, sphereCollider.transform.lossyScale.y), sphereCollider.transform.lossyScale.z);
 
                 sphereColliderArray[j++] = sphereCollider.transform.position.x;
                 sphereColliderArray[j++] = sphereCollider.transform.position.y;
                 sphereColliderArray[j++] = sphereCollider.transform.position.z;
-                sphereColliderArray[j++] = scale;
+                sphereColliderArray[j++] = scale * sphereCollider.Radius;
             }
 
             sGPUParticleSphereColliderBuffer.SetData(sphereColliderArray);
