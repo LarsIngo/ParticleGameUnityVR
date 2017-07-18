@@ -44,6 +44,8 @@ public class EmitterWand : MonoBehaviour {
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         system.TransparencyLifetimePoints = transparencyControlpoints;
 
+        mEmitDish.transform.localScale *= 0.2f;
+
     }
 
     void InitGameObjects()
