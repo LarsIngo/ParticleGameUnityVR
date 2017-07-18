@@ -107,6 +107,7 @@ public class AttractorWand : MonoBehaviour {
                 trigger = VrInput.RightTrigger();
             else trigger = VrInput.LeftTrigger();
 
+            
             attractor.Power = power * trigger;
 
             if (trigger == 1.0f)

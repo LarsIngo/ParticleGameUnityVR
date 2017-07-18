@@ -31,11 +31,14 @@ public static class Factory {
 
         Vector4 [] colorLife = new Vector4[2];
         colorLife[0] = meshColor;
-        colorLife[1] = new Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+        colorLife[1] = new Vector4(1.0f, 1.0f, 1.0f, 0.0f);
         particles.ColorLifetimePoints = colorLife;
 
 
-
+        Vector4[] scaleLife = new Vector4[2];
+        scaleLife[0] = new Vector4(0.01f, 0.01f, 0.0f, 0.0f);
+        scaleLife[1] = new Vector4(0.001f, 0.001f, 0.0f, 1.0f);
+        particles.ScaleLifetimePoints = scaleLife;
 
 
         exp.Explode();
