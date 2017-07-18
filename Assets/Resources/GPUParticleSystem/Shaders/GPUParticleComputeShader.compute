@@ -284,7 +284,7 @@ void EMITT(uint3 id : SV_DispatchThreadID)
 }
 
 
-// Update kernel
+// Result kernel
 #pragma kernel RESULT
 
 StructuredBuffer<int> gGPUColliderResultBufferIN;
@@ -316,6 +316,24 @@ void RESULT(uint3 id : SV_DispatchThreadID)
     }
 }
 
+// Merge particles to one buffer and add sort value to sort buffer.
+#pragma kernel MERGE_INITSORT
+
+StructuredBuffer<float4> gLocalSystemPositionIN;
+StructuredBuffer<float4> gLocalSystemVelocityIN;
+StructuredBuffer<float4> gLocalSystemLifetimeIN;
+StructuredBuffer<float4> gLocalSystemColorIN;
+StructuredBuffer<float4> gLocalSystemHaloIN;
+StructuredBuffer<float4> gLocalSystemScaleIN;
+StructuredBuffer<float4> gLocalSystemTransperancyIN;
+
+RWStructuredBuffer<float4> mergePositionOUT;
+RWStructuredBuffer<float4> mergeVelocityOUT;
+RWStructuredBuffer<float4> mergeLifetimeOUT;
+RWStructuredBuffer<float4> mergeColorOUT;
+RWStructuredBuffer<float4> mergeHaloOUT;
+RWStructuredBuffer<float4> mergeScaleOUT;
+RWStructuredBuffer<float4> mergeTransperancyOUT;
 
 // SORT 
 struct SortElement
@@ -323,37 +341,43 @@ struct SortElement
     float value;
     int index;
 };
-
 StructuredBuffer<SortElement> gSortElementBufferIN;
 RWStructuredBuffer<SortElement> gSortElementBufferOUT;
 
+uniform int gLocalParticleCount;
 uniform int gOffsetIndex;
 uniform float3 gCameraForward;
 
-// InitSort kernel.
-#pragma kernel INITSORT
-
 [numthreads(64, 1, 1)]
-void INITSORT(uint3 id : SV_DispatchThreadID)
+void MERGE_INITSORT(uint3 id : SV_DispatchThreadID)
 {
     int tID = (int)id.x;
 
-    if (tID >= gMaxParticleCount) return;
+    if (tID >= gLocalParticleCount) return;
 
     int offsetIndex = gOffsetIndex;
 
-    SortElement sortElement;
-    sortElement.value = dot(gPositionIN[tID].xyz, -gCameraForward); //Project particle positon on camera forward vector.
-    sortElement.index = tID;
+    float4 positionIN = gLocalSystemPositionIN[tID + offsetIndex];
+    mergePositionOUT[tID + offsetIndex] = positionIN;
+    mergeVelocityOUT[tID + offsetIndex] = gLocalSystemVelocityIN[tID];
+    mergeLifetimeOUT[tID + offsetIndex] = gLocalSystemLifetimeIN[tID];
+    mergeColorOUT[tID + offsetIndex] = gLocalSystemColorIN[tID];
+    mergeHaloOUT[tID + offsetIndex] = gLocalSystemHaloIN[tID];
+    mergeScaleOUT[tID + offsetIndex] = gLocalSystemScaleIN[tID];
+    mergeTransperancyOUT[tID + offsetIndex] = gLocalSystemTransperancyIN[tID];
 
+    SortElement sortElement;
+    sortElement.value = dot(positionIN.xyz, -gCameraForward); //Project particle positon on camera forward vector.
+    sortElement.index = tID + offsetIndex;
     gSortElementBufferOUT[tID + offsetIndex] = sortElement;
 }
 
-uniform int gJ;
-uniform int gK;
 
 // Sort kernel
 #pragma kernel SORT
+
+uniform int gJ;
+uniform int gK;
 
 [numthreads(64, 1, 1)]
 void SORT(uint3 id : SV_DispatchThreadID)
