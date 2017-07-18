@@ -357,7 +357,7 @@ void MERGE_INITSORT(uint3 id : SV_DispatchThreadID)
 
     int offsetIndex = gOffsetIndex;
 
-    float4 positionIN = gLocalSystemPositionIN[tID + offsetIndex];
+    float4 positionIN = gLocalSystemPositionIN[tID];
     mergePositionOUT[tID + offsetIndex] = positionIN;
     mergeVelocityOUT[tID + offsetIndex] = gLocalSystemVelocityIN[tID];
     mergeLifetimeOUT[tID + offsetIndex] = gLocalSystemLifetimeIN[tID];
