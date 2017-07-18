@@ -37,6 +37,7 @@ public class GPUParticleSystem : MonoBehaviour
         public int mVertexCount;
         public ComputeBuffer mIndexBuffer;
         public int mIndexCount;
+        public ComputeBuffer mMatrixBuffer;
     }
 
     /// --- STRUCTS --- ///
@@ -50,6 +51,7 @@ public class GPUParticleSystem : MonoBehaviour
     static int sKernelUpdate = -1;
     static int sKernelEmitt = -1;
     static int sKernelResult = -1;
+    static int sKernelTransform = -1;
     static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
 
     static ComputeBuffer sGPUParticleAttractorBuffer = null;
@@ -128,6 +130,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelResult, "gSphereColliderResultBufferREAD", system.GetSphereColliderResultBuffer());
 
             sComputeShader.SetBool("gInitZero", initZero);
+            
             initZero = false;
 
             // DISPATCH.
@@ -360,6 +363,7 @@ public class GPUParticleSystem : MonoBehaviour
         if (sEmittMeshInfoDictionary.ContainsKey(mEmittMesh)) return;
 
         Vector3[] vertices = mEmittMesh.vertices;
+
         int[] indices = mEmittMesh.triangles;
 
         // Create new emitt mesh info from mesh.
@@ -498,7 +502,7 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     // EMITT UPDATE.
-    private void EmittUppdate()
+    private void EmittUpdate()
     {
         // Update timer.
         mEmittTimer += Time.deltaTime;
@@ -546,14 +550,15 @@ public class GPUParticleSystem : MonoBehaviour
             {
                 Debug.Assert(sEmittMeshInfoDictionary.ContainsKey(mEmittMesh));
 
-                // Set index and vertex buffer.
                 EmittMeshInfo emittMeshInfo = sEmittMeshInfoDictionary[mEmittMesh];
+
+                // Set index and vertex buffer.
                 sComputeShader.SetBuffer(sKernelEmitt, "gEmittMeshVertexBuffer", emittMeshInfo.mVertexBuffer);
                 sComputeShader.SetBuffer(sKernelEmitt, "gEmittMeshIndexBuffer", emittMeshInfo.mIndexBuffer);
                 sComputeShader.SetInt("gEmittMeshVertexCount", emittMeshInfo.mVertexCount);
                 sComputeShader.SetInt("gEmittMeshIndexCount", emittMeshInfo.mIndexCount);
                 sComputeShader.SetInt("gEmittMeshRandomIndex", Random.Range(0, emittMeshInfo.mIndexCount - 1));
-                sComputeShader.SetFloats("gEmittMeshScale", new float[] { transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z });
+                sComputeShader.SetFloats("gEmittMeshScale", new float[] { transform.localScale.x, transform.localScale.y, transform.localScale.z });
             }
             
             // DISPATCH.
@@ -607,7 +612,7 @@ public class GPUParticleSystem : MonoBehaviour
             foreach (KeyValuePair<GPUParticleAttractor, GPUParticleAttractor> it in attractorDictionary)
             {
                 GPUParticleAttractor attractor = it.Value;
-                float scale = Mathf.Max(Mathf.Max(attractor.transform.lossyScale.x, attractor.transform.lossyScale.y), attractor.transform.lossyScale.z);
+                float scale = Mathf.Max(Mathf.Max(attractor.transform.localScale.x, attractor.transform.localScale.y), attractor.transform.localScale.z);
 
                 attractorArray[i++] = attractor.transform.position.x;
                 attractorArray[i++] = attractor.transform.position.y;
@@ -639,7 +644,7 @@ public class GPUParticleSystem : MonoBehaviour
             foreach (KeyValuePair<GPUParticleVectorField, GPUParticleVectorField> it in vectorFieldDictionary)
             {
                 GPUParticleVectorField vectorField = it.Value;
-                float scale = Mathf.Max(Mathf.Max(vectorField.transform.lossyScale.x, vectorField.transform.lossyScale.y), vectorField.transform.lossyScale.z);
+                float scale = Mathf.Max(Mathf.Max(vectorField.transform.localScale.x, vectorField.transform.localScale.y), vectorField.transform.localScale.z);
                 Vector3 vector = vectorField.RelativeVectorField ? vectorField.VectorRelative : vectorField.Vector;
 
                 vectorFieldArray[i++] = vectorField.transform.position.x;
@@ -682,7 +687,7 @@ public class GPUParticleSystem : MonoBehaviour
             {
                 GPUParticleSphereCollider sphereCollider = sphereColliderList[i];
 
-                float scale = Mathf.Max(Mathf.Max(sphereCollider.transform.lossyScale.x, sphereCollider.transform.lossyScale.y), sphereCollider.transform.lossyScale.z);
+                float scale = Mathf.Max(Mathf.Max(sphereCollider.transform.localScale.x, sphereCollider.transform.localScale.y), sphereCollider.transform.localScale.z);
 
                 sphereColliderArray[j++] = sphereCollider.transform.position.x;
                 sphereColliderArray[j++] = sphereCollider.transform.position.y;
@@ -699,6 +704,27 @@ public class GPUParticleSystem : MonoBehaviour
 
         // DISPATCH.
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
+    }
+
+    private void UpdateVertexBuffers()
+    {
+
+        if (mEmittMesh)
+        {
+
+            Vector3[] vertices = mEmittMesh.vertices;
+
+            for (int i = 0; i < vertices.Length; i++)
+            {
+
+                vertices[i] = transform.localToWorldMatrix.MultiplyPoint3x4(vertices[i]);
+
+            }
+
+            sEmittMeshInfoDictionary[mEmittMesh].mVertexBuffer.SetData(vertices);
+
+        }
+
     }
 
     // RENDER.
@@ -729,8 +755,12 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Update()
     {
+
         // Used to make static function get called once in LateUpdate();
         sLateUpdate = true;
+
+        //Update the vertex buffers to match the current transform.
+        UpdateVertexBuffers();
 
         // Update buffers if needed (updated).
         if (mApply)
@@ -738,7 +768,7 @@ public class GPUParticleSystem : MonoBehaviour
 
         // Emitt new particles this frame if active.
         if (mActive)
-            EmittUppdate();
+            EmittUpdate();
 
         // Update particles this frame.
         UpdateSystem();

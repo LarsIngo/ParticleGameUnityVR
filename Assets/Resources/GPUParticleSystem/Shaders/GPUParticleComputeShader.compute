@@ -194,9 +194,9 @@ void EMITT(uint3 id : SV_DispatchThreadID)
 {
     int index = gEmittIndex;
 
-    float3 emittPosition = gPosition;
+    float3 emittPosition = float3(0,0,0);
     if (gEmittMeshIndexCount > 0)
-        emittPosition += gEmittMeshVertexBuffer[gEmittMeshIndexBuffer[gEmittMeshRandomIndex]] * gEmittMeshScale;
+        emittPosition = gEmittMeshVertexBuffer[gEmittMeshIndexBuffer[gEmittMeshRandomIndex]];
 
     gPositionBuffer[index] = float4(emittPosition, 0);
     gVelocityBuffer[index] = float4(gVelocity, 0);

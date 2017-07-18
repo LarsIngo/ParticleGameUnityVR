@@ -9,7 +9,7 @@ public class VrInput : MonoBehaviour {
 
     static SteamVR_TrackedObject leftController;
     static SteamVR_TrackedObject rightController;
-    public static bool controllersFound { get { return leftController.isActiveAndEnabled && rightController.isActiveAndEnabled; } }
+    public static bool controllersFound { get { return leftController.isActiveAndEnabled && rightController.isActiveAndEnabled && leftController && SteamVR.connected[0]; } }
 
     // Use this for initialization
     void Start () {
