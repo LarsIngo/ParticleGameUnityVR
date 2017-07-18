@@ -253,7 +253,7 @@ void INITSORT(uint3 id : SV_DispatchThreadID)
     int offsetIndex = gOffsetIndex;
 
     SortElement sortElement;
-    sortElement.value = gPositionIN[tID].z;//;dot(gPositionIN[tID].xyz, gCameraForward); //TMP
+    sortElement.value = dot(gPositionIN[tID].xyz, -gCameraForward); //Project particle positon on camera forward vector.
     sortElement.index = tID;
 
     gSortElementBufferOUT[tID + offsetIndex] = sortElement;
