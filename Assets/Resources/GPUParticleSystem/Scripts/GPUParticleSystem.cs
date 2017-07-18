@@ -37,6 +37,7 @@ public class GPUParticleSystem : MonoBehaviour
         public int mVertexCount;
         public ComputeBuffer mIndexBuffer;
         public int mIndexCount;
+        public ComputeBuffer mMatrixBuffer;
     }
 
     private struct SortElement
@@ -58,6 +59,7 @@ public class GPUParticleSystem : MonoBehaviour
     static int sKernelResult = -1;
     static int sKernelInitSort = -1;
     static int sKernelSort = -1;
+
     static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
 
     static ComputeBuffer sGPUParticleAttractorBuffer = null;
@@ -87,7 +89,7 @@ public class GPUParticleSystem : MonoBehaviour
         sKernelInitSort = sComputeShader.FindKernel("INITSORT");
         sKernelSort = sComputeShader.FindKernel("SORT");
         sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
-        sGPUParticleAttractorBuffer = new ComputeBuffer(sMaxAttractorCount, sizeof(float) * 4);
+        sGPUParticleAttractorBuffer = new ComputeBuffer(sMaxAttractorCount, sizeof(float) * 8);
         sGPUParticleVectorFieldBuffer = new ComputeBuffer(sMaxVectorFieldCount, sizeof(float) * 8);
         sGPUParticleSphereColliderBuffer = new ComputeBuffer(sMaxSphereColliderCount, sizeof(float) * 4);
         sGPUColliderResultSwapBuffer = new SwapBuffer(2, sMaxGPUColliderCount, sizeof(int));
@@ -141,6 +143,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelResult, "gSphereColliderResultBufferREAD", system.GetSphereColliderResultBuffer());
 
             sComputeShader.SetBool("gInitZero", initZero);
+            
             initZero = false;
 
             // DISPATCH.
@@ -376,6 +379,7 @@ public class GPUParticleSystem : MonoBehaviour
         if (sEmittMeshInfoDictionary.ContainsKey(mEmittMesh)) return;
 
         Vector3[] vertices = mEmittMesh.vertices;
+
         int[] indices = mEmittMesh.triangles;
 
         // Create new emitt mesh info from mesh.
@@ -519,7 +523,7 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     // EMITT UPDATE.
-    private void EmittUppdate()
+    private void EmittUpdate()
     {
         // Update timer.
         mEmittTimer += Time.deltaTime;
@@ -567,14 +571,15 @@ public class GPUParticleSystem : MonoBehaviour
             {
                 Debug.Assert(sEmittMeshInfoDictionary.ContainsKey(mEmittMesh));
 
-                // Set index and vertex buffer.
                 EmittMeshInfo emittMeshInfo = sEmittMeshInfoDictionary[mEmittMesh];
+
+                // Set index and vertex buffer.
                 sComputeShader.SetBuffer(sKernelEmitt, "gEmittMeshVertexBuffer", emittMeshInfo.mVertexBuffer);
                 sComputeShader.SetBuffer(sKernelEmitt, "gEmittMeshIndexBuffer", emittMeshInfo.mIndexBuffer);
                 sComputeShader.SetInt("gEmittMeshVertexCount", emittMeshInfo.mVertexCount);
                 sComputeShader.SetInt("gEmittMeshIndexCount", emittMeshInfo.mIndexCount);
                 sComputeShader.SetInt("gEmittMeshRandomIndex", Random.Range(0, emittMeshInfo.mIndexCount - 1));
-                sComputeShader.SetFloats("gEmittMeshScale", new float[] { transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z });
+                sComputeShader.SetFloats("gEmittMeshScale", new float[] { transform.localScale.x, transform.localScale.y, transform.localScale.z });
             }
             
             // DISPATCH.
@@ -623,16 +628,21 @@ public class GPUParticleSystem : MonoBehaviour
         {
             Debug.Assert(attractorDictionary.Count < sMaxAttractorCount);
 
-            float[] attractorArray = new float[attractorDictionary.Count * 4];
+            float[] attractorArray = new float[attractorDictionary.Count * 8];
             int i = 0;
             foreach (KeyValuePair<GPUParticleAttractor, GPUParticleAttractor> it in attractorDictionary)
             {
                 GPUParticleAttractor attractor = it.Value;
+                float scale = Mathf.Max(Mathf.Max(attractor.transform.localScale.x, attractor.transform.localScale.y), attractor.transform.localScale.z);
 
                 attractorArray[i++] = attractor.transform.position.x;
                 attractorArray[i++] = attractor.transform.position.y;
                 attractorArray[i++] = attractor.transform.position.z;
                 attractorArray[i++] = attractor.Power;
+                attractorArray[i++] = scale * attractor.Min;
+                attractorArray[i++] = scale * attractor.Max;
+                attractorArray[i++] = 0.0f; //Padding
+                attractorArray[i++] = 0.0f; //Padding
             }
             sGPUParticleAttractorBuffer.SetData(attractorArray);
 
@@ -655,17 +665,17 @@ public class GPUParticleSystem : MonoBehaviour
             foreach (KeyValuePair<GPUParticleVectorField, GPUParticleVectorField> it in vectorFieldDictionary)
             {
                 GPUParticleVectorField vectorField = it.Value;
-                float scale = Mathf.Max(Mathf.Max(vectorField.transform.lossyScale.x, vectorField.transform.lossyScale.y), vectorField.transform.lossyScale.z);
+                float scale = Mathf.Max(Mathf.Max(vectorField.transform.localScale.x, vectorField.transform.localScale.y), vectorField.transform.localScale.z);
                 Vector3 vector = vectorField.RelativeVectorField ? vectorField.VectorRelative : vectorField.Vector;
 
                 vectorFieldArray[i++] = vectorField.transform.position.x;
                 vectorFieldArray[i++] = vectorField.transform.position.y;
                 vectorFieldArray[i++] = vectorField.transform.position.z;
-                vectorFieldArray[i++] = scale * vectorField.Radius;
                 vectorFieldArray[i++] = vector.x;
                 vectorFieldArray[i++] = vector.y;
                 vectorFieldArray[i++] = vector.z;
-                vectorFieldArray[i++] = 0.0f;
+                vectorFieldArray[i++] = scale * vectorField.Min;
+                vectorFieldArray[i++] = scale * vectorField.Max;
 
             }
             sGPUParticleVectorFieldBuffer.SetData(vectorFieldArray);
@@ -698,7 +708,7 @@ public class GPUParticleSystem : MonoBehaviour
             {
                 GPUParticleSphereCollider sphereCollider = sphereColliderList[i];
 
-                float scale = Mathf.Max(Mathf.Max(sphereCollider.transform.lossyScale.x, sphereCollider.transform.lossyScale.y), sphereCollider.transform.lossyScale.z);
+                float scale = Mathf.Max(Mathf.Max(sphereCollider.transform.localScale.x, sphereCollider.transform.localScale.y), sphereCollider.transform.localScale.z);
 
                 sphereColliderArray[j++] = sphereCollider.transform.position.x;
                 sphereColliderArray[j++] = sphereCollider.transform.position.y;
@@ -717,7 +727,27 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.Dispatch(sKernelUpdate, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
     }
 
+    private void UpdateVertexBuffers()
+    {
 
+        if (mEmittMesh)
+        {
+
+            Vector3[] vertices = mEmittMesh.vertices;
+
+            for (int i = 0; i < vertices.Length; i++)
+            {
+
+                vertices[i] = transform.localToWorldMatrix.MultiplyPoint3x4(vertices[i]);
+
+            }
+
+            sEmittMeshInfoDictionary[mEmittMesh].mVertexBuffer.SetData(vertices);
+
+        }
+
+    }
+    
     // SORT.
     private void Sort()
     {
@@ -783,8 +813,12 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Update()
     {
+
         // Used to make static function get called once in LateUpdate();
         sLateUpdate = true;
+
+        //Update the vertex buffers to match the current transform.
+        UpdateVertexBuffers();
 
         // Update buffers if needed (updated).
         if (mApply)
@@ -792,7 +826,7 @@ public class GPUParticleSystem : MonoBehaviour
 
         // Emitt new particles this frame if active.
         if (mActive)
-            EmittUppdate();
+            EmittUpdate();
 
         // Update particles this frame.
         UpdateSystem();

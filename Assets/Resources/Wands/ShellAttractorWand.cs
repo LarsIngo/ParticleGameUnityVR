@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttractorWand : MonoBehaviour {
+public class ShellAttractorWand : MonoBehaviour
+{
 
     GameObject mWandGO;
 
@@ -10,45 +11,24 @@ public class AttractorWand : MonoBehaviour {
 
     GameObject mTipGO;
     GPUParticleAttractor attractor;
-    GPUParticleSystem system;
 
     public bool rightHand;
     public float power;
 
     // Use this for initialization
-    void Awake () {
+    void Awake()
+    {
 
         power = 20;
 
         //We create the various parts.
         InitGameObjects();
 
-        //We add the emitter to the tip.
-        system = mTipGO.AddComponent<GPUParticleSystem>();
-        system.EmittMesh = mTipGO.GetComponent<MeshFilter>().mesh;
-        system.EmittParticleLifeTime = 5.0f;
-        system.EmittFrequency = 500.0f;
-        system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-        system.EmittInitialAmbient = new Vector3(1.0f, 1.0f, 1.0f);
-        system.EmittInheritVelocity = false;
-
-        Vector4[] colorControlpoints = { new Vector4(0, 1, 0, 0), new Vector4(1, 1, 0, 0.1f), new Vector4(0, 1, 0, 0.2f), new Vector4(1, 0, 0, 0.3f), new Vector4(0, 1, 0, 0.4f),
-            new Vector4(0, 0, 1, 0.5f), new Vector4(1, 0, 1, 0.6f), new Vector4(0, 1, 1, 0.7f), new Vector4(0, 1, 0, 0.8f), new Vector4(1, 1, 1, 0.9f), new Vector4(1, 1, 0, 1) };
-
-        system.ColorLifetimePoints = colorControlpoints;
-
-        Vector4[] haloControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 0.333f), new Vector4(0, 0, 1, 0.666f), new Vector4(0.5f, 0, 0.5f, 1) };
-        system.HaloLifetimePoints = haloControlpoints;
-        
-        Vector4[] scaleControlpoints = { new Vector4(0.01f, 0.01f, 0, 0), new Vector4(0.01f, 0.01f, 0, 1) };
-        system.ScaleLifetimePoints = scaleControlpoints;
-
-        Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
-        system.TransparencyLifetimePoints = transparencyControlpoints;
-
         //We add an attractor to the tip.
         attractor = mTipGO.AddComponent<GPUParticleAttractor>();
         attractor.Power = 1;
+        attractor.Min = 0.3f;
+        attractor.Max = 0.4f;
 
         mWandGO.transform.Rotate(90, 0, 0);
         mWandGO.transform.position += Vector3.forward * 0.2f;
@@ -76,7 +56,7 @@ public class AttractorWand : MonoBehaviour {
         mTipGO.transform.parent = mWandGO.transform;
         mTipGO.transform.position += Vector3.up * 2;
         mTipGO.transform.localScale *= 0.5f;
-        TempVisuals(mTipGO, PrimitiveType.Sphere, Color.red);
+        TempVisuals(mTipGO, PrimitiveType.Sphere, Color.green);
 
         mWandGO.transform.localScale *= 0.1f;
 
@@ -97,7 +77,8 @@ public class AttractorWand : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
 
         if (VrInput.controllersFound)
         {
@@ -109,30 +90,13 @@ public class AttractorWand : MonoBehaviour {
 
             attractor.Power = power * trigger;
 
-            if (trigger == 1.0f)
-                system.Active = true;
-            else system.Active = false;
-
         }
         else
         {
 
-            if (Input.GetKey(KeyCode.Space))
-            {
-
-                attractor.Power = 20;
-                system.Active = false;
-
-            }
-            else
-            {
-
-                attractor.Power = 0;
-                system.Active = true;
-
-            }
+            attractor.Power = 20;
 
         }
-
     }
+
 }

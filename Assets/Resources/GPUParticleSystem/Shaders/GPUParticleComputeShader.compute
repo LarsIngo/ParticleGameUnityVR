@@ -20,16 +20,28 @@ uniform float gDeltaTime;
 uniform float3 gConstantAcceleration;
 uniform float gConstantDrag;
 
+struct Attractor
+{
+
+    float3 mPosition;
+    float mPower;
+    float mMin;
+    float mMax;
+    float2 padding;
+
+};
+
 uniform int gAttractorCount;
-StructuredBuffer<float4> gAttractorBuffer;
+StructuredBuffer<Attractor> gAttractorBuffer;
 
 
 struct VectorField
 {
 
     float3 mPosition;
-    float mRadius;
-    float4 mVector;
+    float3 mVector;
+    float mMin;
+    float mMax;
 
 };
 uniform int gVectorFieldCount;
@@ -69,21 +81,21 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
         int attractorCount = gAttractorCount;
         for (int i = 0; i < attractorCount; ++i)
         {
-            float4 attractor = gAttractorBuffer[i];
-            float3 aPosition = attractor.xyz;
-            float aPower = attractor.w;
+            Attractor attractor = gAttractorBuffer[i];
+            float3 aPosition = attractor.mPosition;
+            float aPower = attractor.mPower;
+            float aMin = attractor.mMin;
+            float aMax = attractor.mMax;
 
-            float3 acceleratorDirection = aPosition - pPosition;
-            float distance = length(acceleratorDirection);
+            float3 attractorDirection = aPosition - pPosition;
+            float distance = length(attractorDirection);
 
-            if (distance > 0.1f)
+            if (distance > aMin && distance < aMax)
             {
-                acceleratorDirection = normalize(acceleratorDirection);
-
+                attractorDirection = normalize(attractorDirection);
                 float distanceFactor = clamp(1.f / (distance * distance), 0, 1.f);
-                float acceleration = aPower * distanceFactor;
-
-                pVelocity = pVelocity + acceleratorDirection * (acceleration * dt);
+                float attraction = aPower * distanceFactor;
+                pVelocity = pVelocity + attractorDirection * (attraction * dt);
             }
         }
 
@@ -93,17 +105,18 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
         {
             VectorField vectorField = gVectorFieldBuffer[i];
             float3 vPosition = vectorField.mPosition;
-            float vRadius = vectorField.mRadius;
-            float3 vVector = vectorField.mVector.xyz;
+            float3 vVector = vectorField.mVector;
+            float vMin = vectorField.mMin;
+            float vMax = vectorField.mMax;
 
             float3 vectorFieldDirection = vPosition - pPosition;
             float distance = length(vectorFieldDirection);
 
-            if (distance < vRadius)
+            if(distance > vMin && distance < vMax)
             {
-
                 pVelocity = pVelocity + vVector * dt;
             }
+
         }
 
         // Update collider (sphere).
@@ -181,9 +194,9 @@ void EMITT(uint3 id : SV_DispatchThreadID)
 {
     int index = gEmittIndex;
 
-    float3 emittPosition = gPosition;
+    float3 emittPosition = float3(0,0,0);
     if (gEmittMeshIndexCount > 0)
-        emittPosition += gEmittMeshVertexBuffer[gEmittMeshIndexBuffer[gEmittMeshRandomIndex]] * gEmittMeshScale;
+        emittPosition = gEmittMeshVertexBuffer[gEmittMeshIndexBuffer[gEmittMeshRandomIndex]];
 
     gPositionBuffer[index] = float4(emittPosition, 0);
     gVelocityBuffer[index] = float4(gVelocity, 0);
