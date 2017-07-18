@@ -7,23 +7,17 @@ public class AttractorWand : MonoBehaviour {
     GameObject mWandGO;
 
     GameObject mRodGO;
-    Mesh mRodMesh;
 
     GameObject mTipGO;
-    Mesh mTipMesh;
     GPUParticleAttractor attractor;
     GPUParticleSystem system;
-
-    string mRodMaterialPath;
-    string mTipMaterialPath;
 
     public bool rightHand;
     public float power;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
 
-        rightHand = true;
         power = 20;
 
         //We create the various parts.
@@ -36,6 +30,7 @@ public class AttractorWand : MonoBehaviour {
         system.EmittFrequency = 500.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
         system.EmittInitialAmbient = new Vector3(1.0f, 1.0f, 1.0f);
+        system.EmittInheritVelocity = false;
 
         Vector4[] colorControlpoints = { new Vector4(0, 1, 0, 0), new Vector4(1, 1, 0, 0.1f), new Vector4(0, 1, 0, 0.2f), new Vector4(1, 0, 0, 0.3f), new Vector4(0, 1, 0, 0.4f),
             new Vector4(0, 0, 1, 0.5f), new Vector4(1, 0, 1, 0.6f), new Vector4(0, 1, 1, 0.7f), new Vector4(0, 1, 0, 0.8f), new Vector4(1, 1, 1, 0.9f), new Vector4(1, 1, 0, 1) };
@@ -44,14 +39,12 @@ public class AttractorWand : MonoBehaviour {
 
         Vector4[] haloControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 0.333f), new Vector4(0, 0, 1, 0.666f), new Vector4(0.5f, 0, 0.5f, 1) };
         system.HaloLifetimePoints = haloControlpoints;
-        /*
-        Vector4[] scaleControlpoints = { new Vector4(0.1f, 0.1f, 0, 0), new Vector4(0.1f, 0.1f, 0, 0.5f), new Vector4(0.1f, 0, 0.1f, 1) };
-        system.ScaleLifetimePoints = scaleControlpoints;*/
+        
+        Vector4[] scaleControlpoints = { new Vector4(0.01f, 0.01f, 0, 0), new Vector4(0.01f, 0.01f, 0, 1) };
+        system.ScaleLifetimePoints = scaleControlpoints;
 
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         system.TransparencyLifetimePoints = transparencyControlpoints;
-
-        system.EmittInheritVelocity = true;
 
         //We add an attractor to the tip.
         attractor = mTipGO.AddComponent<GPUParticleAttractor>();
@@ -105,18 +98,18 @@ public class AttractorWand : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-
+        Debug.Log(rightHand);
         if (VrInput.controllersFound)
         {
 
             float trigger = 0;
-            if(rightHand)
+            if (rightHand)
                 trigger = VrInput.RightTrigger();
-            else trigger = VrInput.RightTrigger();
+            else trigger = VrInput.LeftTrigger();
 
             attractor.Power = power * trigger;
 
-            if(trigger == 1.0f)
+            if (trigger == 1.0f)
                 system.Active = true;
             else system.Active = false;
 
@@ -127,20 +120,19 @@ public class AttractorWand : MonoBehaviour {
             if (Input.GetKey(KeyCode.Space))
             {
 
-                //attractor.Power = 20;
+                attractor.Power = 20;
                 system.Active = false;
 
             }
             else
             {
 
-                //attractor.Power = 0;
+                attractor.Power = 0;
                 system.Active = true;
 
             }
 
         }
-
 
     }
 }

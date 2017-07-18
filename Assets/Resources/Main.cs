@@ -34,7 +34,11 @@ public class Main : MonoBehaviour
         }
 
         //Equip a wand.
-        mRightController.AddComponent<AttractorWand>();
+        AttractorWand rightWand = mRightController.AddComponent<AttractorWand>();
+        AttractorWand leftWand = mLeftController.AddComponent<AttractorWand>();
+
+        rightWand.rightHand = true;
+        leftWand.rightHand = false;
 
         //Spawn enemies.
         SpawnEnemies();
@@ -73,9 +77,9 @@ public class Main : MonoBehaviour
     void SpawnEnemies()
     {
 
-        //DestroyImmediate(enemy1);
-        //DestroyImmediate(enemy2);
-        //DestroyImmediate(enemy3);
+        DestroyImmediate(enemy1);
+        DestroyImmediate(enemy2);
+        DestroyImmediate(enemy3);
 
         //Spawn enemies.
         enemy1 = new GameObject("ENEMY1");
