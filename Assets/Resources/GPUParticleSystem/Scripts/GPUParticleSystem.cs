@@ -56,6 +56,7 @@ public class GPUParticleSystem : MonoBehaviour
     static int sKernelUpdate = -1;
     static int sKernelEmitt = -1;
     static int sKernelResult = -1;
+    static int sKernelInitSort = -1;
     static int sKernelSort = -1;
     static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
 
@@ -83,6 +84,7 @@ public class GPUParticleSystem : MonoBehaviour
         sKernelUpdate = sComputeShader.FindKernel("UPDATE");
         sKernelEmitt = sComputeShader.FindKernel("EMITT");
         sKernelResult = sComputeShader.FindKernel("RESULT");
+        sKernelInitSort = sComputeShader.FindKernel("INITSORT");
         sKernelSort = sComputeShader.FindKernel("SORT");
         sEmittMeshInfoDictionary = new Dictionary<Mesh, EmittMeshInfo>();
         sGPUParticleAttractorBuffer = new ComputeBuffer(sMaxAttractorCount, sizeof(float) * 4);
@@ -101,6 +103,7 @@ public class GPUParticleSystem : MonoBehaviour
         sKernelUpdate = -1;
         sKernelEmitt = -1;
         sKernelResult = -1;
+        sKernelInitSort = -1;
         sKernelSort = -1;
         foreach (KeyValuePair<Mesh, EmittMeshInfo> it in sEmittMeshInfoDictionary)
         {   // Release compute buffers.
@@ -721,23 +724,45 @@ public class GPUParticleSystem : MonoBehaviour
         Debug.Assert(Mathf.IsPowerOfTwo(mMaxParticleCount));
 
         // TMP
-        Debug.Log("SET DATA");
-        SortElement[] dataIN = new SortElement[mMaxParticleCount];
-        for (int i = 0; i < mMaxParticleCount; ++i)
-        {
-            SortElement data = new SortElement();
-            data.mValue = mMaxParticleCount - i; // VALUE
-            data.mIndex = i; // INDEX
-            dataIN[i] = data;
-            Debug.Log(data.mValue);
-        }
-        mSortElementSwapBuffer.GetOutputBuffer().SetData(dataIN);
+        //Debug.Log("SET DATA");
+        //SortElement[] dataIN = new SortElement[mMaxParticleCount];
+        //for (int i = 0; i < mMaxParticleCount; ++i)
+        //{
+        //    SortElement data = new SortElement();
+        //    data.mValue = mMaxParticleCount - i; // VALUE
+        //    data.mIndex = i; // INDEX
+        //    dataIN[i] = data;
+        //    Debug.Log(data.mValue);
+        //}
+        //mSortElementSwapBuffer.GetOutputBuffer().SetData(dataIN);
 
-        // Major steps.
-        for (int k = 2; k <= mMaxParticleCount; k <<= 1)
+
+        // INIT/UPDATE SORT BUFFER. TODO COMBINE ALL SYSTEMS.
+        Vector3 cForward = Camera.main.transform.forward;
+        sComputeShader.SetFloats("gCameraForward", new float[] { cForward.x, cForward.y, cForward.z });
+        sComputeShader.SetInt("gMaxParticleCount", mMaxParticleCount);
+        sComputeShader.SetInt("gOffsetIndex", 0);
+        sComputeShader.SetBuffer(sKernelInitSort, "gSortElementBufferOUT", mSortElementSwapBuffer.GetOutputBuffer());
+        sComputeShader.SetBuffer(sKernelInitSort, "gPositionIN", mPositionBuffer.GetOutputBuffer());
+        sComputeShader.Dispatch(sKernelInitSort, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
+
+        //TMP
         {
-            // Minor steps.
-            for (int j = k >> 1; j > 0; j = j >> 1)
+            Debug.Log("INIT: GET DATA");
+            SortElement[] dataOUT = new SortElement[mMaxParticleCount];
+            mSortElementSwapBuffer.GetOutputBuffer().GetData(dataOUT);
+
+            for (int i = 0; i < mMaxParticleCount; ++i)
+            {
+                SortElement data = dataOUT[i];
+                Debug.Log(data.mValue);
+            }
+        }
+
+        // DISPATCH SORT BUFFER.
+        for (int k = 2; k <= mMaxParticleCount; k <<= 1) // Major steps.
+        {
+            for (int j = k >> 1; j > 0; j = j >> 1) // Minor steps.
             {
                 // SWAP AND BIND BUFFERS.
                 mSortElementSwapBuffer.Swap();
@@ -746,24 +771,25 @@ public class GPUParticleSystem : MonoBehaviour
 
                 sComputeShader.SetInt("gK", k);
                 sComputeShader.SetInt("gJ", j);
-                Vector3 cForward = Camera.main.transform.forward;
-                sComputeShader.SetFloats("gCameraForward", new float[] { cForward.x, cForward.y, cForward.z });
-                sComputeShader.SetInt("gSortParticleCount", mMaxParticleCount);
+                sComputeShader.SetInt("gMaxParticleCount", mMaxParticleCount);
 
                 // DISPATCH.
                 sComputeShader.Dispatch(sKernelSort, (int)Mathf.Ceil(mMaxParticleCount / 64.0f), 1, 1);
             }
         }
 
-        Debug.Log("FINAL: GET DATA");
-        SortElement[] dataOUT = new SortElement[mMaxParticleCount];
-        mSortElementSwapBuffer.GetOutputBuffer().GetData(dataOUT);
-
-        for (int i = 0; i < mMaxParticleCount; ++i)
         {
-            SortElement data = dataOUT[i];
-            Debug.Log(data.mValue);
+            Debug.Log("FINAL: GET DATA");
+            SortElement[] dataOUT = new SortElement[mMaxParticleCount];
+            mSortElementSwapBuffer.GetOutputBuffer().GetData(dataOUT);
+
+            for (int i = 0; i < mMaxParticleCount; ++i)
+            {
+                SortElement data = dataOUT[i];
+                Debug.Log(data.mValue);
+            }
         }
+
     }
 
     // RENDER.

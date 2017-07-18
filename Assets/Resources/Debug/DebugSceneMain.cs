@@ -149,6 +149,10 @@ public class DebugSceneMain : MonoBehaviour
         GPUParticleSystem system = emitter.AddComponent<GPUParticleSystem>();
         system.EmittParticleLifeTime = 4.0f;
         system.EmittFrequency = 4.0f;
+
+        GameObject att = new GameObject("attractor");
+        att.transform.position = new Vector3(0,0,5);
+        GPUParticleAttractor attractor = att.AddComponent<GPUParticleAttractor>();
     }
 
 }
