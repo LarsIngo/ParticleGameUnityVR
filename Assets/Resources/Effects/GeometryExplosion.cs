@@ -16,38 +16,52 @@ public class GeometryExplosion : MonoBehaviour
     // Material.
     private Material mRenderMaterial = null;
 
-    private float mExplosionSpeed = 1.0f;
-    private float mCurrentOffset = 0.0f;
-   
 
     private bool mActive = false;
-    /// <summary>
-    /// Whether emitter should emitt particles.
-    /// Default: true
-    /// </summary>
-    public bool Active { get { return mActive; } set { mActive = value; } }
+    private float mCurrentOffset = 0.0f;
 
+    private float mExplosionSpeed = 1.0f;
+    /// <summary>
+    /// Speed of with which the explosion expands... :)
+    /// Default: 1.0f -->gg
+    /// </summary>
+    public float ExplosionSpeed { get { return mExplosionSpeed; } set { mExplosionSpeed = value; } }
+
+    public Mesh Mesh { set { this.gameObject.GetComponent<MeshFilter>().mesh = value; } }
     
     // MONOBEHAVIOUR.
     private void Awake()
     {
+
+        this.gameObject.AddComponent<MeshFilter>();
+        MeshRenderer renderer = this.gameObject.AddComponent<MeshRenderer>();
+        
         mRenderMaterial = new Material(Resources.Load<Shader>("Effects/GeometryExplosion"));
+        Debug.Assert(mRenderMaterial != null);
+
+        renderer.material = mRenderMaterial;
+
+        
+
         mCurrentOffset = 0.0f;
-        mRenderMaterial.SetFloat("gOffset", 0.2f);
+        
+        mRenderMaterial.SetFloat("gOffset", mCurrentOffset);
+    }
+
+    public void Explode()
+    {
+        mActive = true;
     }
 
     // MONOBEHAVIOUR.
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            this.GetComponent<Renderer>().material = mRenderMaterial;
-            mActive = true;
-        }
         
         if (mActive)
         {
             mCurrentOffset += mExplosionSpeed * Time.deltaTime;
+
+            
             mRenderMaterial.SetFloat("gOffset", mCurrentOffset);
         }
     }
