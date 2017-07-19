@@ -16,6 +16,7 @@ public class Hub
         NONE = 0,
         MENU,
         ATTRACTOR_LVL_1,
+        ATTRACTOR_LVL_2,
         VATSUG,
         DEFAULT
     };
@@ -53,6 +54,12 @@ public class Hub
     /// Default: null
     /// </summary>
     public List<StageInfo> mStageInfoList;
+
+    /// <summary>
+    /// Current active level.
+    /// Default: null
+    /// </summary>
+    public int stars;
 
     /// --- MEMBERS --- ///
 
