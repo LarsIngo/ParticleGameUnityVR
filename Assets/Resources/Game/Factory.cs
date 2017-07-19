@@ -37,10 +37,9 @@ public static class Factory
         michaelLifetimer.LifeTime = 4.0f;
 
         GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 10.0f;
-
+        attractor.Power = 1000.0f;
         LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
-        blackHoleLifetimer.LifeTime = 4.0f;
+        blackHoleLifetimer.LifeTime = 0.5f;
 
         exp.Explode();
 

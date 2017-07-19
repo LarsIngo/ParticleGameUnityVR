@@ -171,14 +171,20 @@ public class GPUParticleSystem : MonoBehaviour
         sRenderMaterial = null;
     }
 
-    public static void RemoveAll()
+    /// <summary>
+    /// Kills all living particles.
+    /// </summary>
+    public static void KillAllParticles()
     {
-        foreach (KeyValuePair<GPUParticleSystem, GPUParticleSystem> it in sGPUParticleSystemDictionary)
-        {
-            GPUParticleSystem system = it.Value;
-            system.DeInitSystem();
-        }
-        Shutdown();
+        if (sGPUParticleSystemDictionary == null) return;
+
+        float[] data = new float[sTotalParticleCount * 4];
+
+        for (int i = 0; i < sTotalParticleCount * 4; ++i)
+            data[i] = -1.0f;
+
+        sMergedLifetimeBuffer.GetInputBuffer().SetData(data);
+        sMergedLifetimeBuffer.GetOutputBuffer().SetData(data);
     }
 
     /// --- STATIC --- ///
