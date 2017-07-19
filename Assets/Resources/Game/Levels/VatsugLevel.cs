@@ -59,7 +59,17 @@ public class VatsugLevel : Level
         if (enemy)
             timer += Time.deltaTime;
 
-        enemy.transform.position = new Vector3(Mathf.Tan(Time.time / 12.0f), Mathf.Cos(Time.time) * 5.0f * Mathf.Sin(Time.time) * 2, Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f);
+        float x = Mathf.Tan(Time.time / 12.0f);
+        float y = Mathf.Cos(Time.time) * 3.0f + 2.0f;
+        float z = Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f;
+
+        if (z < 3.0f && z > 3.0f && x < 3.0f && x > 3.0f && y < 3.9f)
+        {
+            y = 3.9f;
+        }
+
+
+        enemy.transform.position.Set(x, y, z);// = ;= new Vector3(Mathf.Tan(Time.time / 12.0f), Mathf.Cos(Time.time) * 5.0f * Mathf.Sin(Time.time) * 2, Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f);
 
     }
 
