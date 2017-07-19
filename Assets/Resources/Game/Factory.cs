@@ -125,7 +125,9 @@ public static class Factory
         textUI.fontSize = 299;
         textUI.color = color;
         textUI.alignment = TextAnchor.MiddleCenter;
-        textUI.font = Resources.Load<Font>("Fonts/LemonMilk");
+        textUI.font = Resources.Load<Font>("Fonts/unispace bd");
+
+        count++;
 
         return canvasGO;
 

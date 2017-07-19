@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BasicEnemy : MonoBehaviour {
 
-    private int mHealth;
+    private int mHealth = 10000;
 
     public int Health { get { return mHealth; } set { mHealth = value; startHealth = value; } }
 
@@ -12,7 +12,6 @@ public class BasicEnemy : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-        Health = 10000;
         startHealth = mHealth;
         TempVisuals(gameObject, PrimitiveType.Sphere, Color.green);
 

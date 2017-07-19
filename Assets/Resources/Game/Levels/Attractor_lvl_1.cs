@@ -86,7 +86,7 @@ public class Attractor_lvl_1 : Level
                 stageInfo.score = timer;
 
         }
-        highscore.text = timer + "";
+        highscore.text = timer.ToString("0.00");
 
     }
 
@@ -109,9 +109,9 @@ public class Attractor_lvl_1 : Level
         enemy2 = CreateGameObject("ENEMY2");
         enemy3 = CreateGameObject("ENEMY3");
 
-        enemy1.AddComponent<BasicEnemy>();
-        enemy2.AddComponent<BasicEnemy>();
-        enemy3.AddComponent<BasicEnemy>();
+        enemy1.AddComponent<BasicEnemy>().Health = 1000;
+        enemy2.AddComponent<BasicEnemy>().Health = 1000;
+        enemy3.AddComponent<BasicEnemy>().Health = 1000;
 
         enemy1.transform.position += Vector3.forward * 3 + Vector3.right * 3;
         enemy2.transform.position += Vector3.forward * 3 + Vector3.right * 0;
