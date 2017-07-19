@@ -10,6 +10,8 @@ public class VatsugLevel : Level
     GameObject enemy;
     private Vector3 prevPos;
 
+
+
     bool swap = false;
 
     /// --- MEMBERS --- ///
@@ -25,6 +27,9 @@ public class VatsugLevel : Level
     {
         enemy = this.CreateGameObject("TheOneAndOnlyVatsug");
         enemy.AddComponent<Vatsug>();
+
+        GameObject boat = this.CreateGameObject("ImOnABoat");
+        boat.AddComponent<Boat>();
         
 
         StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
@@ -56,23 +61,17 @@ public class VatsugLevel : Level
     public override void Update()
     {
         
-
+        /*
         float x = Mathf.Tan(Time.time / 8.0f);
-        float y = Mathf.Cos(Time.time) * 3.0f + 1.0f;
-        float z = Mathf.Sin(Time.time / 2) * 3.0f;// Mathf.Cos(Time.time / 3) * 3.0f;
-        
-        if (z < 3.0f && z > 3.0f && x < 3.0f && x > 3.0f && y < 3.9f)
-        {
-            y = 3.9f;
-        }
+        float y = Mathf.Cos(Time.time) * 3.0f;
+        float z = Mathf.Sin(Time.time / 2) * 4.0f;// Mathf.Cos(Time.time / 3) * 3.0f;
+     
 
         Vector3 newPos = new Vector3(x, y, z);
 
         enemy.transform.position = prevPos;
         enemy.transform.LookAt(newPos);
-        prevPos = newPos;
-       //  new Vector3(x, y, z);// ;= new Vector3(Mathf.Tan(Time.time / 12.0f), Mathf.Cos(Time.time) * 5.0f * Mathf.Sin(Time.time) * 2, Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f);
-
+        prevPos = newPos;*/
     }
 
     /// <summary>
