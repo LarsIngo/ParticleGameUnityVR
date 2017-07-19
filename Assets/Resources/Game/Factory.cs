@@ -62,30 +62,34 @@ public static class Factory
             lockImage.transform.parent = screen.transform;
 
         }
+        else
+        {
 
-        GameObject name = CreateWorldText(level, stageInfo.name, Color.white);
-        name.transform.position -= Vector3.up * 0.6f;
-        name.transform.localScale *= 0.3f;
-        name.transform.parent = screen.transform;
+            GameObject name = CreateWorldText(level, stageInfo.name, Color.white);
+            name.transform.position -= Vector3.up * 0.6f;
+            name.transform.localScale *= 0.3f;
+            name.transform.parent = screen.transform;
 
 
 
-        string medalText = "";
-        if (stageInfo.Score < stageInfo.gold)
-            medalText = "Gold";
-        else if (stageInfo.Score < stageInfo.silver)
-            medalText = "Silver";
-        else if (stageInfo.Score < stageInfo.bronze)
-            medalText = "Bronze";
+            string medalText = "";
+            if (stageInfo.Score < stageInfo.gold)
+                medalText = "Gold";
+            else if (stageInfo.Score < stageInfo.silver)
+                medalText = "Silver";
+            else if (stageInfo.Score < stageInfo.bronze)
+                medalText = "Bronze";
 
-        GameObject medal = CreateWorldText(level, medalText, Color.black);
-        medal.transform.position -= Vector3.up * 0.8f;
-        medal.transform.localScale *= 0.4f;
-        medal.transform.SetParent(screen.transform);
+            GameObject medal = CreateWorldText(level, medalText, Color.black);
+            medal.transform.position -= Vector3.up * 0.8f;
+            medal.transform.localScale *= 0.4f;
+            medal.transform.SetParent(screen.transform);
 
-        screen.AddComponent<StageScreen>().stageInfo = stageInfo;
+            screen.AddComponent<StageScreen>().stageInfo = stageInfo;
 
-        count++;
+            count++;
+
+        }
 
         return screen;
 

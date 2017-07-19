@@ -11,6 +11,11 @@ public class MenuLevel : Level
     /// </summary>
     private List<GameObject> mScreenList;
 
+    /// <summary>
+    /// Storing all the created scenes.
+    /// </summary>
+    private UnityEngine.UI.Text mStarText;
+
     /// --- MEMBERS --- ///
 
 
@@ -29,6 +34,13 @@ public class MenuLevel : Level
 
         mScreenList = new List<GameObject>();
 
+        GameObject timerText = Factory.CreateWorldText(this, Hub.Instance.stars.ToString(), Color.white);
+
+        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
+        timerText.transform.localScale *= 100;
+
+        mStarText = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+
     }
 
 
@@ -38,10 +50,7 @@ public class MenuLevel : Level
     public override void Awake()
     {
 
-        GameObject timerText = Factory.CreateWorldText(this, Hub.Instance.stars.ToString(), Color.white);
-
-        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
-        timerText.transform.localScale *= 100;
+        mStarText.text = Hub.Instance.stars.ToString();
 
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
@@ -54,7 +63,7 @@ public class MenuLevel : Level
             screen.transform.position += Vector3.right * Hub.Instance.mStageInfoList[i].world + Vector3.right * Hub.Instance.mStageInfoList[i].world * 0.1f;
 
             //Move it to the stage location
-            screen.transform.position -= Vector3.up * Hub.Instance.mStageInfoList[i].stage + Vector3.up * Hub.Instance.mStageInfoList[i].stage * 0.1f;
+            screen.transform.position -= Vector3.up * Hub.Instance.mStageInfoList[i].stage + Vector3.up * Hub.Instance.mStageInfoList[i].stage * 0.3f;
 
             mScreenList.Add(screen);
 
