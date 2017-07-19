@@ -379,6 +379,7 @@ public static class Factory
 
         return enemy;
     }
+    
 
 
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)

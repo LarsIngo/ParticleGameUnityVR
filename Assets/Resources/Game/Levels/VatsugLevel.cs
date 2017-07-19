@@ -8,9 +8,8 @@ public class VatsugLevel : Level
     public UnityEngine.UI.Text highscore;
 
     GameObject enemy;
-    
+    private Vector3 prevPos;
 
-    float timer = 0;
     bool swap = false;
 
     /// --- MEMBERS --- ///
@@ -24,8 +23,9 @@ public class VatsugLevel : Level
     /// <param name="name">Name of level, must be unique.</param>
     public VatsugLevel(string name) : base(name)
     {
-        enemy = Factory.CreateBasicEnemy(this, new Vector3(0, 0, 3.0f));
-        enemy.GetComponent<BasicEnemy>().Health = 5000;
+        enemy = this.CreateGameObject("TheOneAndOnlyVatsug");
+        enemy.AddComponent<Vatsug>();
+        
 
         StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
         stageInfo.mName = "Vatsug Level";
@@ -47,7 +47,7 @@ public class VatsugLevel : Level
     /// </summary>
     public override void Awake()
     {
-
+        prevPos = new Vector3(0, 0, 0);
     }
 
     /// <summary>
@@ -55,21 +55,23 @@ public class VatsugLevel : Level
     /// </summary>
     public override void Update()
     {
+        
 
-        if (enemy)
-            timer += Time.deltaTime;
-
-        float x = Mathf.Tan(Time.time / 12.0f);
-        float y = Mathf.Cos(Time.time) * 3.0f + 2.0f;
-        float z = Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f;
+        float x = Mathf.Tan(Time.time / 8.0f);
+        float y = Mathf.Cos(Time.time) * 3.0f + 1.0f;
+        float z = Mathf.Sin(Time.time / 2) * 3.0f;// Mathf.Cos(Time.time / 3) * 3.0f;
         
         if (z < 3.0f && z > 3.0f && x < 3.0f && x > 3.0f && y < 3.9f)
         {
             y = 3.9f;
         }
 
+        Vector3 newPos = new Vector3(x, y, z);
 
-        enemy.transform.position = new Vector3(x, y, z);// ;= new Vector3(Mathf.Tan(Time.time / 12.0f), Mathf.Cos(Time.time) * 5.0f * Mathf.Sin(Time.time) * 2, Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f);
+        enemy.transform.position = prevPos;
+        enemy.transform.LookAt(newPos);
+        prevPos = newPos;
+       //  new Vector3(x, y, z);// ;= new Vector3(Mathf.Tan(Time.time / 12.0f), Mathf.Cos(Time.time) * 5.0f * Mathf.Sin(Time.time) * 2, Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f);
 
     }
 

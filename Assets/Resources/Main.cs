@@ -34,7 +34,7 @@ public class Main : MonoBehaviour
         mAttractor_lvl_2 = new Attractor_lvl_2("LEVEL:ATTRACTOR_LVL_2");
         mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
 
-        Hub.Instance.SetState(Hub.STATE.MENU);
+        Hub.Instance.SetState(Hub.STATE.VATSUG);
         
     }
 
