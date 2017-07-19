@@ -14,12 +14,12 @@ public class VatsugWand : MonoBehaviour
     GameObject[] mAttractors;
     private const uint mNrOfAttractors = 5;
 
-    GPUParticleAttractor mEndAttractor;
+    private GPUParticleAttractor mEndAttractor = null;
     private float mPowerEndAttractor;
     private const float mTimerEndAttractor = 0.75f;
     private float mTimerCurrentEndAttractor = mTimerEndAttractor;
 
-    GPUParticleSystem mParticles;
+    private GPUParticleSystem mParticles = null;
 
     public bool rightHand;
     public float mAttractorsPower;
@@ -53,8 +53,7 @@ public class VatsugWand : MonoBehaviour
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         mParticles.TransparencyLifetimePoints = transparencyControlpoints;
 
-        mEndAttractor = new GPUParticleAttractor();
-        mEndAttractor.transform.parent = mTipGO.transform;
+        mEndAttractor = mTipGO.AddComponent<GPUParticleAttractor>();
         mEndAttractor.transform.localPosition = Vector3.up * 1.5f;
 
         mAttractors = new GameObject[mNrOfAttractors];//GPUParticleAttractor[mNrOfAttractors];
