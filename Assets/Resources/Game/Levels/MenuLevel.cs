@@ -24,8 +24,8 @@ public class MenuLevel : Level
     {
 
         //Equip a wand.
-        MenuWand rightWand = rightHand.AddComponent<MenuWand>();
-        rightWand.rightHand = true;
+        GameObject menuWand = Factory.CreateMenuWand(this, true);
+        menuWand.transform.parent = rightHand.transform;
 
         mScreenList = new List<GameObject>();
 

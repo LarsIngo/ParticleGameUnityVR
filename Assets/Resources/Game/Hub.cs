@@ -52,6 +52,19 @@ public class Hub
     /// </summary>
     public List<StageInfo> mStageInfoList;
 
+    /// <summary>
+    /// Delta time.
+    /// Scales correctly with time scale.
+    /// </summary>
+    public float DeltaTime{ get { return Mathf.Max(Time.deltaTime * mTimeScale, 0.01f); } }
+
+    float mTimeScale = 1.0f;
+    /// <summary>
+    /// Time scale.
+    /// Default: 1.0f
+    /// </summary>
+    public float TimeScale { get { return mTimeScale; } set { mTimeScale = value; } }
+
     /// --- MEMBERS --- ///
 
 
@@ -137,7 +150,6 @@ public class Hub
             return mActiveLevel;
         }
     }
-
 
     /// <summary>
     /// Main camera of game. Initialized at StartUp.
