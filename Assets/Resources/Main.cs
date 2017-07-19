@@ -32,7 +32,7 @@ public class Main : MonoBehaviour
         mMenuLevel = new MenuLevel("LEVEL:MENU");
         mAttractor_lvl_1 = new Attractor_lvl_1("LEVEL:ATTRACTOR_LVL_1");
         mAttractor_lvl_2 = new Attractor_lvl_2("LEVEL:ATTRACTOR_LVL_2");
-        mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
+        //mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
 
         Hub.Instance.SetState(Hub.STATE.MENU);
         
