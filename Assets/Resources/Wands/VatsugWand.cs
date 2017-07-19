@@ -13,11 +13,11 @@ public class VatsugWand : MonoBehaviour
 
     private const uint mNrOfAttractors = 5;
 
-    GPUParticleAttractor[] mAttractors;
+    GameObject[] mAttractors;
 
-    private GPUParticleAttractor mEndAttractor = null;
+    GameObject mEndAttractor;
     private float mPowerEndAttractor;
-    private const float mTimerEndAttractor = 0.75f;
+    private const float mTimerEndAttractor = 0.2f;
     private float mTimerCurrentEndAttractor = mTimerEndAttractor;
 
     private GPUParticleSystem mParticles = null;
@@ -28,8 +28,8 @@ public class VatsugWand : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-        mPowerEndAttractor = 50.0f;
-        mAttractorsPower = 20;
+        mPowerEndAttractor = 30.0f;
+        mAttractorsPower = 3.0f;
 
         //We create the various parts.
         InitGameObjects();
@@ -56,21 +56,22 @@ public class VatsugWand : MonoBehaviour
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         mParticles.TransparencyLifetimePoints = transparencyControlpoints;
 
-        mAttractors = new GPUParticleAttractor[mNrOfAttractors];
+        mAttractors = new GameObject[mNrOfAttractors];
 
-        mEndAttractor = mTipGO.AddComponent<GPUParticleAttractor>();
+        mEndAttractor = new GameObject();
+        mEndAttractor.AddComponent<GPUParticleAttractor>();
+        mEndAttractor.transform.parent = mTipGO.transform;
         mEndAttractor.transform.localPosition = Vector3.up * 1.5f;
 
        
         float TwoPIdivNrAttractors = Mathf.PI * 2 / mNrOfAttractors;
         for (int i = 0; i < 5; ++i)
         {
-            mAttractors[i] = mTipGO.AddComponent<GPUParticleAttractor>();
-            mAttractors[i].Power = 1;
-
+            mAttractors[i] = new GameObject("attractor" + i.ToString());
             mAttractors[i].transform.parent = mTipGO.transform;
             mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * 6;
-            
+
+            mAttractors[i].AddComponent<GPUParticleAttractor>().Power = mAttractorsPower;
         }
 
         mWandGO.transform.Rotate(90, 0, 0);
@@ -135,23 +136,23 @@ public class VatsugWand : MonoBehaviour
             if (trigger == 1.0f)
             {
                 for (int i = 0; i < mNrOfAttractors; ++i)
-                  mAttractors[i].Power = mAttractorsPower * trigger;
+                  mAttractors[i].GetComponent<GPUParticleAttractor>().Power = mAttractorsPower;
 
                 mParticles.Active = true;
                 mTimerCurrentEndAttractor = mTimerEndAttractor;
 
-                mEndAttractor.Power = 0.0f;
+                mEndAttractor.GetComponent<GPUParticleAttractor>().Power = 0.0f;
             }
             else
             {
                 for (int i = 0; i < mNrOfAttractors; ++i)
-                  mAttractors[i].Power = 0.0f;
+                  mAttractors[i].GetComponent<GPUParticleAttractor>().Power = 0.0f;
 
                 mParticles.Active = false;
                 if (mTimerCurrentEndAttractor > 0.0f)
                 {
                     mTimerCurrentEndAttractor -= Time.deltaTime;
-                    mEndAttractor.Power = mPowerEndAttractor;
+                    mEndAttractor.GetComponent<GPUParticleAttractor>().Power = mPowerEndAttractor;
 
                 }
             }
