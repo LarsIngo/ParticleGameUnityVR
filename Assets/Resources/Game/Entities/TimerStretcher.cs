@@ -7,50 +7,49 @@ public class TimerStretcher : MonoBehaviour
 
     float mTimer = 0.0f;
 
-    float mTimeIn = 0.0f;
-    float mTimeMain = 0.5f;
-    float mTimeOut = 0.5f;
+    public float mTimeInPhase = 0.0f;
+    public float mTimeMainPhase = 0.5f;
+    public float mTimeOutPhase = 0.5f;
 
-    float mTimeScale = 0.1f;
+    public float mTargetTimeScale = 0.1f;
 
 	void Awake ()
     {
-        Time.timeScale = mTimeScale;
+        Time.timeScale = mTargetTimeScale;
     }
 
 	void Update ()
     {
+        // Increment timer with realtime.
         mTimer += (Time.deltaTime / Time.timeScale);
 
-        float totalTime = mTimeIn + mTimeMain + mTimeOut;
 
-        if (mTimer < mTimeIn)
+        float totalTime = mTimeInPhase + mTimeMainPhase + mTimeOutPhase;
+
+        if (mTimer < mTimeInPhase)
         {
             // IN.
-            float lerpFactor = mTimer / mTimeIn; // [0,1]
-            float slerpFactor = (1.0f - Mathf.Cos(lerpFactor * Mathf.PI)) / 2.0f; //[0,1]
-            float timeScale = mTimeScale + slerpFactor * (1.0f - mTimeScale);
-            Time.timeScale = Mathf.Clamp(1.0f - timeScale, mTimeScale, 1);
+            float factor = mTimer / mTimeInPhase; // [0,1]
+            Time.timeScale = CustomMath.Slerp(1, mTargetTimeScale, factor); // [1, mTargetTimeScale]
         }
-        else if (mTimer < mTimeIn + mTimeMain)
+        else if (mTimer < mTimeInPhase + mTimeMainPhase)
         {
             // MAIN.
-            Time.timeScale = mTimeScale;
+            Time.timeScale = mTargetTimeScale;
         }
         else
         {
             // OUT.
-            float lerpFactor = Mathf.Clamp01((mTimer - mTimeIn - mTimeMain) / mTimeOut); // [0,1]
-            float slerpFactor = (1.0f - Mathf.Cos(lerpFactor * Mathf.PI)) / 2.0f; // [0,1]
-
-            float timeScale = mTimeScale + slerpFactor * (1.0f - mTimeScale);
-            Time.timeScale = Mathf.Clamp(timeScale, mTimeScale, 1); ;
+            float factor = Mathf.Clamp01((mTimer - mTimeInPhase - mTimeMainPhase) / mTimeOutPhase); // [0,1]
+            Time.timeScale = Time.timeScale = CustomMath.Slerp(mTargetTimeScale, 1, factor); // [mTargetTimeScale, 1]
         }
 
+        // Set pitch to match time scale.
         AudioSource[] audioSourceArray = FindObjectsOfType<AudioSource>();
         for (int i = 0; i < audioSourceArray.GetLength(0); ++i)
             audioSourceArray[i].pitch = Time.timeScale;
 
+        // When done, remove self.
         if (mTimer > totalTime)
         {
             Time.timeScale = 1.0f;
