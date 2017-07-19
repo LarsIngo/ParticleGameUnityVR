@@ -89,7 +89,7 @@ public static class Factory
 
             GameObject stars = level.CreateGameObject("STARS" + count++);
 
-            if (true || stageInfo.Score < stageInfo.mGold)
+            if (stageInfo.Score < stageInfo.mGold)
             {
 
                 GameObject gold = CreateWorldImage(level, "Textures/Star");
@@ -97,14 +97,14 @@ public static class Factory
                 gold.transform.parent = stars.transform;
 
             }
-            if (true || stageInfo.Score < stageInfo.mSilver)
+            if (stageInfo.Score < stageInfo.mSilver)
             {
 
                 GameObject silver = CreateWorldImage(level, "Textures/Star");
                 silver.transform.parent = stars.transform;
 
             }
-            if (true || stageInfo.Score < stageInfo.mBronze)
+            if (stageInfo.Score < stageInfo.mBronze)
             {
 
                 GameObject bronze = CreateWorldImage(level, "Textures/Star");
