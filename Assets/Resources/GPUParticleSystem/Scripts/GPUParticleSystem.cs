@@ -187,6 +187,13 @@ public class GPUParticleSystem : MonoBehaviour
 
             system.mLifetimeBuffer.GetInputBuffer().SetData(data);
             system.mLifetimeBuffer.GetOutputBuffer().SetData(data);
+
+            for (int i = 0; i < data.GetLength(0); ++i)
+                data[i] = float.MaxValue;
+
+            system.mPositionBuffer.GetInputBuffer().SetData(data);
+            system.mPositionBuffer.GetOutputBuffer().SetData(data);
+
         }
     }
 
