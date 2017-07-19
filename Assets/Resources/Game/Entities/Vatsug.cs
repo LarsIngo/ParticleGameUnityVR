@@ -30,7 +30,7 @@ public class Vatsug : MonoBehaviour {
 	void Update () {
         if (VrInput.LeftTrigger() == 1.0f || VrInput.RightTrigger() == 1.0f)
         {
-            Factory.CreateMichaelBayEffect(Hub.Instance.ActiveLevel, GetComponent<MeshFilter>().mesh, transform, GetComponent<Renderer>().material.color);
+            Factory.CreateMichaelBayEffect(Hub.Instance.ActiveLevel, GetComponent<MeshFilter>().mesh, transform, new Color(1, 1, 1, 1));
             Destroy(gameObject);
         }
         else
