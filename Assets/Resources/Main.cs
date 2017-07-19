@@ -33,15 +33,12 @@ public class Main : MonoBehaviour
             mRightController.transform.position = new Vector3(3, 0, 5);
         }
 
-        //Equip a wand.
-        AttractorWand rightWand = mRightController.AddComponent<AttractorWand>();
-        AttractorWand leftWand = mLeftController.AddComponent<AttractorWand>();
+        MenuWand menuWand = mRightController.AddComponent<MenuWand>();
+        menuWand.rightHand = true;
 
-        rightWand.rightHand = true;
-        leftWand.rightHand = false;
-
-        //Spawn enemies.
-        SpawnEnemies();
+        GameObject test = new GameObject("TEST");
+        test.AddComponent<StageScreen>();
+        test.transform.position += Vector3.forward;
 
     }
 
