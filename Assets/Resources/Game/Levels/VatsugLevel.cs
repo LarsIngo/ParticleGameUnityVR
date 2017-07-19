@@ -8,8 +8,10 @@ public class VatsugLevel : Level
     public UnityEngine.UI.Text highscore;
 
     GameObject enemy;
+    
 
     float timer = 0;
+    bool swap = false;
 
     /// --- MEMBERS --- ///
 
@@ -23,6 +25,7 @@ public class VatsugLevel : Level
     public VatsugLevel(string name) : base(name)
     {
         enemy = Factory.CreateBasicEnemy(this, new Vector3(0, 0, 3.0f));
+        enemy.GetComponent<BasicEnemy>().Health = 5000;
 
         StageInfo stageInfo = new StageInfo();
         stageInfo.name = "Vatsug Level";
@@ -62,14 +65,14 @@ public class VatsugLevel : Level
         float x = Mathf.Tan(Time.time / 12.0f);
         float y = Mathf.Cos(Time.time) * 3.0f + 2.0f;
         float z = Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f;
-
+        
         if (z < 3.0f && z > 3.0f && x < 3.0f && x > 3.0f && y < 3.9f)
         {
             y = 3.9f;
         }
 
 
-        enemy.transform.position.Set(x, y, z);// = ;= new Vector3(Mathf.Tan(Time.time / 12.0f), Mathf.Cos(Time.time) * 5.0f * Mathf.Sin(Time.time) * 2, Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f);
+        enemy.transform.position = new Vector3(x, y, z);// ;= new Vector3(Mathf.Tan(Time.time / 12.0f), Mathf.Cos(Time.time) * 5.0f * Mathf.Sin(Time.time) * 2, Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f);
 
     }
 
