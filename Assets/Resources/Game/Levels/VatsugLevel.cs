@@ -24,11 +24,8 @@ public class VatsugLevel : Level
     {
         enemy = Factory.CreateBasicEnemy(this, new Vector3(0, 0, 3.0f));
 
-        StageInfo stageInfo = new StageInfo();
-        stageInfo.name = "Vatsug Level";
-        stageInfo.stageState = Hub.STATE.VATSUG;
-       
-
+        StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
+        stageInfo.mName = "Vatsug Level";
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 

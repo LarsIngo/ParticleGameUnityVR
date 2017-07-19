@@ -63,41 +63,65 @@ public static class Factory
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
     {
 
-        GameObject screen = level.CreateGameObject(stageInfo.name + "_SCREEN" + count++);
-        MeshFilter meshFilter = screen.AddComponent<MeshFilter>();
-        MeshRenderer meshRenderer = screen.AddComponent<MeshRenderer>();
-
-        GameObject tmp = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        meshFilter.mesh = tmp.GetComponent<MeshFilter>().mesh;
-        Object.Destroy(tmp);
-
+        GameObject screen = CreateWorldImage(level, stageInfo.mThumbnail);
         screen.AddComponent<MeshCollider>();
 
-        Material mat = new Material(Shader.Find("Unlit/Texture"));
-        mat.mainTexture = Resources.Load(stageInfo.thumbnail) as Texture2D;
-        meshRenderer.material = mat;
+        if (stageInfo.mLocked || stageInfo.mStarRequirement > Hub.Instance.stars)
+        {
 
-        GameObject name = CreateWorldText(level, stageInfo.name, Color.black);
-        name.transform.position -= Vector3.up * 0.6f;
-        name.transform.localScale *= 0.3f;
-        name.transform.parent = screen.transform;
+            GameObject lockImage = CreateWorldImage(level, "Textures/Locked", true);
+            lockImage.transform.position -= Vector3.forward * 0.1f;
+            lockImage.transform.parent = screen.transform;
 
-        string medalText = "test";
-        if (stageInfo.score < stageInfo.gold)
-            medalText = "Gold";
-        else if (stageInfo.score < stageInfo.silver)
-            medalText = "Silver";
-        else if (stageInfo.score < stageInfo.bronze)
-            medalText = "Bronze";
+            GameObject requirement = CreateWorldText(level, stageInfo.mStarRequirement.ToString(), Color.red * 0.9f);
+            requirement.transform.position -= Vector3.forward * 0.15f;
+            requirement.transform.localScale *= 2;
+            requirement.transform.parent = screen.transform;
 
-        GameObject medal = CreateWorldText(level, medalText, Color.black);
-        medal.transform.position -= Vector3.up * 0.8f;
-        medal.transform.localScale *= 0.4f;
-        medal.transform.SetParent(screen.transform);
+        }
+        else
+        {
 
-        screen.AddComponent<StageScreen>().stageInfo = stageInfo;
+            GameObject name = CreateWorldText(level, stageInfo.mName, Color.white);
+            name.transform.position -= Vector3.up * 0.6f;
+            name.transform.localScale *= 0.3f;
+            name.transform.parent = screen.transform;
 
-        count++;
+            GameObject stars = level.CreateGameObject("STARS" + count++);
+
+            if (true || stageInfo.Score < stageInfo.mGold)
+            {
+
+                GameObject gold = CreateWorldImage(level, "Textures/Star");
+                gold.transform.position += Vector3.right * 1.1f;
+                gold.transform.parent = stars.transform;
+
+            }
+            if (true || stageInfo.Score < stageInfo.mSilver)
+            {
+
+                GameObject silver = CreateWorldImage(level, "Textures/Star");
+                silver.transform.parent = stars.transform;
+
+            }
+            if (true || stageInfo.Score < stageInfo.mBronze)
+            {
+
+                GameObject bronze = CreateWorldImage(level, "Textures/Star");
+                bronze.transform.position -= Vector3.right * 1.1f;
+                bronze.transform.parent = stars.transform;
+
+            }
+
+            stars.transform.position -= Vector3.up * 0.8f;
+            stars.transform.localScale *= 0.2f;
+            stars.transform.SetParent(screen.transform);
+
+            screen.AddComponent<StageScreen>().stageInfo = stageInfo;
+
+            count++;
+
+        }
 
         return screen;
 
@@ -118,14 +142,37 @@ public static class Factory
         UnityEngine.UI.Text textUI = textGO.AddComponent<UnityEngine.UI.Text>();
         textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 5000);
         textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 5000);
-        textUI.transform.localScale *= 0.001f;
+        textUI.transform.localScale *= 0.004f;
         textUI.text = text;
-        textUI.fontSize = 299;
+        textUI.fontSize = 75;
         textUI.color = color;
         textUI.alignment = TextAnchor.MiddleCenter;
         textUI.font = Resources.Load<Font>("Fonts/unispace bd");
 
         return canvasGO;
+
+    }
+
+    public static GameObject CreateWorldImage(Level level, string image, bool transparent = false)
+    {
+
+        GameObject imageGO = level.CreateGameObject("image" + count++);
+        MeshFilter meshFilter = imageGO.AddComponent<MeshFilter>();
+        MeshRenderer meshRenderer = imageGO.AddComponent<MeshRenderer>();
+
+        GameObject tmp = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        meshFilter.mesh = tmp.GetComponent<MeshFilter>().mesh;
+        Object.Destroy(tmp);
+
+        Material mat = new Material(Shader.Find("Unlit/Texture"));
+
+        if(transparent)
+            mat = new Material(Shader.Find("Unlit/Transparent"));
+
+        mat.mainTexture = Resources.Load(image) as Texture2D;
+        meshRenderer.material = mat;
+
+        return imageGO;
 
     }
 
