@@ -17,7 +17,7 @@ public class VatsugWand : MonoBehaviour
 
     GameObject mEndAttractor;
     private float mPowerEndAttractor;
-    private const float mTimerEndAttractor = 0.2f;
+    private const float mTimerEndAttractor = 0.1f;
     private float mTimerCurrentEndAttractor = mTimerEndAttractor;
 
     private GPUParticleSystem mParticles = null;
@@ -29,7 +29,7 @@ public class VatsugWand : MonoBehaviour
     void Awake()
     {
         mPowerEndAttractor = 30.0f;
-        mAttractorsPower = 3.0f;
+        mAttractorsPower = 7.0f;
 
         //We create the various parts.
         InitGameObjects();
@@ -61,7 +61,7 @@ public class VatsugWand : MonoBehaviour
         mEndAttractor = new GameObject();
         mEndAttractor.AddComponent<GPUParticleAttractor>();
         mEndAttractor.transform.parent = mTipGO.transform;
-        mEndAttractor.transform.localPosition = Vector3.up * 1.5f;
+        mEndAttractor.transform.localPosition = Vector3.up * 10f;
 
        
         float TwoPIdivNrAttractors = Mathf.PI * 2 / mNrOfAttractors;
@@ -69,7 +69,7 @@ public class VatsugWand : MonoBehaviour
         {
             mAttractors[i] = new GameObject("attractor" + i.ToString());
             mAttractors[i].transform.parent = mTipGO.transform;
-            mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * 6;
+            mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * 5 * Mathf.Sin(Time.time);
 
             mAttractors[i].AddComponent<GPUParticleAttractor>().Power = mAttractorsPower;
         }
@@ -154,6 +154,10 @@ public class VatsugWand : MonoBehaviour
                     mTimerCurrentEndAttractor -= Time.deltaTime;
                     mEndAttractor.GetComponent<GPUParticleAttractor>().Power = mPowerEndAttractor;
 
+                }
+                else
+                {
+                    mEndAttractor.GetComponent<GPUParticleAttractor>().Power = 0.0f;
                 }
             }
         }
