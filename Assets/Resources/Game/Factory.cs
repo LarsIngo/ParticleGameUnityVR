@@ -95,7 +95,7 @@ public static class Factory
         GameObject medal = CreateWorldText(level, medalText, Color.black);
         medal.transform.position -= Vector3.up * 0.8f;
         medal.transform.localScale *= 0.4f;
-        medal.transform.parent = screen.transform;
+        medal.transform.SetParent(screen.transform);
 
         screen.AddComponent<StageScreen>().stageInfo = stageInfo;
 
@@ -116,7 +116,7 @@ public static class Factory
         canvas.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 1000);
 
         GameObject textGO = level.CreateGameObject("TEXT" + count);
-        textGO.transform.parent = canvasGO.transform;
+        textGO.transform.SetParent(canvasGO.transform);
         UnityEngine.UI.Text textUI = textGO.AddComponent<UnityEngine.UI.Text>();
         textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 5000);
         textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 5000);
