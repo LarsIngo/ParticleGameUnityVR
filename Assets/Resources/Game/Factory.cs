@@ -61,6 +61,11 @@ public static class Factory
             lockImage.transform.position -= Vector3.forward * 0.1f;
             lockImage.transform.parent = screen.transform;
 
+            GameObject requirement = CreateWorldText(level, stageInfo.mStarRequirement.ToString(), Color.red * 0.9f);
+            requirement.transform.position -= Vector3.forward * 0.15f;
+            requirement.transform.localScale *= 2;
+            requirement.transform.parent = screen.transform;
+
         }
         else
         {
