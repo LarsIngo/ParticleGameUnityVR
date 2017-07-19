@@ -817,24 +817,24 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     // RENDER.
-    private static void RenderSystem(GPUParticleSystem system)
+    private void RenderSystem()
     {
         Debug.Assert(sTotalParticleCount <= sMergedParticleCount);
 
-        system.mRenderMaterial.SetPass(0);
+        mRenderMaterial.SetPass(0);
 
         // BIND BUFFERS.
-        system.mRenderMaterial.SetBuffer("gPosition", sMergedPositionBuffer.GetOutputBuffer());
-        system.mRenderMaterial.SetBuffer("gVelocity", sMergedVelocityBuffer.GetOutputBuffer());
-        system.mRenderMaterial.SetBuffer("gLifetime", sMergedLifetimeBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gPosition", sMergedPositionBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gVelocity", sMergedVelocityBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gLifetime", sMergedLifetimeBuffer.GetOutputBuffer());
 
-        system.mRenderMaterial.SetBuffer("gColor", sMergedColorBuffer.GetOutputBuffer());
-        system.mRenderMaterial.SetBuffer("gHalo", sMergedHaloBuffer.GetOutputBuffer());
-        system.mRenderMaterial.SetBuffer("gScale", sMergedScaleBuffer.GetOutputBuffer());
-        system.mRenderMaterial.SetBuffer("gTransparency", sMergedTransperancyBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gColor", sMergedColorBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gHalo", sMergedHaloBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gScale", sMergedScaleBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gTransparency", sMergedTransperancyBuffer.GetOutputBuffer());
 
         // BIND SORTED BUFFER AND USE AS INDEX BUFFER TO RENDER BACK TO FRONT.
-        system.mRenderMaterial.SetBuffer("gSortedParticleIndexBuffer", sSortElementSwapBuffer.GetOutputBuffer());
+        mRenderMaterial.SetBuffer("gSortedParticleIndexBuffer", sSortElementSwapBuffer.GetOutputBuffer());
 
         // DRAW.
         Graphics.DrawProcedural(MeshTopology.Points, sTotalParticleCount, 1);
@@ -931,9 +931,9 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void OnRenderObject()
     {
-        if (sRender)
-        {
-            sRender = false;
+        //if (sRender)
+        //{
+        //    sRender = false;
 
             // Merge particle buffers.
             Merge();
@@ -942,8 +942,8 @@ public class GPUParticleSystem : MonoBehaviour
             Sort();
 
             // Render this frame.
-            RenderSystem(this);
-        }
+            RenderSystem();
+        //}
     }
 
     // MONOBEHAVIOUR.

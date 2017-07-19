@@ -34,8 +34,8 @@ public class Main : MonoBehaviour
         }
 
         //Equip a wand.
-        EmitterWand rightWand = mRightController.AddComponent<EmitterWand>();
-        ShellAttractorWand leftWand = mLeftController.AddComponent<ShellAttractorWand>();
+        AttractorWand rightWand = mRightController.AddComponent<AttractorWand>();
+        AttractorWand leftWand = mLeftController.AddComponent<AttractorWand>();
 
         rightWand.rightHand = true;
         leftWand.rightHand = false;
