@@ -28,6 +28,11 @@ public class DefaultLevel : Level
     public DefaultLevel(string name) : base(name)
     {
 
+        StageInfo stageInfo = new StageInfo();
+        stageInfo.name = "Default Level";
+
+        Hub.Instance.mStageInfoList.Add(stageInfo);
+
         //Equip a wand.
         AttractorWand rightWand = rightHand.AddComponent<AttractorWand>();
         AttractorWand leftWand = leftHand.AddComponent<AttractorWand>();

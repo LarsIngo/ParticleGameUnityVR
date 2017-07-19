@@ -14,6 +14,7 @@ public class Hub
     public enum STATE
     {
         NONE = 0,
+        MENU,
         DEFAULT,
     };
 
@@ -46,10 +47,10 @@ public class Hub
     private Level mActiveLevel = null;
 
     /// <summary>
-    /// Last picture taken from camera.
+    /// Current active level.
     /// Default: null
     /// </summary>
-    private Texture2D mSnapshot = null;
+    public List<StageInfo> mStageInfoList;
 
     /// --- MEMBERS --- ///
 
@@ -68,6 +69,7 @@ public class Hub
     {
         // Create dictionary.
         mLevelDic = new Dictionary<string, Level>();
+        mStageInfoList = new List<StageInfo>();
     }
 
     /// <summary>
@@ -136,16 +138,6 @@ public class Hub
         }
     }
 
-    /// <summary>
-    /// Get snapshot.
-    /// </summary>
-    public Texture2D Snapshot
-    {
-        get
-        {
-            return mSnapshot;
-        }
-    }
 
     /// <summary>
     /// Main camera of game. Initialized at StartUp.

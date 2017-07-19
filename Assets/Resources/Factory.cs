@@ -47,13 +47,25 @@ public static class Factory {
         return michael;
     }
 
-    public static GameObject CreateStageScreen(Stage stage)
+    public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
     {
 
-        GameObject stageScreen = new GameObject("Stage_" + stage.name + "Screen");
-        stageScreen.AddComponent<StageScreen>();
+        GameObject screen = level.CreateGameObject(stageInfo.name + "_SCREEN");
+        MeshFilter meshFilter = screen.AddComponent<MeshFilter>();
+        MeshRenderer meshRenderer = screen.AddComponent<MeshRenderer>();
 
-        return stageScreen;
+        GameObject tmp = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        meshFilter.mesh = tmp.GetComponent<MeshFilter>().mesh;
+        Object.Destroy(tmp);
+
+        screen.AddComponent<MeshCollider>();
+
+        Material mat = new Material(Shader.Find("Unlit/Texture"));
+        meshRenderer.material = mat;
+
+        screen.AddComponent<StageScreen>().stageInfo = stageInfo;
+
+        return screen;
 
     }
 

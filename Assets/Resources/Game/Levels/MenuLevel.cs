@@ -22,6 +22,16 @@ public class MenuLevel : Level
         MenuWand rightWand = rightHand.AddComponent<MenuWand>();
         rightWand.rightHand = true;
 
+        for(int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
+        {
+
+            GameObject screen = CreateGameObject("Screen");
+            screen.AddComponent<StageScreen>();
+            
+            screen.transform.position += Vector3.forward + Vector3.right * (i + 0.1f);
+
+        }
+
     }
 
 
@@ -49,13 +59,6 @@ public class MenuLevel : Level
     public override void Sleep()
     {
         
-    }
-
-    void SpawnEnemies()
-    {
-
-
-
     }
 
     /// --- FUNCTIONS --- ///
