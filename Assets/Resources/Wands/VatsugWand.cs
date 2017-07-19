@@ -10,18 +10,25 @@ public class VatsugWand : MonoBehaviour
     GameObject mRodGO;
 
     GameObject mTipGO;
+
     GameObject[] mAttractors;
+    private const uint mNrOfAttractors = 5;
+
     GPUParticleAttractor mEndAttractor;
+    private float mPowerEndAttractor;
+    private const float mTimerEndAttractor = 0.75f;
+    private float mTimerCurrentEndAttractor = mTimerEndAttractor;
+
     GPUParticleSystem mParticles;
 
-    public bool rightHand;
-    public float power;
+    public bool mRightHand;
+    public float mAttractorsPower;
 
     // Use this for initialization
     void Awake()
     {
-
-        power = 20;
+        mPowerEndAttractor = 50.0f;
+        mAttractorsPower = 20;
 
         //We create the various parts.
         InitGameObjects();
@@ -46,10 +53,13 @@ public class VatsugWand : MonoBehaviour
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         mParticles.TransparencyLifetimePoints = transparencyControlpoints;
 
-        const uint nrOfAttractors = 5;
-        mAttractors = new GameObject[5];//GPUParticleAttractor[nrOfAttractors];
+        mEndAttractor = new GPUParticleAttractor();
+        mEndAttractor.transform.parent = mTipGO.transform;
+        mEndAttractor.transform.localPosition = Vector3.up * 1.5f;
 
-        float TwoPIdivNrAttractors = Mathf.PI * 2 / nrOfAttractors;
+        mAttractors = new GameObject[mNrOfAttractors];//GPUParticleAttractor[mNrOfAttractors];
+
+        float TwoPIdivNrAttractors = Mathf.PI * 2 / mNrOfAttractors;
         for (int i = 0; i < 5; ++i)
         {
             //mAttractors[i] = mTipGO.AddComponent<GPUParticleAttractor>();
@@ -114,21 +124,39 @@ public class VatsugWand : MonoBehaviour
         {
 
             float trigger = 0;
-            if (rightHand)
+            if (mRightHand)
                 trigger = VrInput.RightTrigger();
             else trigger = VrInput.LeftTrigger();
 
-
-            attractor.Power = power * trigger;
+            
 
             if (trigger == 1.0f)
-                system.Active = true;
-            else system.Active = false;
+            {
+                //for (int i = 0; i < mNrOfAttractors; ++i)
+                //  mAttractors[i].Power = power * trigger;
 
+                mParticles.Active = true;
+                mTimerCurrentEndAttractor = mTimerEndAttractor;
+
+                mEndAttractor.Power = 0.0f;
+            }
+            else
+            {
+                //for (int i = 0; i < mNrOfAttractors; ++i)
+                //  mAttractors[i].Power = 0.0f;
+
+                mParticles.Active = false;
+                if (mTimerCurrentEndAttractor > 0.0f)
+                {
+                    mTimerCurrentEndAttractor -= Time.deltaTime;    //TMP
+                    mEndAttractor.Power = mPowerEndAttractor;
+
+                }
+            }
         }
         else
         {
-
+            /*
             if (Input.GetKey(KeyCode.Space))
             {
 
@@ -143,7 +171,7 @@ public class VatsugWand : MonoBehaviour
                 system.Active = true;
 
             }
-
+            */
         }
 
     }

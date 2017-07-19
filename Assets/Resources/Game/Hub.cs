@@ -14,7 +14,8 @@ public class Hub
     public enum STATE
     {
         NONE = 0,
-        DEFAULT,
+        DEFAULT = 1,
+        VATSUG = 2,
     };
 
     /// <summary>

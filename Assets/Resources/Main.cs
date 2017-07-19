@@ -15,6 +15,7 @@ public class Main : MonoBehaviour
 
     // Levels.
     private Level mDeafultLevel;
+    private Level mVatsugLevel;
 
     /// --- SCENES --- ///
 
@@ -25,7 +26,9 @@ public class Main : MonoBehaviour
         Factory.CreateStageScreen(new Stage("Best stage"));
 
         mDeafultLevel = new DefaultLevel("LEVEL:DEFAULT");
-        Hub.Instance.SetState(Hub.STATE.DEFAULT);
+        mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
+
+        Hub.Instance.SetState(Hub.STATE.VATSUG);
     }
 
     private void Update()
@@ -36,6 +39,9 @@ public class Main : MonoBehaviour
         {
             case Hub.STATE.DEFAULT:
                 mCurrentLevel = mDeafultLevel;
+                break;
+            case Hub.STATE.VATSUG:
+                mCurrentLevel = mVatsugLevel;
                 break;
 
             default: Debug.Log("WARNING: No assigned STATE"); break;
