@@ -8,6 +8,7 @@ public class VatsugWand : MonoBehaviour
     public uint mNrOfAttractors;
 
     public GameObject[] mAttractors;
+    
 
     public GameObject mEndAttractor;
 
@@ -42,11 +43,12 @@ public class VatsugWand : MonoBehaviour
             {
 
                 float TwoPIdivNrAttractors = Mathf.PI * 2 / mNrOfAttractors;
+                
                 for (int i = 0; i < mNrOfAttractors; ++i)
                 {
                     mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * 5 * Mathf.Sin(Time.time);
 
-                    mAttractors[i].AddComponent<GPUParticleAttractor>().Power = mPowerAttractors;
+                    mAttractors[i].GetComponent<GPUParticleAttractor>().Power = mPowerAttractors;
                 }
 
                 mParticles.Active = true;
