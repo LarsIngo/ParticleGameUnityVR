@@ -24,7 +24,7 @@ public class Main : MonoBehaviour
 
         Factory.CreateStageScreen(new Stage("Best stage"));
 
-        mDeafultLevel = new DeafultLevel("LEVEL:DEFAULT");
+        mDeafultLevel = new DefaultLevel("LEVEL:DEFAULT");
         Hub.Instance.SetState(Hub.STATE.DEFAULT);
     }
 

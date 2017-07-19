@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeafultLevel : Level
+public class DefaultLevel : Level
 {
     /// +++ MEMBERS +++ ///
 
@@ -25,12 +25,12 @@ public class DeafultLevel : Level
     /// Constructor.
     /// </summary>
     /// <param name="name">Name of level, must be unique.</param>
-    public DeafultLevel(string name) : base(name)
+    public DefaultLevel(string name) : base(name)
     {
 
         //Equip a wand.
-        AttractorWand rightWand = leftHand.AddComponent<AttractorWand>();
-        AttractorWand leftWand = rightHand.AddComponent<AttractorWand>();
+        AttractorWand rightWand = rightHand.AddComponent<AttractorWand>();
+        AttractorWand leftWand = leftHand.AddComponent<AttractorWand>();
 
         rightWand.rightHand = true;
         leftWand.rightHand = false;
