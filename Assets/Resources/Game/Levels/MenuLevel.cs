@@ -34,10 +34,13 @@ public class MenuLevel : Level
 
         mScreenList = new List<GameObject>();
 
-        GameObject timerText = Factory.CreateWorldText(this, Hub.Instance.stars.ToString(), Color.white);
-
-        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
+        GameObject timerText = Factory.CreateWorldText(this, Hub.Instance.stars.ToString(), Color.black);
+        timerText.transform.position += Vector3.forward * 150 + Vector3.up * 150;
         timerText.transform.localScale *= 100;
+
+        GameObject starImage = Factory.CreateWorldImage(this, "Textures/Star", true);
+        starImage.transform.position += Vector3.forward * 155 + Vector3.up * 150;
+        starImage.transform.localScale *= 100;
 
         mStarText = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
 

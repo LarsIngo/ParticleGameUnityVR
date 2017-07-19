@@ -93,9 +93,9 @@ public class Attractor_lvl_1 : Level
 
     void SpawnEnemies()
     {
-        Object.Destroy(enemy1);
-        Object.Destroy(enemy2);
-        Object.Destroy(enemy3);
+        Object.DestroyImmediate(enemy1);
+        Object.DestroyImmediate(enemy2);
+        Object.DestroyImmediate(enemy3);
 
         //Spawn enemies.
         enemy1 = CreateGameObject("ENEMY1");

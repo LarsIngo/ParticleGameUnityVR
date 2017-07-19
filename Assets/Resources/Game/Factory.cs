@@ -65,7 +65,22 @@ public static class Factory
 
         GameObject screen = CreateWorldImage(level, stageInfo.mThumbnail);
         screen.AddComponent<MeshCollider>();
+        screen.AddComponent<GPUParticleAttractor>();
+        screen.GetComponent<GPUParticleAttractor>().Max = 1;
+        screen.GetComponent<GPUParticleAttractor>().Power = -0.1f;
 
+        GameObject tmp = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        Mesh planeMesh = tmp.GetComponent<MeshFilter>().mesh;
+        Object.Destroy(tmp);
+
+        //GameObject frameLeft = level.CreateGameObject("FRAMELEFT" + count++);
+        //frameLeft.transform.Rotate(90, 0, 0);
+        //frameLeft.transform.localScale *= 0.1f;
+        //frameLeft.transform.parent = screen.transform;
+        //GPUParticleSystem system = frameLeft.AddComponent<GPUParticleSystem>();
+        //system.EmittFrequency = 500;
+        //system.EmittMesh = planeMesh;
+        
         if (stageInfo.mLocked || stageInfo.mStarRequirement > Hub.Instance.stars)
         {
 
@@ -89,7 +104,7 @@ public static class Factory
 
             GameObject stars = level.CreateGameObject("STARS" + count++);
 
-            if (true || stageInfo.Score < stageInfo.mGold)
+            if (stageInfo.Score < stageInfo.mGold)
             {
 
                 GameObject gold = CreateWorldImage(level, "Textures/Star");
@@ -97,14 +112,14 @@ public static class Factory
                 gold.transform.parent = stars.transform;
 
             }
-            if (true || stageInfo.Score < stageInfo.mSilver)
+            if (stageInfo.Score < stageInfo.mSilver)
             {
 
                 GameObject silver = CreateWorldImage(level, "Textures/Star");
                 silver.transform.parent = stars.transform;
 
             }
-            if (true || stageInfo.Score < stageInfo.mBronze)
+            if (stageInfo.Score < stageInfo.mBronze)
             {
 
                 GameObject bronze = CreateWorldImage(level, "Textures/Star");
@@ -283,7 +298,6 @@ public static class Factory
 
     }
 
-
     public static GameObject CreateVatsugWand(Level level, float powerEndAttractor, float powerNormalAttractors, float pendulumSpeed, float reboundDistance, bool rightHand)
     {
         //The wand is the parent object to all the parts.
@@ -380,7 +394,6 @@ public static class Factory
         return enemy;
     }
     
-
 
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
     {
