@@ -86,6 +86,17 @@ public class VrInput : MonoBehaviour {
 
     }
 
+    public static bool Menu()
+    {
+
+        if (!controllersFound)
+            return false;
+
+        SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)rightController.index);
+        return controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu);
+
+    }
+
     Vector3 oldRight;
     Vector3 oldLeft;
     public static Vector3 deltaRight;

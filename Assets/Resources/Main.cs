@@ -58,6 +58,10 @@ public class Main : MonoBehaviour
 
         // Update level.
         mCurrentLevel.Update();
+
+        if (VrInput.Menu())
+            Hub.Instance.SetState(Hub.STATE.MENU);
+
     }
 
     private void OnDestroy()
