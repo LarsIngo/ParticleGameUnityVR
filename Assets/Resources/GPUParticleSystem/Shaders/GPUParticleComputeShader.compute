@@ -1,18 +1,19 @@
 ﻿CGPROGRAM
 
-// TODO: Fix comment: Update kernel
+// TODO: Fix comment: Update kernel // James
 #pragma kernel UPDATE
-
 
 StructuredBuffer<float4> gPositionIN;
 StructuredBuffer<float4> gVelocityIN;
-StructuredBuffer<float4> gAmbientIN;
 StructuredBuffer<float4> gLifetimeIN;
 
 RWStructuredBuffer<float4> gPositionOUT;
 RWStructuredBuffer<float4> gVelocityOUT;
-RWStructuredBuffer<float4> gAmbientOUT;
 RWStructuredBuffer<float4> gLifetimeOUT;
+RWStructuredBuffer<float4> gColorOUT;
+RWStructuredBuffer<float4> gHaloOUT;
+RWStructuredBuffer<float4> gScaleOUT;
+RWStructuredBuffer<float4> gTransparencyOUT;
 
 uniform int gMaxParticleCount;
 uniform float gDeltaTime;
@@ -52,6 +53,19 @@ StructuredBuffer<float4> gSphereColliderBuffer;
 
 RWStructuredBuffer<int> gSphereColliderResultBufferWRITE;
 
+// VALUES OVER LIFETIME.
+uniform int gColorLifetimeCount;
+StructuredBuffer<float4> gColorLifetimeBuffer;
+
+uniform int gHaloLifetimeCount;
+StructuredBuffer<float4> gHaloLifetimeBuffer;
+
+uniform int gScaleLifetimeCount;
+StructuredBuffer<float4> gScaleLifetimeBuffer;
+
+uniform int gTransparencyLifetimeCount;
+StructuredBuffer<float4> gTransparencyLifetimeBuffer;
+
 [numthreads(64,1,1)]
 void UPDATE(uint3 id : SV_DispatchThreadID)
 {
@@ -61,7 +75,6 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
     float3 pPosition = gPositionIN[tID].xyz;
     float3 pVelocity = gVelocityIN[tID].xyz;
-    float3 pAmbient = gAmbientIN[tID].xyz;
     float2 pLifetime = gLifetimeIN[tID].xy;
 
     if (pLifetime.x > -0.3f)
@@ -158,13 +171,93 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
             }
         }
 
+        // UPDATE LIFEIMTE DEPENDENT VARIABLES.
+        float currentLifetimeFactor = 1 - pLifetime.x / pLifetime.y; //[0,1]
+
+        float3 pColor;
+        float3 pHalo;
+        float2 pScale;
+        float pTransparency;
+
+        // COLOR OVER LIFETIME.
+        for (int i = 1; i < gColorLifetimeCount; ++i)
+        {
+            if (gColorLifetimeBuffer[i].w > currentLifetimeFactor)
+            {
+                float4 c0 = gColorLifetimeBuffer[i - 1];
+                float4 c1 = gColorLifetimeBuffer[i];
+
+                float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
+
+                pColor = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
+
+                //exit
+                break;
+            }
+        }
+
+        // HALO OVER LIFETIME.
+        for (int i = 1; i < gHaloLifetimeCount; ++i)
+        {
+            if (gHaloLifetimeBuffer[i].w > currentLifetimeFactor)
+            {
+                float4 c0 = gHaloLifetimeBuffer[i - 1];
+                float4 c1 = gHaloLifetimeBuffer[i];
+
+                float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
+
+                pHalo = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
+
+                //exit
+                break;
+            }
+        }
+
+        // SCALE OVER LIFETIME.
+        for (int i = 1; i < gScaleLifetimeCount; ++i)
+        {
+            if (gScaleLifetimeBuffer[i].w > currentLifetimeFactor)
+            {
+                float4 c0 = gScaleLifetimeBuffer[i - 1];
+                float4 c1 = gScaleLifetimeBuffer[i];
+
+                float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
+
+                pScale = c0.xy * (1 - lerpFactor) + c1.xy * lerpFactor;
+
+                //exit
+                break;
+            }
+        }
+
+        // TRANSPARENCY OVER LIFETIME.
+        for (int i = 1; i < gTransparencyLifetimeCount; ++i)
+        {
+            if (gTransparencyLifetimeBuffer[i].w > currentLifetimeFactor)
+            {
+                float4 c0 = gTransparencyLifetimeBuffer[i - 1];
+                float4 c1 = gTransparencyLifetimeBuffer[i];
+
+                float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
+
+                pTransparency = c0.x * (1 - lerpFactor) + c1.x * lerpFactor;
+
+                //exit
+                break;
+            }
+        }
+
+        gColorOUT[tID] = float4(pColor, 0);
+        gHaloOUT[tID] = float4(pHalo, 0);
+        gScaleOUT[tID] = float4(pScale, 0, 0);
+        gTransparencyOUT[tID] = float4(pTransparency, 0, 0, 0);
+
         // Update lifetime.
         pLifetime.x = pLifetime.x - dt;
     }
 
     gPositionOUT[tID] = float4(pPosition, 0);
     gVelocityOUT[tID] = float4(pVelocity, 0);
-    gAmbientOUT[tID] = float4(pAmbient, 0);
     gLifetimeOUT[tID] = float4(pLifetime.xy, 0, 0);
 }
 
@@ -173,13 +266,11 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
 RWStructuredBuffer<float4> gPositionBuffer;
 RWStructuredBuffer<float4> gVelocityBuffer;
-RWStructuredBuffer<float4> gAmbientBuffer;
 RWStructuredBuffer<float4> gLifetimeBuffer;
 
 uniform int gEmittIndex;
 uniform float3 gPosition;
 uniform float3 gVelocity;
-uniform float3 gAmbient;
 uniform float gLifetime;
 
 uniform StructuredBuffer<float3> gEmittMeshVertexBuffer;
@@ -197,17 +288,18 @@ void EMITT(uint3 id : SV_DispatchThreadID)
     float3 emittPosition = float3(0,0,0);
     if (gEmittMeshIndexCount > 0)
         emittPosition = gEmittMeshVertexBuffer[gEmittMeshIndexBuffer[gEmittMeshRandomIndex]];
+    else
+        emittPosition = gPosition;
 
     gPositionBuffer[index] = float4(emittPosition, 0);
     gVelocityBuffer[index] = float4(gVelocity, 0);
-    gAmbientBuffer[index] = float4(gAmbient, 0);
 
     float lifetime = gLifetime;
     gLifetimeBuffer[index] = float4(lifetime, lifetime, 0, 0);
 }
 
 
-// Update kernel
+// Result kernel
 #pragma kernel RESULT
 
 StructuredBuffer<int> gGPUColliderResultBufferIN;
@@ -239,6 +331,24 @@ void RESULT(uint3 id : SV_DispatchThreadID)
     }
 }
 
+// Merge particles to one buffer and add sort value to sort buffer.
+#pragma kernel MERGE_INITSORT
+
+StructuredBuffer<float4> gLocalSystemPositionIN;
+StructuredBuffer<float4> gLocalSystemVelocityIN;
+StructuredBuffer<float4> gLocalSystemLifetimeIN;
+StructuredBuffer<float4> gLocalSystemColorIN;
+StructuredBuffer<float4> gLocalSystemHaloIN;
+StructuredBuffer<float4> gLocalSystemScaleIN;
+StructuredBuffer<float4> gLocalSystemTransperancyIN;
+
+RWStructuredBuffer<float4> mergePositionOUT;
+RWStructuredBuffer<float4> mergeVelocityOUT;
+RWStructuredBuffer<float4> mergeLifetimeOUT;
+RWStructuredBuffer<float4> mergeColorOUT;
+RWStructuredBuffer<float4> mergeHaloOUT;
+RWStructuredBuffer<float4> mergeScaleOUT;
+RWStructuredBuffer<float4> mergeTransperancyOUT;
 
 // SORT 
 struct SortElement
@@ -246,37 +356,43 @@ struct SortElement
     float value;
     int index;
 };
-
 StructuredBuffer<SortElement> gSortElementBufferIN;
 RWStructuredBuffer<SortElement> gSortElementBufferOUT;
 
+uniform int gLocalParticleCount;
 uniform int gOffsetIndex;
 uniform float3 gCameraForward;
 
-// InitSort kernel.
-#pragma kernel INITSORT
-
 [numthreads(64, 1, 1)]
-void INITSORT(uint3 id : SV_DispatchThreadID)
+void MERGE_INITSORT(uint3 id : SV_DispatchThreadID)
 {
     int tID = (int)id.x;
 
-    if (tID >= gMaxParticleCount) return;
+    if (tID >= gLocalParticleCount) return;
 
     int offsetIndex = gOffsetIndex;
 
-    SortElement sortElement;
-    sortElement.value = dot(gPositionIN[tID].xyz, -gCameraForward); //Project particle positon on camera forward vector.
-    sortElement.index = tID;
+    float4 positionIN = gLocalSystemPositionIN[tID];
+    mergePositionOUT[tID + offsetIndex] = positionIN;
+    mergeVelocityOUT[tID + offsetIndex] = gLocalSystemVelocityIN[tID];
+    mergeLifetimeOUT[tID + offsetIndex] = gLocalSystemLifetimeIN[tID];
+    mergeColorOUT[tID + offsetIndex] = gLocalSystemColorIN[tID];
+    mergeHaloOUT[tID + offsetIndex] = gLocalSystemHaloIN[tID];
+    mergeScaleOUT[tID + offsetIndex] = gLocalSystemScaleIN[tID];
+    mergeTransperancyOUT[tID + offsetIndex] = gLocalSystemTransperancyIN[tID];
 
+    SortElement sortElement;
+    sortElement.value = dot(positionIN.xyz, -gCameraForward); //Project particle positon on camera forward vector.
+    sortElement.index = tID + offsetIndex;
     gSortElementBufferOUT[tID + offsetIndex] = sortElement;
 }
 
-uniform int gJ;
-uniform int gK;
 
 // Sort kernel
 #pragma kernel SORT
+
+uniform int gJ;
+uniform int gK;
 
 [numthreads(64, 1, 1)]
 void SORT(uint3 id : SV_DispatchThreadID)

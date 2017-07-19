@@ -145,14 +145,29 @@ public class DebugSceneMain : MonoBehaviour
 
     void GPU()
     {
-        GameObject emitter = new GameObject("emitter");
-        GPUParticleSystem system = emitter.AddComponent<GPUParticleSystem>();
-        system.EmittParticleLifeTime = 30.0f;
-        system.EmittFrequency = 500.0f;
+        GameObject emitter1 = new GameObject("emitter1");
+        emitter1.transform.position = new Vector3(2,0,0);
+        GPUParticleSystem system1 = emitter1.AddComponent<GPUParticleSystem>();
+        system1.EmittParticleLifeTime = 2;
+        system1.EmittFrequency = 200;
+
+        GameObject emitter2 = new GameObject("emitter2");
+        emitter2.transform.position = new Vector3(-2, 0, 0);
+        GPUParticleSystem system2 = emitter2.AddComponent<GPUParticleSystem>();
+        system2.EmittParticleLifeTime = 2;
+        system2.EmittFrequency = 300;
+
+        //GameObject emitter3 = new GameObject("emitter3");
+        //emitter3.transform.position = new Vector3(-4, 0, 0);
+        //GPUParticleSystem system3 = emitter3.AddComponent<GPUParticleSystem>();
+        //system3.EmittParticleLifeTime = 8;
+        //system3.EmittFrequency = 16;
+
 
         GameObject att = new GameObject("attractor");
         att.transform.position = new Vector3(0,0,5);
         GPUParticleAttractor attractor = att.AddComponent<GPUParticleAttractor>();
+        attractor.Power = 100;
     }
 
 }

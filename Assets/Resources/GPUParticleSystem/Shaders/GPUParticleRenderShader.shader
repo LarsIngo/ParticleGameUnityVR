@@ -23,8 +23,12 @@
 
 			StructuredBuffer<float4> gPosition;
 			StructuredBuffer<float4> gVelocity;
-			StructuredBuffer<float4> gAmbient;
 			StructuredBuffer<float4> gLifetime;
+
+            StructuredBuffer<float4> gColor;
+            StructuredBuffer<float4> gHalo;
+            StructuredBuffer<float4> gScale;
+            StructuredBuffer<float4> gTransparency;
 
             struct SortElement
             {
@@ -33,26 +37,17 @@
             };
             StructuredBuffer<SortElement> gSortedParticleIndexBuffer;
 
-			uniform int gColorLifetimeCount;
-			StructuredBuffer<float4> gColorLifetimeBuffer;
-
-			uniform int gHaloLifetimeCount;
-			StructuredBuffer<float4> gHaloLifetimeBuffer;
-
-			uniform int gScaleLifetimeCount;
-			StructuredBuffer<float4> gScaleLifetimeBuffer;
-
-			uniform int gTransparencyLifetimeCount;
-			StructuredBuffer<float4> gTransparencyLifetimeBuffer;
-
 			// ---
 
 			struct vsOutput
 			{
 				float4 svPosition : SV_POSITION;
 				float3 velocity : VELOCITY;
-				float3 ambient : AMBIENT;
 				float2 lifetime : LIFETIME;
+                float3 color : COLOR;
+                float3 halo : HALO;
+                float2 scale : SCALE;
+                float transparency : TRANSPARENCY;
 			};
 
 			vsOutput vert(uint vID : SV_VertexID) 
@@ -64,8 +59,11 @@
 
 				output.svPosition = float4(gPosition[index].xyz, 1);
 				output.velocity = gVelocity[index].xyz;
-				output.ambient = gAmbient[index].xyz;
 				output.lifetime = gLifetime[index].xy;
+                output.color = gColor[index].xyz;
+                output.halo = gHalo[index].xyz;
+                output.scale = gScale[index].xy;
+                output.transparency = gTransparency[index].x;
 
 				return output;
 			}
@@ -77,7 +75,6 @@
 				float4 svPosition : SV_POSITION;
 				float3 color : COLOR;
 				float  transparency : TRANSPARENCY;
-				float3 ambient : AMBIENT;
 				float3 halo : HALO;
 				float2 uv : UV;
 			};
@@ -95,82 +92,11 @@
 
 				float3 pPosition = input[0].svPosition.xyz;
 				float3 pVelocity = input[0].velocity;
-				float3 pAmbient = input[0].ambient;
 
-				float3 pColor;
-				float3 pHalo;
-				float2 pScale;
-				float  pTransparency;
-
-				//update lifetime dependent variables
-				float currentLifetimeFactor = 1 - pLifetime.x / pLifetime.y;//since lifetime starts from zero to one instead of one to zero
-				
-
-
-				for (int i = 1; i < gColorLifetimeCount; ++i)
-				{
-					if (gColorLifetimeBuffer[i].w > currentLifetimeFactor)
-					{
-						float4 c0 = gColorLifetimeBuffer[i - 1];
-						float4 c1 = gColorLifetimeBuffer[i];
-
-						float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
-
-						pColor = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
-
-						//exit
-						break;
-					}
-				}
-
-				for (int i = 1; i < gHaloLifetimeCount; ++i)
-				{
-					if (gHaloLifetimeBuffer[i].w > currentLifetimeFactor)
-					{
-						float4 c0 = gHaloLifetimeBuffer[i - 1];
-						float4 c1 = gHaloLifetimeBuffer[i];
-
-						float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
-
-						pHalo = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
-
-						//exit
-						break;
-					}
-				}
-
-				for (int i = 1; i < gScaleLifetimeCount; ++i)
-				{
-					if (gScaleLifetimeBuffer[i].w > currentLifetimeFactor)
-					{
-						float4 c0 = gScaleLifetimeBuffer[i - 1];
-						float4 c1 = gScaleLifetimeBuffer[i];
-
-						float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
-
-						pScale = c0.xy * (1 - lerpFactor) + c1.xy * lerpFactor;
-
-						//exit
-						break;
-					}
-				}
-
-				for (int i = 1; i < gTransparencyLifetimeCount; ++i)
-				{
-					if (gTransparencyLifetimeBuffer[i].w > currentLifetimeFactor)
-					{
-						float4 c0 = gTransparencyLifetimeBuffer[i - 1];
-						float4 c1 = gTransparencyLifetimeBuffer[i];
-
-						float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
-
-						pTransparency = c0.x * (1 - lerpFactor) + c1.x * lerpFactor;
-
-						//exit
-						break;
-					}
-				}
-				
+				float3 pColor = input[0].color;
+				float3 pHalo = input[0].halo;
+				float2 pScale = input[0].scale;
+				float pTransparency = input[0].transparency;
 
 				float3 pForward = normalize(_WorldSpaceCameraPos - pPosition);
 				float3 pRight = cross(pForward, lensUp);
@@ -187,7 +113,6 @@
 					output.svPosition = UnityObjectToClipPos(float4(vPosition, 1));
 					output.color = pColor;
 					output.transparency = pTransparency;
-					output.ambient = pAmbient;
 					output.halo = pHalo;
 					output.uv = float2(x, 1.0f - y);
 
@@ -208,8 +133,7 @@
 
 				float cosFactor = -cos(3.14159265f / 2.f * (factor + 1.f));
 
-
-				return float4(factor * input.color * input.ambient + (1 - factor) * input.halo, cosFactor) * float4(1, 1, 1, input.transparency);
+				return float4(factor * input.color + (1 - factor) * input.halo, cosFactor * input.transparency);
 			}
 
 			ENDCG

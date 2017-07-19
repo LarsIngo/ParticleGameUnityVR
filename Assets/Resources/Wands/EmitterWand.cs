@@ -27,7 +27,6 @@ public class EmitterWand : MonoBehaviour {
         system.EmittParticleLifeTime = 5.0f;
         system.EmittFrequency = 500.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-        system.EmittInitialAmbient = new Vector3(1.0f, 1.0f, 1.0f);
         system.EmittInheritVelocity = false;
 
         Vector4[] colorControlpoints = { new Vector4(0, 1, 0, 0), new Vector4(1, 1, 0, 0.1f), new Vector4(0, 1, 0, 0.2f), new Vector4(1, 0, 0, 0.3f), new Vector4(0, 1, 0, 0.4f),
