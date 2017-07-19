@@ -8,7 +8,9 @@ public class DefaultLevel : Level
 
     GameObject mParticleSystem;
 
-    public UnityEngine.UI.Text highscore;
+    GameObject mHMD;
+    public GameObject mLeftController;
+    public GameObject mRightController;
 
     GameObject enemy1;
     GameObject enemy2;
@@ -62,7 +64,7 @@ public class DefaultLevel : Level
         }
 
         if ((enemy1 || enemy2 || enemy3))
-            timer += Time.deltaTime;
+            timer += Hub.Instance.DeltaTime;
 
     }
 
