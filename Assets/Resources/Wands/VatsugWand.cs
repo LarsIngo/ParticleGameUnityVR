@@ -22,7 +22,7 @@ public class VatsugWand : MonoBehaviour
     public float mPowerAttractors;
     public float mNormalAttractorReboundDistance;
 
-    private float pingpongTimer = 0.0f;
+    private float timerSpeed = 1.0f;
 
 
     // Update is called once per frame
@@ -45,18 +45,8 @@ public class VatsugWand : MonoBehaviour
 
                 float TwoPIdivNrAttractors = Mathf.PI * 2 / mNrOfAttractors;
 
-                pingpongTimer = ((pingpongTimer + Time.deltaTime * mNrOfAttractors) % mNrOfAttractors + 1);
-                /*for (int i = 0; i < mNrOfAttractors; ++i)
-                {
-                    
-                    //mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * mNormalAttractorReboundDistance;
-                    float fac = pingpongTimer - i;
-                    if (fac <= 1.0f && fac > 0.0f)
-                        mAttractors[i].GetComponent<GPUParticleAttractor>().Power = mPowerAttractors;
-                    else
-                        mAttractors[i].GetComponent<GPUParticleAttractor>().Power = mPowerAttractors / mNrOfAttractors;
-                }*/
 
+                mParticleEmitter.transform.localPosition = new Vector3(Mathf.Cos(Time.deltaTime * timerSpeed), Mathf.Sin(Time.deltaTime * timerSpeed), 0.0f) * mNormalAttractorReboundDistance;
 
 
                 mParticleEmitter.GetComponent<GPUParticleSystem>().Active = true;
@@ -87,22 +77,8 @@ public class VatsugWand : MonoBehaviour
         }
         else
         {
-            /*
-            if (Input.GetKey(KeyCode.Space))
-            {
-
-                attractor.Power = 20;
-                system.Active = false;
-
-            }
-            else
-            {
-
-                attractor.Power = 0;
-                system.Active = true;
-
-            }
-            */
+            
+            
         }
 
     }

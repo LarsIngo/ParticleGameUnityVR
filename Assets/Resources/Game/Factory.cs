@@ -213,10 +213,7 @@ public static class Factory
         WandGO.transform.localScale *= 0.1f;
 
         //++++++++++ WAND ++++++++++
-        const uint nrOfAttractors = 5;
-
-        GameObject[] attractors;
-
+        
         GameObject endAttractor;
 
         GameObject emitter = new GameObject("VatsugEmitter");
@@ -226,10 +223,12 @@ public static class Factory
 
         //We add the emitter to the tip.
         GPUParticleSystem particleEmitter = emitter.AddComponent<GPUParticleSystem>();
-        TempVisuals(emitter, PrimitiveType.Cube, Color.blue);
-        emitter.GetComponent<Renderer>().enabled = false;
+        GPUParticleAttractor attractor = emitter.AddComponent<GPUParticleAttractor>();
+        TempVisuals(emitter, PrimitiveType.Sphere, Color.blue);
+        //emitter.GetComponent<Renderer>().enabled = false;
         emitter.transform.parent = TipGO.transform;
-        emitter.transform.localPosition = new Vector3(1, 0, 1) * normalAttractorReboundDistance;
+        emitter.transform.localScale = Vector3.one * 0.2f;
+        emitter.transform.localPosition = new Vector3(1, 0, 0) * normalAttractorReboundDistance;
 
         particleEmitter.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
         particleEmitter.EmittParticleLifeTime = 5.0f;
@@ -249,9 +248,7 @@ public static class Factory
 
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         particleEmitter.TransparencyLifetimePoints = transparencyControlpoints;
-
-        attractors = new GameObject[nrOfAttractors];
-
+        
         endAttractor = new GameObject();
         endAttractor.AddComponent<GPUParticleAttractor>();
         endAttractor.transform.parent = TipGO.transform;
@@ -259,24 +256,12 @@ public static class Factory
 
         
 
-        float TwoPIdivNrAttractors = Mathf.PI * 2 / nrOfAttractors;
-        for (int i = 0; i < nrOfAttractors; ++i)
-        {
-            attractors[i] = new GameObject("attractorVatsug" + i.ToString());
-            attractors[i].transform.parent = TipGO.transform;
-            attractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * normalAttractorReboundDistance;
-
-            attractors[i].AddComponent<GPUParticleAttractor>().Power = powerNormalAttractors;
-        }
-
         WandGO.transform.Rotate(90, 0, 0);
         WandGO.transform.position += Vector3.forward * 0.2f;
 
 
         VatsugWand wand = TipGO.AddComponent<VatsugWand>();
-        wand.mAttractors = attractors;
         wand.mEndAttractor = endAttractor;
-        wand.mNrOfAttractors = nrOfAttractors;
         wand.mPowerEndAttractor = powerEndAttractor;
         wand.mPowerAttractors = powerNormalAttractors;
         wand.mNormalAttractorReboundDistance = normalAttractorReboundDistance;
