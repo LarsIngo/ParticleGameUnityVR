@@ -6,6 +6,11 @@ public class MenuLevel : Level
 {
     /// +++ MEMBERS +++ ///
 
+    /// <summary>
+    /// Level currently active.
+    /// </summary>
+    private List<GameObject> mScreenList;
+
     /// --- MEMBERS --- ///
 
 
@@ -22,15 +27,7 @@ public class MenuLevel : Level
         MenuWand rightWand = rightHand.AddComponent<MenuWand>();
         rightWand.rightHand = true;
 
-        for(int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
-        {
-
-            GameObject screen = CreateGameObject("Screen");
-            screen.AddComponent<StageScreen>();
-            
-            screen.transform.position += Vector3.forward + Vector3.right * (i + 0.1f);
-
-        }
+        mScreenList = new List<GameObject>();
 
     }
 
@@ -40,6 +37,17 @@ public class MenuLevel : Level
     /// </summary>
     public override void Awake()
     {
+
+        for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
+        {
+
+            GameObject screen = Factory.CreateStageScreen(this, Hub.Instance.mStageInfoList[i]);
+
+            screen.transform.position += Vector3.forward + Vector3.right * i * 0.1f;
+
+            mScreenList.Add(screen);
+
+        }
 
     }
 
@@ -58,7 +66,13 @@ public class MenuLevel : Level
     /// </summary>
     public override void Sleep()
     {
-        
+
+        for (int i = 0; i < mScreenList.Count; i++)
+            Object.Destroy(mScreenList[i]);
+
+        for (int i = 0; i < mScreenList.Count; i++)
+            mScreenList.RemoveAt(i);
+
     }
 
     /// --- FUNCTIONS --- ///

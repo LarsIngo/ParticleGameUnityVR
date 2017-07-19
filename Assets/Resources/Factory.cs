@@ -61,6 +61,7 @@ public static class Factory {
         screen.AddComponent<MeshCollider>();
 
         Material mat = new Material(Shader.Find("Unlit/Texture"));
+        mat.mainTexture = Resources.Load(stageInfo.thumbnail) as Texture2D;
         meshRenderer.material = mat;
 
         screen.AddComponent<StageScreen>().stageInfo = stageInfo;

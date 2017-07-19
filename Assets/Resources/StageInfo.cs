@@ -13,7 +13,7 @@ public class StageInfo  {
     {
 
         name = "Stage:" + count;
-        thumbnail = "Textures/Default.jpg";
+        thumbnail = "Textures/Default";
 
     }
     public StageInfo(string name)
