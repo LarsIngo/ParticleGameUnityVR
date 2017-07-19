@@ -246,7 +246,7 @@ public static class Factory
         endAttractor = new GameObject();
         endAttractor.AddComponent<GPUParticleAttractor>();
         endAttractor.transform.parent = TipGO.transform;
-        endAttractor.transform.localPosition = Vector3.up * 10f;
+        endAttractor.transform.localPosition = Vector3.up * 12.0f;
 
         //the distance to wich the normal attractors can reach when periodically sinusweaving their way to victory...
         float normalAttractorReboundDistance = 5.0f;

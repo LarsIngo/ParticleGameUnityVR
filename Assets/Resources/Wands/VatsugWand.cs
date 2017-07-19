@@ -22,7 +22,7 @@ public class VatsugWand : MonoBehaviour
     public float mPowerAttractors;
     public float mNormalAttractorReboundDistance;
 
-    
+    private float pingpongTimer = 0.0f;
 
 
     // Update is called once per frame
@@ -43,10 +43,11 @@ public class VatsugWand : MonoBehaviour
             {
 
                 float TwoPIdivNrAttractors = Mathf.PI * 2 / mNrOfAttractors;
-                
+
+                pingpongTimer += Time.deltaTime;
                 for (int i = 0; i < mNrOfAttractors; ++i)
                 {
-                    mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * 5 * Mathf.Sin(Time.time);
+                    mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), Mathf.Sin(pingpongTimer), Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * 15.0f;// * ;
 
                     mAttractors[i].GetComponent<GPUParticleAttractor>().Power = mPowerAttractors;
                 }
