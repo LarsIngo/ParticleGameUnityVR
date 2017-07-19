@@ -182,7 +182,7 @@ public class GPUParticleSystem : MonoBehaviour
             GPUParticleSystem system = it.Value;
 
             float[] data = new float[system.mMaxParticleCount * 4];
-            for (int i = 0; i < data.GetLength(0) * 4; ++i)
+            for (int i = 0; i < data.GetLength(0); ++i)
                 data[i] = -1.0f;
 
             system.mLifetimeBuffer.GetInputBuffer().SetData(data);
