@@ -20,7 +20,7 @@ public static class Factory {
         LifeTimer lifetimer = michael.AddComponent<LifeTimer>();
         lifetimer.LifeTime = 1.2f;
 
-        GameObject particleDebris = new GameObject();
+        /*GameObject particleDebris = new GameObject();
 
         GPUParticleSystem particles = particleDebris.AddComponent<GPUParticleSystem>();
         particles.EmittParticleLifeTime = 7.0f;
@@ -39,7 +39,7 @@ public static class Factory {
         scaleLife[0] = new Vector4(0.01f, 0.01f, 0.0f, 0.0f);
         scaleLife[1] = new Vector4(0.001f, 0.001f, 0.0f, 1.0f);
         particles.ScaleLifetimePoints = scaleLife;
-
+        */
 
         exp.Explode();
 
