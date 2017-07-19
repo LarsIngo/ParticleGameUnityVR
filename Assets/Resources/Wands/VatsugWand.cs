@@ -44,12 +44,15 @@ public class VatsugWand : MonoBehaviour
 
                 float TwoPIdivNrAttractors = Mathf.PI * 2 / mNrOfAttractors;
 
-                pingpongTimer = (pingpongTimer + Time.deltaTime / 5) % 1.0f;
+                pingpongTimer = (pingpongTimer + Time.deltaTime / mNrOfAttractors) % mNrOfAttractors + 1;
                 for (int i = 0; i < mNrOfAttractors; ++i)
                 {
-                    mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 3.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * mNormalAttractorReboundDistance * pingpongTimer;
+                    mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * mNormalAttractorReboundDistance;
 
-                    mAttractors[i].GetComponent<GPUParticleAttractor>().Power = mPowerAttractors;
+                    if (pingpongTimer - i <= 1.0f)
+                        mAttractors[i].GetComponent<GPUParticleAttractor>().Power = mPowerAttractors;
+                    else
+                        mAttractors[i].GetComponent<GPUParticleAttractor>().Power = mPowerAttractors / mNrOfAttractors;
                 }
 
                 mParticles.Active = true;
