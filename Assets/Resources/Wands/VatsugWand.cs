@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class VatsugWand : MonoBehaviour
 {
-    
-    public uint mNrOfAttractors;
-
-    public GameObject[] mAttractors;
-    
 
     public GameObject mEndAttractor;
 
@@ -38,18 +33,16 @@ public class VatsugWand : MonoBehaviour
 
 
 
-            mParticleEmitter.transform.localPosition = new Vector3(Mathf.Cos(Time.deltaTime), 0.0f, Mathf.Sin(Time.deltaTime)).normalized * mNormalAttractorReboundDistance;
-
+            
             if (trigger == 1.0f)
             {
+                
 
-                float TwoPIdivNrAttractors = Mathf.PI * 2 / mNrOfAttractors;
-
-
-                mParticleEmitter.transform.localPosition = new Vector3(Mathf.Cos(Time.deltaTime * timerSpeed), Mathf.Sin(Time.deltaTime * timerSpeed), 0.0f) * mNormalAttractorReboundDistance;
+                mParticleEmitter.transform.localPosition = new Vector3(Mathf.Cos(Time.time * timerSpeed), Mathf.Sin(Time.time * timerSpeed), 0.0f) * mNormalAttractorReboundDistance;
 
 
                 mParticleEmitter.GetComponent<GPUParticleSystem>().Active = true;
+                mParticleEmitter.GetComponent<GPUParticleAttractor>().Power = mPowerAttractors;
                 mTimerCurrentEndAttractor = mTimerEndAttractor;
 
                 mEndAttractor.GetComponent<GPUParticleAttractor>().Power = 0.0f;
@@ -59,13 +52,13 @@ public class VatsugWand : MonoBehaviour
             }
             else
             {
-                for (int i = 0; i < mNrOfAttractors; ++i)
-                  mAttractors[i].GetComponent<GPUParticleAttractor>().Power = 0.0f;
 
                 mParticleEmitter.GetComponent<GPUParticleSystem>().Active = false;
                 if (mTimerCurrentEndAttractor > 0.0f)
                 {
                     mTimerCurrentEndAttractor -= Time.deltaTime;
+
+                    mParticleEmitter.GetComponent<GPUParticleAttractor>().Power = 0.0f;
                     mEndAttractor.GetComponent<GPUParticleAttractor>().Power = mPowerEndAttractor;
 
                 }
