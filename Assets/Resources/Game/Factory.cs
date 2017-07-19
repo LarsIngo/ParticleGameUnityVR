@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Factory {
+/// <summary>
+/// Static class contatning functions to create constructed game objects.
+/// </summary>
+public static class Factory
+{
 
-    public static GameObject CreateMichaelBayEffect(Mesh mesh, Transform t, Color meshColor)
+    /// +++ FUNCTIONS +++ ///
+
+    public static GameObject CreateMichaelBayEffect(Level level, Mesh mesh, Transform t, Color meshColor)
     {
-        GameObject michael = new GameObject();
-        GameObject blackHole = new GameObject();
+        GameObject michael = level.CreateGameObject("michael" + Time.time);
+        GameObject blackHole = level.CreateGameObject("blackhole" + Time.time);
         michael.transform.position = t.position;
         michael.transform.rotation = t.rotation;
         blackHole.transform.position = t.position;
@@ -16,7 +22,7 @@ public static class Factory {
         GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
         exp.Mesh = mesh;
         exp.ExplosionColor = meshColor;
-        
+
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
         michaelLifetimer.LifeTime = 1.2f;
 
@@ -33,14 +39,14 @@ public static class Factory {
         return michael;
     }
 
-    public static GameObject CreateStageScreen(Stage stage)
+    public static GameObject CreateVatsugWand(Level level)
     {
+        GameObject wand = level.CreateGameObject("VatsugWand" + Time.time.ToString());
 
-        GameObject stageScreen = new GameObject("Stage_" + stage.name + "Screen");
-        stageScreen.AddComponent<StageScreen>();
+        wand.AddComponent<VatsugWand>();
 
-        return stageScreen;
-
+        return wand;
     }
 
+    /// --- FUNCTIONS --- ///
 }

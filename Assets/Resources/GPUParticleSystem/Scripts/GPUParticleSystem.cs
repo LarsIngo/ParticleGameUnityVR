@@ -504,7 +504,7 @@ public class GPUParticleSystem : MonoBehaviour
     private void EmittUpdate()
     {
         // Update timer.
-        mEmittTimer += Time.deltaTime;
+        mEmittTimer += Hub.Instance.DeltaTime;
 
         int emittCount = (int)(mEmittFrequency * mEmittTimer);
 
@@ -522,7 +522,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
             // Inherit velocity from emitter if true.
-            Vector3 velocity = (emitterVelocity / Time.deltaTime) * (mEmittInheritVelocity ? 1 : 0) + mEmittInitialVelocity;
+            Vector3 velocity = (emitterVelocity / Hub.Instance.DeltaTime) * (mEmittInheritVelocity ? 1 : 0) + mEmittInitialVelocity;
 
             
             Vector3 newInitPos = mLastPosition;
@@ -601,7 +601,7 @@ public class GPUParticleSystem : MonoBehaviour
 
         // SET META DATA.
         sComputeShader.SetInt("gMaxParticleCount", mMaxParticleCount);
-        sComputeShader.SetFloat("gDeltaTime", Time.deltaTime);
+        sComputeShader.SetFloat("gDeltaTime", Hub.Instance.DeltaTime);
 
         sComputeShader.SetFloats("gConstantAcceleration", new float[] {mEmittConstantAcceleration.x, mEmittConstantAcceleration.y, mEmittConstantAcceleration.z });
         sComputeShader.SetFloat("gConstantDrag", mEmittConstantDrag);

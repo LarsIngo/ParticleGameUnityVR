@@ -148,7 +148,7 @@ public class VatsugWand : MonoBehaviour
                 mParticles.Active = false;
                 if (mTimerCurrentEndAttractor > 0.0f)
                 {
-                    mTimerCurrentEndAttractor -= Time.deltaTime;    //TMP
+                    mTimerCurrentEndAttractor -= Time.deltaTime;
                     mEndAttractor.Power = mPowerEndAttractor;
 
                 }
