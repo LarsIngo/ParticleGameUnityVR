@@ -32,10 +32,11 @@ public class Attractor_lvl_1 : Level
         stageInfo.name = "My first wand!";
         stageInfo.thumbnail = "Textures/Attractor_lvl_1";
         stageInfo.stageState = Hub.STATE.ATTRACTOR_LVL_1;
+        stageInfo.world = 1;
+        stageInfo.stage = 0;
         stageInfo.bronze = 30;
         stageInfo.silver = 15;
         stageInfo.gold = 10;
-        stageInfo.score = 999;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
@@ -76,8 +77,8 @@ public class Attractor_lvl_1 : Level
         else
         {
 
-            if (stageInfo.score > timer)
-                stageInfo.score = timer;
+            if (stageInfo.Score > timer)
+                stageInfo.SetScore(timer);
 
         }
         highscore.text = timer.ToString("0.00");
@@ -90,6 +91,7 @@ public class Attractor_lvl_1 : Level
     public override void Sleep()
     {
         
+
     }
 
     void SpawnEnemies()

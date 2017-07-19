@@ -38,12 +38,23 @@ public class MenuLevel : Level
     public override void Awake()
     {
 
+        GameObject timerText = Factory.CreateWorldText(this, Hub.Instance.stars.ToString(), Color.white);
+
+        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
+        timerText.transform.localScale *= 100;
+
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
 
             GameObject screen = Factory.CreateStageScreen(this, Hub.Instance.mStageInfoList[i]);
 
-            screen.transform.position += Vector3.forward * 2 + Vector3.up * 1.5f + Vector3.right * i + Vector3.right * i * 0.1f;
+            screen.transform.position += Vector3.forward * 2 + Vector3.up * 1.5f;
+
+            //Move it to the world location
+            screen.transform.position += Vector3.right * Hub.Instance.mStageInfoList[i].world + Vector3.right * Hub.Instance.mStageInfoList[i].world * 0.1f;
+
+            //Move it to the stage location
+            screen.transform.position -= Vector3.up * Hub.Instance.mStageInfoList[i].stage + Vector3.up * Hub.Instance.mStageInfoList[i].stage * 0.1f;
 
             mScreenList.Add(screen);
 

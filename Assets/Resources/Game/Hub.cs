@@ -54,6 +54,12 @@ public class Hub
     /// </summary>
     public List<StageInfo> mStageInfoList;
 
+    /// <summary>
+    /// Current active level.
+    /// Default: null
+    /// </summary>
+    public int stars;
+
     /// --- MEMBERS --- ///
 
 

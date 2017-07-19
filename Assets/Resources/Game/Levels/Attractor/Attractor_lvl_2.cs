@@ -32,10 +32,13 @@ public class Attractor_lvl_2 : Level
         stageInfo.name = "Double Trouble!";
         stageInfo.thumbnail = "Textures/Attractor_lvl_2";
         stageInfo.stageState = Hub.STATE.ATTRACTOR_LVL_2;
+        stageInfo.world = 1;
+        stageInfo.stage = 1;
+        stageInfo.starRequirement = 2;
+
         stageInfo.bronze = 30;
         stageInfo.silver = 15;
         stageInfo.gold = 10;
-        stageInfo.score = 999;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
@@ -73,12 +76,12 @@ public class Attractor_lvl_2 : Level
     {
 
         if ((enemy1 || enemy2 || enemy3))
-            timer += Hub.Instance.DeltaTime;
+            timer += Time.deltaTime;
         else
         {
 
-            if (stageInfo.score > timer)
-                stageInfo.score = timer;
+            if (stageInfo.Score > timer)
+                stageInfo.SetScore(timer);
 
         }
 

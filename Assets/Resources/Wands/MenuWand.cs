@@ -21,7 +21,7 @@ public class MenuWand : MonoBehaviour {
         if (Physics.Raycast(ray, out hit))
         {
 
-            if(hit.collider.tag == "StageScreen")
+            if(hit.collider.tag == "StageScreen" && !hit.collider.GetComponent<StageScreen>().stageInfo.locked && hit.collider.GetComponent<StageScreen>().stageInfo.starRequirement <= Hub.Instance.stars)
             {
 
                 point = hit.point;

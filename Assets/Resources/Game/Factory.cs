@@ -70,12 +70,15 @@ public static class Factory
         name.transform.localScale *= 0.3f;
         name.transform.parent = screen.transform;
 
-        string medalText = "test";
-        if (stageInfo.score < stageInfo.gold)
+        if (stageInfo.locked || stageInfo.starRequirement > Hub.Instance.stars)
+            screen.transform.localScale *= 0.75f;
+
+        string medalText = "";
+        if (stageInfo.Score < stageInfo.gold)
             medalText = "Gold";
-        else if (stageInfo.score < stageInfo.silver)
+        else if (stageInfo.Score < stageInfo.silver)
             medalText = "Silver";
-        else if (stageInfo.score < stageInfo.bronze)
+        else if (stageInfo.Score < stageInfo.bronze)
             medalText = "Bronze";
 
         GameObject medal = CreateWorldText(level, medalText, Color.black);
