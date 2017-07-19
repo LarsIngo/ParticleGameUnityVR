@@ -6,89 +6,59 @@ using UnityEngine.Rendering;
 public class Main : MonoBehaviour
 {
 
-    GameObject mParticleSystem;
+    /// +++ SCENES +++ ///
 
-    GameObject mHMD;
-    public GameObject mLeftController;
-    public GameObject mRightController;
+    /// <summary>
+    /// Level currently active.
+    /// </summary>
+    private Level mCurrentLevel;
 
-    public UnityEngine.UI.Text highscore;
+    // Levels.
+    private Level mDeafultLevel;
 
-    GameObject enemy1;
-    GameObject enemy2;
-    GameObject enemy3;
+    /// --- SCENES --- ///
 
     private void Start ()
     {
-        mHMD = GameObject.Find("Camera (head)");
-
-        if (mLeftController == null)
-        {
-            mLeftController = new GameObject("STATIC LEFT CONTROLLER");
-            mLeftController.transform.position = new Vector3(-3,0,5);
-        }
-        if (mRightController == null)
-        {
-            mRightController = new GameObject("STATIC RIGHT CONTROLLER");
-            mRightController.transform.position = new Vector3(3, 0, 5);
-        }
-
-        MenuWand menuWand = mRightController.AddComponent<MenuWand>();
-        menuWand.rightHand = true;
+        Hub.Instance.StartUp();
 
         Factory.CreateStageScreen(new Stage("Best stage"));
 
+        mDeafultLevel = new DeafultLevel("LEVEL:DEFAULT");
+        Hub.Instance.SetState(Hub.STATE.DEFAULT);
     }
 
-    float timer = 0;
     private void Update()
     {
 
-        if (Input.GetKey(KeyCode.Space))
+        // Check state.
+        switch (Hub.Instance.CurrentState)
         {
-            Factory.CreateMichaelBayEffect(enemy1.GetComponent<MeshFilter>().mesh, enemy1.transform, enemy1.GetComponent<Renderer>().material.color);
+            case Hub.STATE.DEFAULT:
+                mCurrentLevel = mDeafultLevel;
+                break;
+
+            default: Debug.Log("WARNING: No assigned STATE"); break;
         }
 
-        if (VrInput.LeftGrip())
+        // Switch active level.
+        if (Hub.Instance.ActiveLevel != mCurrentLevel)
         {
+            if (Hub.Instance.ActiveLevel != null)
+                Hub.Instance.ActiveLevel.Sleep();
 
-            SpawnEnemies();
-            timer = 0;
+            Hub.Instance.SetActiveLevel(mCurrentLevel);
+            mCurrentLevel.Awake();
 
         }
 
-        if((enemy1 || enemy2 || enemy3))
-            timer += Time.deltaTime;
-
-        highscore.text = timer + "";
-
+        // Update level.
+        mCurrentLevel.Update();
     }
 
     private void OnDestroy()
     {
-
-    }
-
-    void SpawnEnemies()
-    {
-
-        DestroyImmediate(enemy1);
-        DestroyImmediate(enemy2);
-        DestroyImmediate(enemy3);
-
-        //Spawn enemies.
-        enemy1 = new GameObject("ENEMY1");
-        enemy2 = new GameObject("ENEMY2");
-        enemy3 = new GameObject("ENEMY3");
-
-        enemy1.AddComponent<BasicEnemy>();
-        enemy2.AddComponent<BasicEnemy>();
-        enemy3.AddComponent<BasicEnemy>();
-
-        enemy1.transform.position += Vector3.forward * 3 + Vector3.right * 3;
-        enemy2.transform.position += Vector3.forward * 3 + Vector3.right * 0;
-        enemy3.transform.position += Vector3.forward * 3 + Vector3.right * -3;
-
+        Hub.Instance.ShutDown();
     }
 
 }
