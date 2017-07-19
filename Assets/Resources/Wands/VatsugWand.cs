@@ -21,7 +21,7 @@ public class VatsugWand : MonoBehaviour
 
     GPUParticleSystem mParticles;
 
-    public bool mRightHand;
+    public bool rightHand;
     public float mAttractorsPower;
 
     // Use this for initialization
@@ -124,7 +124,7 @@ public class VatsugWand : MonoBehaviour
         {
 
             float trigger = 0;
-            if (mRightHand)
+            if (rightHand)
                 trigger = VrInput.RightTrigger();
             else trigger = VrInput.LeftTrigger();
 
