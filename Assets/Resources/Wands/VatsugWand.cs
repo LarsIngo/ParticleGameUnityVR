@@ -11,8 +11,9 @@ public class VatsugWand : MonoBehaviour
 
     GameObject mTipGO;
 
-    GameObject[] mAttractors;
     private const uint mNrOfAttractors = 5;
+
+    GPUParticleAttractor[] mAttractors;
 
     private GPUParticleAttractor mEndAttractor = null;
     private float mPowerEndAttractor;
@@ -41,6 +42,8 @@ public class VatsugWand : MonoBehaviour
         mParticles.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
         mParticles.EmittInheritVelocity = false;
 
+        mParticles.Active = false;
+
         Vector4[] colorControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(1, 1, 0, 0.5f), new Vector4(0, 1, 0, 1.0f) };
         mParticles.ColorLifetimePoints = colorControlpoints;
 
@@ -53,17 +56,18 @@ public class VatsugWand : MonoBehaviour
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         mParticles.TransparencyLifetimePoints = transparencyControlpoints;
 
+        mAttractors = new GPUParticleAttractor[mNrOfAttractors];
+
         mEndAttractor = mTipGO.AddComponent<GPUParticleAttractor>();
         mEndAttractor.transform.localPosition = Vector3.up * 1.5f;
 
-        mAttractors = new GameObject[mNrOfAttractors];//GPUParticleAttractor[mNrOfAttractors];
-
+       
         float TwoPIdivNrAttractors = Mathf.PI * 2 / mNrOfAttractors;
         for (int i = 0; i < 5; ++i)
         {
-            //mAttractors[i] = mTipGO.AddComponent<GPUParticleAttractor>();
-            //mAttractors[i].Power = 1;
-            TempVisuals(mAttractors[i], PrimitiveType.Cube, Color.blue);
+            mAttractors[i] = mTipGO.AddComponent<GPUParticleAttractor>();
+            mAttractors[i].Power = 1;
+
             mAttractors[i].transform.parent = mTipGO.transform;
             mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * 6;
             
@@ -118,7 +122,6 @@ public class VatsugWand : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (VrInput.controllersFound)
         {
 
@@ -131,18 +134,18 @@ public class VatsugWand : MonoBehaviour
 
             if (trigger == 1.0f)
             {
-                //for (int i = 0; i < mNrOfAttractors; ++i)
-                //  mAttractors[i].Power = power * trigger;
+                for (int i = 0; i < mNrOfAttractors; ++i)
+                  mAttractors[i].Power = mAttractorsPower * trigger;
 
-                mParticles.Active = false;
+                mParticles.Active = true;
                 mTimerCurrentEndAttractor = mTimerEndAttractor;
 
                 mEndAttractor.Power = 0.0f;
             }
             else
             {
-                //for (int i = 0; i < mNrOfAttractors; ++i)
-                //  mAttractors[i].Power = 0.0f;
+                for (int i = 0; i < mNrOfAttractors; ++i)
+                  mAttractors[i].Power = 0.0f;
 
                 mParticles.Active = false;
                 if (mTimerCurrentEndAttractor > 0.0f)
