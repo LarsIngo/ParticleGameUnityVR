@@ -75,18 +75,35 @@ public static class Factory
             name.transform.localScale *= 0.3f;
             name.transform.parent = screen.transform;
 
-            string medalText = "";
-            if (stageInfo.Score < stageInfo.mGold)
-                medalText = "Gold";
-            else if (stageInfo.Score < stageInfo.mSilver)
-                medalText = "Silver";
-            else if (stageInfo.Score < stageInfo.mBronze)
-                medalText = "Bronze";
+            GameObject stars = level.CreateGameObject("STARS" + count++);
 
-            GameObject medal = CreateWorldText(level, medalText, Color.white);
-            medal.transform.position -= Vector3.up * 0.8f;
-            medal.transform.localScale *= 0.4f;
-            medal.transform.SetParent(screen.transform);
+            if (true || stageInfo.Score < stageInfo.mGold)
+            {
+
+                GameObject gold = CreateWorldImage(level, "Textures/Star");
+                gold.transform.position += Vector3.right * 1.1f;
+                gold.transform.parent = stars.transform;
+
+            }
+            if (true || stageInfo.Score < stageInfo.mSilver)
+            {
+
+                GameObject silver = CreateWorldImage(level, "Textures/Star");
+                silver.transform.parent = stars.transform;
+
+            }
+            if (true || stageInfo.Score < stageInfo.mBronze)
+            {
+
+                GameObject bronze = CreateWorldImage(level, "Textures/Star");
+                bronze.transform.position -= Vector3.right * 1.1f;
+                bronze.transform.parent = stars.transform;
+
+            }
+
+            stars.transform.position -= Vector3.up * 0.8f;
+            stars.transform.localScale *= 0.2f;
+            stars.transform.SetParent(screen.transform);
 
             screen.AddComponent<StageScreen>().stageInfo = stageInfo;
 
