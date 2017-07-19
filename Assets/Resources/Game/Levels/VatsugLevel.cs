@@ -28,12 +28,18 @@ public class VatsugLevel : Level
     public VatsugLevel(string name) : base(name)
     {
 
+        StageInfo stageInfo = new StageInfo();
+        stageInfo.name = "Vatsug Level";
+
+
+        Hub.Instance.mStageInfoList.Add(stageInfo);
+
         //Equip a wand.
         VatsugWand rightWand = rightHand.AddComponent<VatsugWand>();
-        AttractorWand leftWand = leftHand.AddComponent<AttractorWand>();
+        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
 
-        rightWand.rightHand = true;
-        leftWand.rightHand = false;
+        rightWand.transform.parent = rightHand.transform;
+        leftWand.transform.parent = leftHand.transform;
 
         //Spawn enemies.
         SpawnEnemies();

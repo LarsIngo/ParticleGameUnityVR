@@ -6,6 +6,11 @@ public class MenuLevel : Level
 {
     /// +++ MEMBERS +++ ///
 
+    /// <summary>
+    /// Storing all the created scenes.
+    /// </summary>
+    private List<GameObject> mScreenList;
+
     /// --- MEMBERS --- ///
 
 
@@ -19,8 +24,10 @@ public class MenuLevel : Level
     {
 
         //Equip a wand.
-        MenuWand rightWand = rightHand.AddComponent<MenuWand>();
-        rightWand.rightHand = true;
+        GameObject menuWand = Factory.CreateMenuWand(this, true);
+        menuWand.transform.parent = rightHand.transform;
+
+        mScreenList = new List<GameObject>();
 
     }
 
@@ -31,6 +38,17 @@ public class MenuLevel : Level
     public override void Awake()
     {
 
+        for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
+        {
+
+            GameObject screen = Factory.CreateStageScreen(this, Hub.Instance.mStageInfoList[i]);
+
+            screen.transform.position += Vector3.forward * 2 + Vector3.up * 1.5f + Vector3.right * i * 0.1f;
+
+            mScreenList.Add(screen);
+
+        }
+
     }
 
     /// <summary>
@@ -39,7 +57,17 @@ public class MenuLevel : Level
     public override void Update()
     {
 
+        if (VrInput.RightGripPressed())
+        {
 
+            for (int i = 0; i < mScreenList.Count; i++)
+            {
+
+                mScreenList[i].transform.position -= VrInput.deltaRight.x * Vector3.right * 5;
+    
+            }
+
+        }
 
     }
 
@@ -48,13 +76,12 @@ public class MenuLevel : Level
     /// </summary>
     public override void Sleep()
     {
-        
-    }
 
-    void SpawnEnemies()
-    {
+        for (int i = 0; i < mScreenList.Count; i++)
+            Object.Destroy(mScreenList[i]);
 
-
+        for (int i = 0; i < mScreenList.Count; i++)
+            mScreenList.RemoveAt(i);
 
     }
 

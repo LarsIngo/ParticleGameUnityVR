@@ -16,6 +16,7 @@ public class Main : MonoBehaviour
     // Levels.
     private Level mDeafultLevel;
     private Level mVatsugLevel;
+    private Level mMenuLevel;
 
     /// --- SCENES --- ///
 
@@ -24,9 +25,10 @@ public class Main : MonoBehaviour
         Hub.Instance.StartUp();
 
         mDeafultLevel = new DefaultLevel("LEVEL:DEFAULT");
+        mMenuLevel = new MenuLevel("LEVEL:MENU");
         mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
-
-        Hub.Instance.SetState(Hub.STATE.VATSUG);
+        Hub.Instance.SetState(Hub.STATE.MENU);
+        
     }
 
     private void Update()
@@ -35,13 +37,18 @@ public class Main : MonoBehaviour
         // Check state.
         switch (Hub.Instance.CurrentState)
         {
-            case Hub.STATE.DEFAULT:
-                mCurrentLevel = mDeafultLevel;
+            case Hub.STATE.MENU:
+                mCurrentLevel = mMenuLevel;
                 break;
+
             case Hub.STATE.VATSUG:
                 mCurrentLevel = mVatsugLevel;
                 break;
 
+            case Hub.STATE.DEFAULT:
+                mCurrentLevel = mDeafultLevel;
+                break;
+            
             default: Debug.Log("WARNING: No assigned STATE"); break;
         }
 
@@ -58,6 +65,10 @@ public class Main : MonoBehaviour
 
         // Update level.
         mCurrentLevel.Update();
+
+        if (VrInput.Menu())
+            Hub.Instance.SetState(Hub.STATE.MENU);
+
     }
 
     private void OnDestroy()

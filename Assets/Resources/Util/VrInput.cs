@@ -65,6 +65,53 @@ public class VrInput : MonoBehaviour {
         return controller.GetPressDown(SteamVR_Controller.ButtonMask.Grip);
 
     }
+    public static bool LeftGripPressed()
+    {
+
+        if (!controllersFound)
+            return false;
+
+        SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)leftController.index);
+        return controller.GetPress(SteamVR_Controller.ButtonMask.Grip);
+
+    }
+    public static bool RightGripPressed()
+    {
+
+        if (!controllersFound)
+            return false;
+
+        SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)rightController.index);
+        return controller.GetPress(SteamVR_Controller.ButtonMask.Grip);
+
+    }
+
+    public static bool Menu()
+    {
+
+        if (!controllersFound)
+            return false;
+
+        SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)rightController.index);
+        return controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu);
+
+    }
+
+    Vector3 oldRight;
+    Vector3 oldLeft;
+    public static Vector3 deltaRight;
+    public static Vector3 deltaLeft;
+
+    void Update()
+    {
+
+        deltaRight = oldRight - right.transform.position;
+        deltaLeft = oldRight - right.transform.position;
+
+        oldRight = right.transform.position;
+        oldLeft = left.transform.position;
+
+    }
 
 
 }

@@ -14,8 +14,9 @@ public class Hub
     public enum STATE
     {
         NONE = 0,
-        DEFAULT = 1,
-        VATSUG = 2,
+        MENU,
+        VATSUG,
+        DEFAULT
     };
 
     /// <summary>
@@ -47,6 +48,12 @@ public class Hub
     private Level mActiveLevel = null;
 
     /// <summary>
+    /// Current active level.
+    /// Default: null
+    /// </summary>
+    public List<StageInfo> mStageInfoList;
+
+    /// <summary>
     /// Delta time.
     /// Scales correctly with time scale.
     /// </summary>
@@ -58,7 +65,6 @@ public class Hub
     /// Default: 1.0f
     /// </summary>
     public float TimeScale { get { return mTimeScale; } set { mTimeScale = value; } }
-
 
     /// --- MEMBERS --- ///
 
@@ -77,6 +83,7 @@ public class Hub
     {
         // Create dictionary.
         mLevelDic = new Dictionary<string, Level>();
+        mStageInfoList = new List<StageInfo>();
     }
 
     /// <summary>
