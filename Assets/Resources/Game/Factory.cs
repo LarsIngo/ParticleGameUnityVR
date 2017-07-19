@@ -19,10 +19,10 @@ public static class Factory
 
     /// +++ FUNCTIONS +++ ///
 
-    public static GameObject CreateMichaelBayEffect(Level level, Mesh mesh, Transform t, Color meshColor)
+    public static void CreateMichaelBayEffect(Level level, Mesh mesh, Transform t, Color meshColor)
     {
-        GameObject michael = level.CreateGameObject("michael" + Time.time);
-        GameObject blackHole = level.CreateGameObject("blackhole" + Time.time);
+        GameObject michael = level.CreateGameObject("michael" + count++);
+        GameObject blackHole = level.CreateGameObject("blackhole" + count++);
         michael.transform.position = t.position;
         michael.transform.rotation = t.rotation;
         blackHole.transform.position = t.position;
@@ -31,21 +31,33 @@ public static class Factory
         GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
         exp.Mesh = mesh;
         exp.ExplosionColor = meshColor;
-        exp.ExplosionSpeed = 5;
+        exp.ExplosionSpeed = 8;
+        exp.ShrinkSpeed = 1.0f;
+        exp.ShrinkTime = 0.25f;
+
+        TimerStretch timeStrech = michael.AddComponent<TimerStretch>();
+        timeStrech.TimePrePhase = 0.5f;
+        timeStrech.TimeMainPhase = 0.2f;
+        timeStrech.TimePostPhase = 0.5f;
+        timeStrech.TargetTimeScale = 0.1f;
 
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
         michaelLifetimer.LifeTime = 4.0f;
 
         GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 1000.0f;
+        attractor.Power = 250.0f;
         LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
-        blackHoleLifetimer.LifeTime = 0.5f;
+        blackHoleLifetimer.LifeTime = 0.2f;
 
-        exp.Explode();
+        AudioSource ceramicSound = michael.AddComponent<AudioSource>();
+        ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");
+        ceramicSound.Play();
 
-        count++;
+        AudioSource artillerySound = michael.AddComponent<AudioSource>();
+        artillerySound.clip = Resources.Load<AudioClip>("Samples/Explosion/Artillery");
+        artillerySound.time = 0.25f;
+        artillerySound.Play();
 
-        return michael;
     }
 
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
@@ -118,14 +130,14 @@ public static class Factory
     public static GameObject CreateWorldText(Level level, string text, Color color)
     {
 
-        GameObject canvasGO = level.CreateGameObject("CANVAS" + count);
+        GameObject canvasGO = level.CreateGameObject("CANVAS" + count++);
         Canvas canvas = canvasGO.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.GetComponent<RectTransform>().position = Vector3.zero;
         canvas.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1000);
         canvas.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 1000);
 
-        GameObject textGO = level.CreateGameObject("TEXT" + count);
+        GameObject textGO = level.CreateGameObject("TEXT" + count++);
         textGO.transform.SetParent(canvasGO.transform);
         UnityEngine.UI.Text textUI = textGO.AddComponent<UnityEngine.UI.Text>();
         textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 5000);
@@ -136,8 +148,6 @@ public static class Factory
         textUI.color = color;
         textUI.alignment = TextAnchor.MiddleCenter;
         textUI.font = Resources.Load<Font>("Fonts/unispace bd");
-
-        count++;
 
         return canvasGO;
 
@@ -170,11 +180,11 @@ public static class Factory
     {
 
         //The wand is the parent object to all the parts.
-        GameObject WandGO = level.CreateGameObject("AttractorWand" + count);
+        GameObject WandGO = level.CreateGameObject("AttractorWand" + count++);
 
         //The rod
         //We set its transform.
-        GameObject RodGO = level.CreateGameObject("Rod" + count);
+        GameObject RodGO = level.CreateGameObject("Rod" + count++);
         RodGO.transform.parent = WandGO.transform;
         RodGO.transform.localScale += Vector3.up * 8;
         RodGO.transform.localScale *= 0.2f;
@@ -183,7 +193,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = new GameObject("Tip" + count);
+        GameObject TipGO = new GameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -227,8 +237,6 @@ public static class Factory
         wand.system = system;
         wand.attractor = attractor;
 
-        count++;
-
         return WandGO;
 
     }
@@ -237,11 +245,11 @@ public static class Factory
     {
 
         //The wand is the parent object to all the parts.
-        GameObject WandGO = level.CreateGameObject("MenuWand" + count);
+        GameObject WandGO = level.CreateGameObject("MenuWand" + count++);
 
         //The rod
         //We set its transform.
-        GameObject RodGO = level.CreateGameObject("Rod" + count);
+        GameObject RodGO = level.CreateGameObject("Rod" + count++);
         RodGO.transform.parent = WandGO.transform;
         RodGO.transform.localScale += Vector3.up * 8;
         RodGO.transform.localScale *= 0.2f;
@@ -250,7 +258,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = new GameObject("Tip" + count);
+        GameObject TipGO = new GameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -271,11 +279,107 @@ public static class Factory
         wand.lineRenderer = lineRenderer;
         wand.rightHand = rightHand;
 
-        count++;
-
         return WandGO;
 
     }
+
+
+    public static GameObject CreateVatsugWand(Level level, float powerEndAttractor, float powerNormalAttractors, float pendulumSpeed, float reboundDistance, bool rightHand)
+    {
+        //The wand is the parent object to all the parts.
+        GameObject WandGO = level.CreateGameObject("VatsugWand" + count);
+
+        //The rod
+        //We set its transform.
+        GameObject RodGO = level.CreateGameObject("Rod" + count);
+        RodGO.transform.parent = WandGO.transform;
+        RodGO.transform.localScale += Vector3.up * 8;
+        RodGO.transform.localScale *= 0.2f;
+        RodGO.transform.position += Vector3.forward * 0.2f;
+        TempVisuals(RodGO, PrimitiveType.Cylinder, Color.black);
+
+        //The tip
+        //We set its transform
+        GameObject TipGO = new GameObject("Tip" + count);
+        TipGO.transform.parent = WandGO.transform;
+        TipGO.transform.position += Vector3.up * 2;
+        TipGO.transform.localScale *= 0.5f;
+        TipGO.transform.position += Vector3.forward * 0.2f;
+        TempVisuals(TipGO, PrimitiveType.Sphere, Color.red);
+
+        WandGO.transform.localScale *= 0.1f;
+
+        //++++++++++ WAND ++++++++++
+        
+        GameObject endAttractor;
+
+        GameObject emitter = new GameObject("VatsugEmitter");
+
+
+        //We add the emitter to the tip.
+        GPUParticleSystem particleEmitter = emitter.AddComponent<GPUParticleSystem>();
+        GPUParticleAttractor attractor = emitter.AddComponent<GPUParticleAttractor>();
+        TempVisuals(emitter, PrimitiveType.Sphere, Color.blue);
+        emitter.GetComponent<Renderer>().enabled = false;
+        emitter.transform.parent = TipGO.transform;
+        emitter.transform.localScale = Vector3.one * 0.7f;
+        emitter.transform.localPosition = new Vector3(1, 0, 0) * reboundDistance;
+
+        particleEmitter.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
+        particleEmitter.EmittParticleLifeTime = 5.0f;
+        particleEmitter.EmittFrequency = 500.0f;
+        particleEmitter.EmittInheritVelocity = false;
+
+        particleEmitter.Active = false;
+
+        Vector4[] colorControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(1, 1, 0, 0.3f), new Vector4(0, 1, 0, 1.0f) };
+        particleEmitter.ColorLifetimePoints = colorControlpoints;
+
+        Vector4[] haloControlpoints = { new Vector4(0, 0, 1, 0), new Vector4(1, 0, 1, 1.0f) };
+        particleEmitter.HaloLifetimePoints = haloControlpoints;
+
+        Vector4[] scaleControlpoints = { new Vector4(0.04f, 0.04f, 0, 0), new Vector4(0.01f, 0.01f, 0, 0.02f), new Vector4(0.01f, 0.01f, 0, 1) };
+        particleEmitter.ScaleLifetimePoints = scaleControlpoints;
+
+        Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
+        particleEmitter.TransparencyLifetimePoints = transparencyControlpoints;
+        
+        endAttractor = new GameObject();
+        endAttractor.AddComponent<GPUParticleAttractor>();
+        endAttractor.transform.parent = TipGO.transform;
+        endAttractor.transform.localPosition = Vector3.up * 17.0f;
+
+        
+
+        WandGO.transform.Rotate(90, 0, 0);
+        WandGO.transform.position += Vector3.forward * 0.2f;
+
+
+        VatsugWand wand = TipGO.AddComponent<VatsugWand>();
+        wand.mEndAttractor = endAttractor;
+        wand.mPowerEndAttractor = powerEndAttractor;
+        wand.mPowerAttractors = powerNormalAttractors;
+        wand.mReboundDistance = reboundDistance;
+        wand.mParticleEmitter = emitter;// particleEmitter;
+        wand.rightHand = rightHand;
+        wand.pendulumSpeed = pendulumSpeed;
+
+        count++;
+
+        return WandGO;
+    }
+
+    public static GameObject CreateBasicEnemy(Level level, Vector3 position)
+    {
+        GameObject enemy = level.CreateGameObject("enemy" + count);
+        enemy.AddComponent<BasicEnemy>();
+        enemy.transform.position = position;
+
+        count++;
+
+        return enemy;
+    }
+
 
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
     {
