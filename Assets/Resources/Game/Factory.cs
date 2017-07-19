@@ -267,14 +267,14 @@ public static class Factory
         GPUParticleSystem particleEmitter = emitter.AddComponent<GPUParticleSystem>();
         GPUParticleAttractor attractor = emitter.AddComponent<GPUParticleAttractor>();
         TempVisuals(emitter, PrimitiveType.Sphere, Color.blue);
-        //emitter.GetComponent<Renderer>().enabled = false;
+        emitter.GetComponent<Renderer>().enabled = false;
         emitter.transform.parent = TipGO.transform;
-        emitter.transform.localScale = Vector3.one * 0.2f;
+        emitter.transform.localScale = Vector3.one * 0.7f;
         emitter.transform.localPosition = new Vector3(1, 0, 0) * reboundDistance;
 
         particleEmitter.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
         particleEmitter.EmittParticleLifeTime = 5.0f;
-        particleEmitter.EmittFrequency = 250.0f;
+        particleEmitter.EmittFrequency = 500.0f;
         particleEmitter.EmittInheritVelocity = false;
 
         particleEmitter.Active = false;
@@ -282,7 +282,7 @@ public static class Factory
         Vector4[] colorControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(1, 1, 0, 0.3f), new Vector4(0, 1, 0, 1.0f) };
         particleEmitter.ColorLifetimePoints = colorControlpoints;
 
-        Vector4[] haloControlpoints = { new Vector4(1, 1, 0, 0), new Vector4(1, 1, 0, 1.0f) };
+        Vector4[] haloControlpoints = { new Vector4(0, 0, 1, 0), new Vector4(1, 0, 1, 1.0f) };
         particleEmitter.HaloLifetimePoints = haloControlpoints;
 
         Vector4[] scaleControlpoints = { new Vector4(0.04f, 0.04f, 0, 0), new Vector4(0.01f, 0.01f, 0, 0.02f), new Vector4(0.01f, 0.01f, 0, 1) };
@@ -294,7 +294,7 @@ public static class Factory
         endAttractor = new GameObject();
         endAttractor.AddComponent<GPUParticleAttractor>();
         endAttractor.transform.parent = TipGO.transform;
-        endAttractor.transform.localPosition = Vector3.up * 12.0f;
+        endAttractor.transform.localPosition = Vector3.up * 17.0f;
 
         
 
@@ -314,6 +314,17 @@ public static class Factory
         count++;
 
         return WandGO;
+    }
+
+    public static GameObject CreateBasicEnemy(Level level, Vector3 position)
+    {
+        GameObject enemy = level.CreateGameObject("enemy" + count);
+        enemy.AddComponent<BasicEnemy>();
+        enemy.transform.position = position;
+
+        count++;
+
+        return enemy;
     }
 
 
