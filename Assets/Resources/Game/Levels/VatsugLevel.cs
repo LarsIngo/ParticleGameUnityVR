@@ -30,6 +30,8 @@ public class VatsugLevel : Level
 
         StageInfo stageInfo = new StageInfo();
         stageInfo.name = "Vatsug Level";
+        stageInfo.stageState = Hub.STATE.VATSUG;
+       
 
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
