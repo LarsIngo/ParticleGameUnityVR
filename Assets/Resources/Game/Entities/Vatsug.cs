@@ -28,7 +28,7 @@ public class Vatsug : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (mHP < 0)
+        if (VrInput.LeftTrigger() == 1.0f || VrInput.RightTrigger() == 1.0f)
         {
             Factory.CreateMichaelBayEffect(Hub.Instance.ActiveLevel, GetComponent<MeshFilter>().mesh, transform, GetComponent<Renderer>().material.color);
             Destroy(gameObject);
