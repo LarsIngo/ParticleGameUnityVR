@@ -16,6 +16,7 @@ public class GeometryExplosion : MonoBehaviour
     // Material.
     private Material mRenderMaterial = null;
 
+    private float mTimer = 0;
 
     private bool mActive = false;
     private float mCurrentOffset = 0.0f;
@@ -27,7 +28,21 @@ public class GeometryExplosion : MonoBehaviour
     /// </summary>
     public float ExplosionSpeed { get { return mExplosionSpeed; } set { mExplosionSpeed = value; } }
 
-    public Mesh Mesh { set { this.gameObject.GetComponent<MeshFilter>().mesh = value; } }
+    private float mShrinkSpeed = 1.0f;
+    /// <summary>
+    /// Speed of with which the mesh shrinks.
+    /// Default: 1.0f
+    /// </summary>
+    public float ShrinkSpeed { get { return mShrinkSpeed; } set { mShrinkSpeed = value; } }
+
+    private float mShrinkTime = 1.0f;
+    /// <summary>
+    /// How long the mesh shrinks before exploding.
+    /// Default: 0.5f
+    /// </summary>
+    public float ShrinkTime { get { return mShrinkTime; } set { mShrinkTime = value; } }
+
+    public Mesh Mesh { set { gameObject.GetComponent<MeshFilter>().mesh = value; } }
 
     public Color ExplosionColor { set
         {
@@ -40,17 +55,13 @@ public class GeometryExplosion : MonoBehaviour
     // MONOBEHAVIOUR.
     private void Awake()
     {
-        this.gameObject.AddComponent<MeshFilter>();
-        MeshRenderer renderer = this.gameObject.AddComponent<MeshRenderer>();
+        gameObject.AddComponent<MeshFilter>();
+        MeshRenderer renderer = gameObject.AddComponent<MeshRenderer>();
         
         mRenderMaterial = new Material(Resources.Load<Shader>("Effects/GeometryExplosion"));
         Debug.Assert(mRenderMaterial != null);
         
-
         renderer.material = mRenderMaterial;
-        
-
-        mCurrentOffset = 0.0f;
         
         mRenderMaterial.SetFloat("gOffset", mCurrentOffset);
         mRenderMaterial.SetFloat("gAmbientRed", 1.0f);
@@ -58,21 +69,22 @@ public class GeometryExplosion : MonoBehaviour
         mRenderMaterial.SetFloat("gAmbientBlue", 1.0f);
     }
 
-    public void Explode()
-    {
-        mActive = true;
-    }
-
     // MONOBEHAVIOUR.
     private void Update()
     {
-        if (mActive)
+        mTimer += Time.deltaTime;
+
+        if (mTimer < mShrinkTime)
+        {
+            mCurrentOffset -= mShrinkSpeed * Time.deltaTime;
+            mRenderMaterial.SetFloat("gOffset", mCurrentOffset);
+        }
+        else
         {
             mCurrentOffset += mExplosionSpeed * Time.deltaTime;
-            
             mRenderMaterial.SetFloat("gOffset", mCurrentOffset);
-            
         }
+
     }
     
 }
