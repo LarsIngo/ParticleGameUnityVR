@@ -5,14 +5,33 @@ using UnityEngine;
 public class TimerStretch : MonoBehaviour
 {
 
-    float mTimer = 0.0f;
+    private float mTimer = 0.0f;
 
-    public float mTimeInPhase = 0.5f;
-    public float mTimeMainPhase = 0.5f;
-    public float mTimeOutPhase = 0.5f;
+    private float mTimeInPhase = 0.5f;
+    /// <summary>
+    /// Time to get to target time scale.
+    /// </summary>
+    public float TimePrePhase { get { return mTimeInPhase; } set { mTimeInPhase = value; } }
 
-    public float mTargetTimeScale = 0.1f;
-    public float mCurrentTimeScale = 1.0f;
+    private float mTimeMainPhase = 0.5f;
+    /// <summary>
+    /// Time in target time scale.
+    /// </summary>
+    public float TimeMainPhase { get { return mTimeMainPhase; } set { mTimeMainPhase = value; } }
+
+    private float mTimeOutPhase = 0.5f;
+    /// <summary>
+    /// Time to leave target time scale.
+    /// </summary>
+    public float TimePostPhase { get { return mTimeOutPhase; } set { mTimeOutPhase = value; } }
+
+    private float mTargetTimeScale = 0.1f;
+    /// <summary>
+    /// Time scale target amount.
+    /// </summary>
+    public float TargetTimeScale { get { return mTargetTimeScale; } set { mTargetTimeScale = value; } }
+
+    private float mCurrentTimeScale = 1.0f;
 
     private static Dictionary<TimerStretch, TimerStretch> sTimeStretchDictionary = null;
 

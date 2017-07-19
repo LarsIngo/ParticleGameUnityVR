@@ -19,7 +19,7 @@ public static class Factory
 
     /// +++ FUNCTIONS +++ ///
 
-    public static GameObject CreateMichaelBayEffect(Level level, Mesh mesh, Transform t, Color meshColor)
+    public static void CreateMichaelBayEffect(Level level, Mesh mesh, Transform t, Color meshColor)
     {
         GameObject michael = level.CreateGameObject("michael" + count++);
         GameObject blackHole = level.CreateGameObject("blackhole" + count++);
@@ -36,16 +36,28 @@ public static class Factory
         exp.ShrinkTime = 0.25f;
 
         TimerStretch timeStrech = michael.AddComponent<TimerStretch>();
+        timeStrech.TimePrePhase = 0.5f;
+        timeStrech.TimeMainPhase = 0.2f;
+        timeStrech.TimePostPhase = 0.5f;
+        timeStrech.TargetTimeScale = 0.1f;
 
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
-        michaelLifetimer.LifeTime = 5.0f;
+        michaelLifetimer.LifeTime = 4.0f;
 
         GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
         attractor.Power = 250.0f;
         LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
         blackHoleLifetimer.LifeTime = 0.2f;
 
-        return michael;
+        AudioSource ceramicSound = michael.AddComponent<AudioSource>();
+        ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");
+        ceramicSound.Play();
+
+        AudioSource artillerySound = michael.AddComponent<AudioSource>();
+        artillerySound.clip = Resources.Load<AudioClip>("Samples/Explosion/Artillery");
+        artillerySound.time = 0.25f;
+        artillerySound.Play();
+
     }
 
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
