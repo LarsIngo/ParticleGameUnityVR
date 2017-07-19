@@ -9,7 +9,7 @@ public class VrInput : MonoBehaviour {
 
     static SteamVR_TrackedObject leftController;
     static SteamVR_TrackedObject rightController;
-    public static bool controllersFound { get { return leftController.isActiveAndEnabled && rightController.isActiveAndEnabled; } }
+    public static bool controllersFound { get { return leftController.isActiveAndEnabled && rightController.isActiveAndEnabled && leftController; } }
 
     // Use this for initialization
     void Start () {
@@ -22,7 +22,7 @@ public class VrInput : MonoBehaviour {
     public static float LeftTrigger()
     {
 
-        if (!leftController.isActiveAndEnabled)
+        if (!controllersFound)
             return -1;
 
         SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)leftController.index);
@@ -32,7 +32,7 @@ public class VrInput : MonoBehaviour {
     public static float RightTrigger()
     {
 
-        if (!rightController.isActiveAndEnabled)
+        if (!controllersFound)
             return -1;
 
         SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)rightController.index);
@@ -42,7 +42,7 @@ public class VrInput : MonoBehaviour {
     public static bool LeftGrip()
     {
 
-        if (!leftController.isActiveAndEnabled)
+        if (!controllersFound)
             return false;
 
         SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)leftController.index);
@@ -52,7 +52,7 @@ public class VrInput : MonoBehaviour {
     public static bool RightGrip()
     {
 
-        if (!rightController.isActiveAndEnabled)
+        if (!controllersFound)
             return false;
 
         SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)rightController.index);

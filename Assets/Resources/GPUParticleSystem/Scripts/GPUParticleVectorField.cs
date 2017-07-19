@@ -58,6 +58,20 @@ public class GPUParticleVectorField : MonoBehaviour
     /// </summary>
     public Vector3 VectorRelative { get { return transform.rotation * mVector; } }
 
+    private float mMin = 0;
+    /// <summary>
+    /// Minimum distance to vector field.
+    /// Default: 0
+    /// </summary>
+    public float Min { get { return mMin; } set { mMin = Mathf.Max(value, 0); } }
+
+    private float mMax = float.MaxValue;
+    /// <summary>
+    /// Maximum distance to vector field.
+    /// Default: float.MaxValue
+    /// </summary>
+    public float Max { get { return mMax; } set { mMax = Mathf.Max(value, 0); } }
+
     private void InitVectorField()
     {
 
@@ -96,6 +110,6 @@ public class GPUParticleVectorField : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(0, 1, 0, 0.25f);
-        Gizmos.DrawSphere(transform.position, Mathf.Max(Mathf.Max(transform.lossyScale.x, transform.lossyScale.y), transform.lossyScale.z) * mRadius);
+        Gizmos.DrawSphere(transform.position, Mathf.Max(Mathf.Max(transform.localScale.x, transform.localScale.y), transform.localScale.z) * mRadius);
     }
 }

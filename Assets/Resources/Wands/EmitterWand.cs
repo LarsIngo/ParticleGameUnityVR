@@ -2,30 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttractorWand : MonoBehaviour {
+public class EmitterWand : MonoBehaviour {
 
-    GameObject mWandGO;
+    GameObject mEmitDish;
 
-    GameObject mRodGO;
-
-    GameObject mTipGO;
-    GPUParticleAttractor attractor;
     GPUParticleSystem system;
 
     public bool rightHand;
     public float power;
 
     // Use this for initialization
-    void Awake () {
+    void Awake()
+    {
 
-        power = 20;
+        if(power == 0)
+            power = 500;
 
         //We create the various parts.
         InitGameObjects();
 
         //We add the emitter to the tip.
-        system = mTipGO.AddComponent<GPUParticleSystem>();
-        system.EmittMesh = mTipGO.GetComponent<MeshFilter>().mesh;
+        system = mEmitDish.AddComponent<GPUParticleSystem>();
+        system.EmittMesh = mEmitDish.GetComponent<MeshFilter>().mesh;
         system.EmittParticleLifeTime = 5.0f;
         system.EmittFrequency = 500.0f;
         system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
@@ -38,46 +36,24 @@ public class AttractorWand : MonoBehaviour {
 
         Vector4[] haloControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 0.333f), new Vector4(0, 0, 1, 0.666f), new Vector4(0.5f, 0, 0.5f, 1) };
         system.HaloLifetimePoints = haloControlpoints;
-        
+
         Vector4[] scaleControlpoints = { new Vector4(0.01f, 0.01f, 0, 0), new Vector4(0.01f, 0.01f, 0, 1) };
         system.ScaleLifetimePoints = scaleControlpoints;
 
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         system.TransparencyLifetimePoints = transparencyControlpoints;
 
-        //We add an attractor to the tip.
-        attractor = mTipGO.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 1;
-
-        mWandGO.transform.Rotate(90, 0, 0);
-        mWandGO.transform.position += Vector3.forward * 0.2f;
+        mEmitDish.transform.localScale *= 0.2f;
 
     }
 
     void InitGameObjects()
     {
 
-        //The wand is the parent object to all the parts.
-        mWandGO = new GameObject("Wand");
-        mWandGO.transform.parent = gameObject.transform;
-
-        //The rod
-        //We set its transform.
-        mRodGO = new GameObject("Rod");
-        mRodGO.transform.parent = mWandGO.transform;
-        mRodGO.transform.localScale += Vector3.up * 8;
-        mRodGO.transform.localScale *= 0.2f;
-        TempVisuals(mRodGO, PrimitiveType.Cylinder, Color.black);
-
-        //The tip
-        //We set its transform
-        mTipGO = new GameObject("Tip");
-        mTipGO.transform.parent = mWandGO.transform;
-        mTipGO.transform.position += Vector3.up * 2;
-        mTipGO.transform.localScale *= 0.5f;
-        TempVisuals(mTipGO, PrimitiveType.Sphere, Color.red);
-
-        mWandGO.transform.localScale *= 0.1f;
+        mEmitDish = new GameObject("EmitDish");
+        mEmitDish.transform.parent = transform;
+        mEmitDish.transform.localScale -= Vector3.up * 0.9f;
+        TempVisuals(mEmitDish, PrimitiveType.Sphere, Color.black);
 
     }
 
@@ -96,7 +72,8 @@ public class AttractorWand : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
 
         if (VrInput.controllersFound)
         {
@@ -106,31 +83,17 @@ public class AttractorWand : MonoBehaviour {
                 trigger = VrInput.RightTrigger();
             else trigger = VrInput.LeftTrigger();
 
-            
-            attractor.Power = power * trigger;
-
-            if (trigger == 1.0f)
+            if(trigger < 0.1f)
                 system.Active = true;
             else system.Active = false;
+
+            system.EmittFrequency = 1 + trigger * power;
 
         }
         else
         {
 
-            if (Input.GetKey(KeyCode.Space))
-            {
-
-                attractor.Power = 20;
-                system.Active = false;
-
-            }
-            else
-            {
-
-                attractor.Power = 0;
-                system.Active = true;
-
-            }
+            system.Active = true;
 
         }
 
