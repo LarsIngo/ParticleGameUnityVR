@@ -30,6 +30,7 @@ public class Main : MonoBehaviour
         mDeafultLevel = new DefaultLevel("LEVEL:DEFAULT");
         mMenuLevel = new MenuLevel("LEVEL:MENU");
         mAttractor_lvl_1 = new Attractor_lvl_1("LEVEL:ATTRACTOR_LVL_1");
+        mAttractor_lvl_2 = new Attractor_lvl_2("LEVEL:ATTRACTOR_LVL_2");
         Hub.Instance.SetState(Hub.STATE.MENU);
     }
 
@@ -45,6 +46,10 @@ public class Main : MonoBehaviour
 
             case Hub.STATE.ATTRACTOR_LVL_1:
                 mCurrentLevel = mAttractor_lvl_1;
+                break;
+
+            case Hub.STATE.ATTRACTOR_LVL_2:
+                mCurrentLevel = mAttractor_lvl_2;
                 break;
 
             case Hub.STATE.DEFAULT:

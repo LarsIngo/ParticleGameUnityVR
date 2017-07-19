@@ -16,6 +16,7 @@ public class Hub
         NONE = 0,
         MENU,
         ATTRACTOR_LVL_1,
+        ATTRACTOR_LVL_2,
         DEFAULT,
     };
 
