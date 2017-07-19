@@ -44,7 +44,7 @@ public class VatsugWand : MonoBehaviour
 
                 float TwoPIdivNrAttractors = Mathf.PI * 2 / mNrOfAttractors;
 
-                pingpongTimer = ((pingpongTimer + Time.deltaTime) % mNrOfAttractors);
+                pingpongTimer = ((pingpongTimer + Time.deltaTime * mNrOfAttractors) % mNrOfAttractors);
                 for (int i = 0; i < mNrOfAttractors; ++i)
                 {
                     //mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * mNormalAttractorReboundDistance;

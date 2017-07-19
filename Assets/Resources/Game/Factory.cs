@@ -213,7 +213,7 @@ public static class Factory
         WandGO.transform.localScale *= 0.1f;
 
         //++++++++++ WAND ++++++++++
-        const uint nrOfAttractors = 3;
+        const uint nrOfAttractors = 5;
 
         GameObject[] attractors;
 
