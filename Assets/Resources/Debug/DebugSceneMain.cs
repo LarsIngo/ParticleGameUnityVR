@@ -167,6 +167,7 @@ public class DebugSceneMain : MonoBehaviour
         GameObject att = new GameObject("attractor");
         att.transform.position = new Vector3(0,0,5);
         GPUParticleAttractor attractor = att.AddComponent<GPUParticleAttractor>();
+        attractor.Power = 100;
     }
 
 }
