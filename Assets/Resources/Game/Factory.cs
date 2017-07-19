@@ -31,17 +31,15 @@ public static class Factory
         GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
         exp.Mesh = mesh;
         exp.ExplosionColor = meshColor;
+        exp.ExplosionSpeed = 5;
 
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
-        michaelLifetimer.LifeTime = 1.2f;
+        michaelLifetimer.LifeTime = 4.0f;
 
         GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 10.0f;
-
+        attractor.Power = 1000.0f;
         LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
-        blackHoleLifetimer.LifeTime = 4.0f;
-
-
+        blackHoleLifetimer.LifeTime = 0.5f;
 
         exp.Explode();
 
@@ -67,11 +65,57 @@ public static class Factory
         mat.mainTexture = Resources.Load(stageInfo.thumbnail) as Texture2D;
         meshRenderer.material = mat;
 
+        GameObject name = CreateWorldText(level, stageInfo.name, Color.black);
+        name.transform.position -= Vector3.up * 0.6f;
+        name.transform.localScale *= 0.3f;
+        name.transform.parent = screen.transform;
+
+        string medalText = "test";
+        if (stageInfo.score < stageInfo.gold)
+            medalText = "Gold";
+        else if (stageInfo.score < stageInfo.silver)
+            medalText = "Silver";
+        else if (stageInfo.score < stageInfo.bronze)
+            medalText = "Bronze";
+
+        GameObject medal = CreateWorldText(level, medalText, Color.black);
+        medal.transform.position -= Vector3.up * 0.8f;
+        medal.transform.localScale *= 0.4f;
+        medal.transform.SetParent(screen.transform);
+
         screen.AddComponent<StageScreen>().stageInfo = stageInfo;
 
         count++;
 
         return screen;
+
+    }
+
+    public static GameObject CreateWorldText(Level level, string text, Color color)
+    {
+
+        GameObject canvasGO = level.CreateGameObject("CANVAS" + count);
+        Canvas canvas = canvasGO.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+        canvas.GetComponent<RectTransform>().position = Vector3.zero;
+        canvas.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1000);
+        canvas.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 1000);
+
+        GameObject textGO = level.CreateGameObject("TEXT" + count);
+        textGO.transform.SetParent(canvasGO.transform);
+        UnityEngine.UI.Text textUI = textGO.AddComponent<UnityEngine.UI.Text>();
+        textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 5000);
+        textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 5000);
+        textUI.transform.localScale *= 0.001f;
+        textUI.text = text;
+        textUI.fontSize = 299;
+        textUI.color = color;
+        textUI.alignment = TextAnchor.MiddleCenter;
+        textUI.font = Resources.Load<Font>("Fonts/unispace bd");
+
+        count++;
+
+        return canvasGO;
 
     }
 

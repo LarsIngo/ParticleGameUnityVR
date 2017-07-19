@@ -18,6 +18,10 @@ public class Main : MonoBehaviour
     private Level mVatsugLevel;
     private Level mMenuLevel;
 
+    //Attractor levels.
+    private Level mAttractor_lvl_1;
+    private Level mAttractor_lvl_2;
+
     /// --- SCENES --- ///
 
     private void Start ()
@@ -26,8 +30,10 @@ public class Main : MonoBehaviour
 
         mDeafultLevel = new DefaultLevel("LEVEL:DEFAULT");
         mMenuLevel = new MenuLevel("LEVEL:MENU");
+        mAttractor_lvl_1 = new Attractor_lvl_1("LEVEL:ATTRACTOR_LVL_1");
+
         mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
-        Hub.Instance.SetState(Hub.STATE.VATSUG);
+        Hub.Instance.SetState(Hub.STATE.MENU);
         
     }
 
@@ -39,6 +45,10 @@ public class Main : MonoBehaviour
         {
             case Hub.STATE.MENU:
                 mCurrentLevel = mMenuLevel;
+                break;
+
+            case Hub.STATE.ATTRACTOR_LVL_1:
+                mCurrentLevel = mAttractor_lvl_1;
                 break;
 
             case Hub.STATE.VATSUG:
@@ -57,6 +67,9 @@ public class Main : MonoBehaviour
         {
             if (Hub.Instance.ActiveLevel != null)
                 Hub.Instance.ActiveLevel.Sleep();
+
+            // Kill all living particles.
+            GPUParticleSystem.KillAllParticles();
 
             Hub.Instance.SetActiveLevel(mCurrentLevel);
             mCurrentLevel.Awake();

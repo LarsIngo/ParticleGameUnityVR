@@ -68,7 +68,7 @@ public class GeometryExplosion : MonoBehaviour
     {
         if (mActive)
         {
-            mCurrentOffset += mExplosionSpeed * Hub.Instance.DeltaTime;
+            mCurrentOffset += mExplosionSpeed * Time.deltaTime;
             
             mRenderMaterial.SetFloat("gOffset", mCurrentOffset);
             

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BasicEnemy : MonoBehaviour {
 
-    private int mHealth;
+    private int mHealth = 10000;
 
     public int Health { get { return mHealth; } set { mHealth = value; startHealth = value; } }
 
@@ -12,11 +12,10 @@ public class BasicEnemy : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-        Health = 10000;
         startHealth = mHealth;
         TempVisuals(gameObject, PrimitiveType.Sphere, Color.green);
 
-        gameObject.AddComponent<GPUParticleSphereCollider>();
+        gameObject.AddComponent<GPUParticleSphereCollider>().Radius = 0.5f;
 
 	}
 	
@@ -27,11 +26,15 @@ public class BasicEnemy : MonoBehaviour {
         {
             Factory.CreateMichaelBayEffect(Hub.Instance.ActiveLevel, GetComponent<MeshFilter>().mesh, transform, GetComponent<Renderer>().material.color);
             Destroy(gameObject);
+            GameObject t = new GameObject("BLÄÄ" + Time.time);
+            t.AddComponent<TimerStretcher>();
         }
+        else
+        {
+            GetComponent<Renderer>().material.color = Color.Lerp(Color.green, Color.red, 1 - ((float)Health / startHealth));
 
-        GetComponent<Renderer>().material.color = Color.Lerp(Color.green, Color.red, 1 - ((float)Health / startHealth));
-
-        mHealth -= GetComponent<GPUParticleSphereCollider>().CollisionsThisFrame;
+            mHealth -= GetComponent<GPUParticleSphereCollider>().CollisionsThisFrame;
+        }
         	
 	}
 
