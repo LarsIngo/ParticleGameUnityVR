@@ -1,17 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿//using System.Collections;
+//using System.Collections.Generic;
+//using UnityEngine;
 
-public class TimerStretcher : MonoBehaviour
-{
+//public class TimerStretcher : MonoBehaviour
+//{
 
-	void Awake ()
-    {
+//	void Awake ()
+//    {
 		
-	}
+//	}
 
-	void Update ()
-    {
+//	void Update ()
+//    {
 		
-	}
-}
+//	}
+//}

@@ -22,8 +22,7 @@ public class Main : MonoBehaviour
     {
         Hub.Instance.StartUp();
 
-        mDeafultLevel = new DeafultLevel("LEVEL:DEFAULT");
-
+        mDeafultLevel = new DefaultLevel("LEVEL:DEFAULT");
         Hub.Instance.SetState(Hub.STATE.DEFAULT);
     }
 

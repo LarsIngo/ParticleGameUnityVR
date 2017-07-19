@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeafultLevel : Level
+public class DefaultLevel : Level
 {
     /// +++ MEMBERS +++ ///
 
@@ -27,24 +27,12 @@ public class DeafultLevel : Level
     /// Constructor.
     /// </summary>
     /// <param name="name">Name of level, must be unique.</param>
-    public DeafultLevel(string name) : base(name)
+    public DefaultLevel(string name) : base(name)
     {
-        mHMD = GameObject.Find("Camera (head)");
-
-        if (mLeftController == null)
-        {
-            mLeftController = new GameObject("STATIC LEFT CONTROLLER");
-            mLeftController.transform.position = new Vector3(-3, 0, 5);
-        }
-        if (mRightController == null)
-        {
-            mRightController = new GameObject("STATIC RIGHT CONTROLLER");
-            mRightController.transform.position = new Vector3(3, 0, 5);
-        }
 
         //Equip a wand.
-        AttractorWand rightWand = mRightController.AddComponent<AttractorWand>();
-        AttractorWand leftWand = mLeftController.AddComponent<AttractorWand>();
+        AttractorWand rightWand = rightHand.AddComponent<AttractorWand>();
+        AttractorWand leftWand = leftHand.AddComponent<AttractorWand>();
 
         rightWand.rightHand = true;
         leftWand.rightHand = false;
@@ -88,7 +76,6 @@ public class DeafultLevel : Level
         
     }
 
-
     void SpawnEnemies()
     {
         Object.Destroy(enemy1);
@@ -96,9 +83,9 @@ public class DeafultLevel : Level
         Object.Destroy(enemy3);
 
         //Spawn enemies.
-        enemy1 = new GameObject("ENEMY1");
-        enemy2 = new GameObject("ENEMY2");
-        enemy3 = new GameObject("ENEMY3");
+        enemy1 = CreateGameObject("ENEMY1");
+        enemy2 = CreateGameObject("ENEMY2");
+        enemy3 = CreateGameObject("ENEMY3");
 
         enemy1.AddComponent<BasicEnemy>();
         enemy2.AddComponent<BasicEnemy>();
