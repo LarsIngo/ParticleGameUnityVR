@@ -94,8 +94,11 @@ public class GPUParticleSystem : MonoBehaviour
     static int sTotalParticleCount = 0;
     static SwapBuffer sSortElementSwapBuffer = null;
 
-    static bool sLateUpdate;
+    // Material.
+    static Material sRenderMaterial = null;
 
+    // Flags to make sure we only do some functins onces per frame.
+    static bool sLateUpdate;
     static Dictionary<Camera, Camera> sRenderedCameraDictionary = new Dictionary<Camera, Camera>();
 
     // STARTUP.
@@ -126,6 +129,9 @@ public class GPUParticleSystem : MonoBehaviour
         sMergedTransperancyBuffer = new SwapBuffer(1, 1, sizeof(float) * 4);
 
         sSortElementSwapBuffer = new SwapBuffer(2, 1, System.Runtime.InteropServices.Marshal.SizeOf(typeof(SortElement)));
+
+        // MATERIAL.
+        sRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
     }
 
     // SHUTDOWN.
@@ -161,6 +167,8 @@ public class GPUParticleSystem : MonoBehaviour
         sMergedTransperancyBuffer.Release();
 
         sSortElementSwapBuffer.Release();
+
+        sRenderMaterial = null;
     }
 
     /// --- STATIC --- ///
@@ -183,9 +191,6 @@ public class GPUParticleSystem : MonoBehaviour
     // Collisons.
     private ComputeBuffer mSphereColliderResultBuffer = null;
     public ComputeBuffer GetSphereColliderResultBuffer() { return mSphereColliderResultBuffer; }
-
-    // Material.
-    Material mRenderMaterial = null;
 
     // Emitter.
     private Vector3 mLastPosition = Vector3.zero;
@@ -414,9 +419,6 @@ public class GPUParticleSystem : MonoBehaviour
         // MESH.
         mEmittMesh = mNewEmittMesh;
         UpdateMesh();
-
-        // MATERIAL.
-        mRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
 
         //LIFETIME POINT BUFFERS
         // ------- Color ------
@@ -822,20 +824,20 @@ public class GPUParticleSystem : MonoBehaviour
     {
         Debug.Assert(sTotalParticleCount <= sMergedParticleCount);
 
-        mRenderMaterial.SetPass(0);
+        sRenderMaterial.SetPass(0);
 
         // BIND BUFFERS.
-        mRenderMaterial.SetBuffer("gPosition", sMergedPositionBuffer.GetOutputBuffer());
-        mRenderMaterial.SetBuffer("gVelocity", sMergedVelocityBuffer.GetOutputBuffer());
-        mRenderMaterial.SetBuffer("gLifetime", sMergedLifetimeBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gPosition", sMergedPositionBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gVelocity", sMergedVelocityBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gLifetime", sMergedLifetimeBuffer.GetOutputBuffer());
 
-        mRenderMaterial.SetBuffer("gColor", sMergedColorBuffer.GetOutputBuffer());
-        mRenderMaterial.SetBuffer("gHalo", sMergedHaloBuffer.GetOutputBuffer());
-        mRenderMaterial.SetBuffer("gScale", sMergedScaleBuffer.GetOutputBuffer());
-        mRenderMaterial.SetBuffer("gTransparency", sMergedTransperancyBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gColor", sMergedColorBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gHalo", sMergedHaloBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gScale", sMergedScaleBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gTransparency", sMergedTransperancyBuffer.GetOutputBuffer());
 
         // BIND SORTED BUFFER AND USE AS INDEX BUFFER TO RENDER BACK TO FRONT.
-        mRenderMaterial.SetBuffer("gSortedParticleIndexBuffer", sSortElementSwapBuffer.GetOutputBuffer());
+        sRenderMaterial.SetBuffer("gSortedParticleIndexBuffer", sSortElementSwapBuffer.GetOutputBuffer());
 
         // DRAW.
         Graphics.DrawProcedural(MeshTopology.Points, sTotalParticleCount, 1);
