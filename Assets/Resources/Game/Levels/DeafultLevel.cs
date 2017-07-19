@@ -30,8 +30,8 @@ public class DefaultLevel : Level
     public DefaultLevel(string name) : base(name)
     {
 
-        StageInfo stageInfo = new StageInfo();
-        stageInfo.name = "Default Level";
+        StageInfo stageInfo = new StageInfo(0,0, Hub.STATE.DEFAULT);
+        stageInfo.mName = "Default Level";
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 

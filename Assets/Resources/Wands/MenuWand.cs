@@ -21,7 +21,7 @@ public class MenuWand : MonoBehaviour {
         if (Physics.Raycast(ray, out hit))
         {
 
-            if(hit.collider.tag == "StageScreen" && !hit.collider.GetComponent<StageScreen>().stageInfo.locked && hit.collider.GetComponent<StageScreen>().stageInfo.starRequirement <= Hub.Instance.stars)
+            if(hit.collider.tag == "StageScreen" && !hit.collider.GetComponent<StageScreen>().stageInfo.mLocked && hit.collider.GetComponent<StageScreen>().stageInfo.mStarRequirement <= Hub.Instance.stars)
             {
 
                 point = hit.point;
@@ -73,7 +73,7 @@ public class MenuWand : MonoBehaviour {
             if (trigger == 1.0f)
             {
 
-                Hub.Instance.SetState(target.GetComponent<StageScreen>().stageInfo.stageState);
+                Hub.Instance.SetState(target.GetComponent<StageScreen>().stageInfo.mStageState);
 
             }
 
@@ -84,7 +84,7 @@ public class MenuWand : MonoBehaviour {
             if (Input.GetKey(KeyCode.Space))
             {
 
-                Hub.Instance.SetState(target.GetComponent<StageScreen>().stageInfo.stageState);
+                Hub.Instance.SetState(target.GetComponent<StageScreen>().stageInfo.mStageState);
 
             }
 

@@ -28,15 +28,12 @@ public class Attractor_lvl_1 : Level
     public Attractor_lvl_1(string name) : base(name)
     {
 
-        stageInfo = new StageInfo();
-        stageInfo.name = "My first wand!";
-        stageInfo.thumbnail = "Textures/Attractor_lvl_1";
-        stageInfo.stageState = Hub.STATE.ATTRACTOR_LVL_1;
-        stageInfo.world = 1;
-        stageInfo.stage = 0;
-        stageInfo.bronze = 30;
-        stageInfo.silver = 15;
-        stageInfo.gold = 10;
+        stageInfo = new StageInfo(1,0, Hub.STATE.ATTRACTOR_LVL_1);
+        stageInfo.mName = "My first wand!";
+        stageInfo.mThumbnail = "Textures/Attractor_lvl_1";
+        stageInfo.mBronze = 30;
+        stageInfo.mSilver = 15;
+        stageInfo.mGold = 10;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 

@@ -60,10 +60,10 @@ public class MenuLevel : Level
             screen.transform.position += Vector3.forward * 2 + Vector3.up * 1.5f;
 
             //Move it to the world location
-            screen.transform.position += Vector3.right * Hub.Instance.mStageInfoList[i].world + Vector3.right * Hub.Instance.mStageInfoList[i].world * 0.1f;
+            screen.transform.position += Vector3.right * Hub.Instance.mStageInfoList[i].mWorld + Vector3.right * Hub.Instance.mStageInfoList[i].mWorld * 0.1f;
 
             //Move it to the stage location
-            screen.transform.position -= Vector3.up * Hub.Instance.mStageInfoList[i].stage + Vector3.up * Hub.Instance.mStageInfoList[i].stage * 0.5f;
+            screen.transform.position -= Vector3.up * Hub.Instance.mStageInfoList[i].mStage + Vector3.up * Hub.Instance.mStageInfoList[i].mStage * 0.5f;
 
             mScreenList.Add(screen);
 

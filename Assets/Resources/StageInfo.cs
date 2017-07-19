@@ -6,19 +6,19 @@ public class StageInfo  {
 
     static public int count = 0;
 
-    public int world;
-    public int stage;
+    public int mWorld;
+    public int mStage;
 
-    public int starRequirement;
-    public bool locked;
+    public Hub.STATE mStageState;
 
-    public string name;
-    public string thumbnail;
-    public Hub.STATE stageState;
+    public int mStarRequirement;
+    public bool mLocked;
 
-    private float mScore = 9999;
+    public string mName;
+    public string mThumbnail;
+
+    private float mScore;
     public float Score { get { return mScore; } }
-
     public void SetScore(float newScore)
     {
 
@@ -27,41 +27,54 @@ public class StageInfo  {
 
         int starsEarned = 0;
 
-        if (mScore < bronze)
+        if (mScore < mBronze)
             starsEarned--;
-        if (mScore < silver)
+        if (mScore < mSilver)
             starsEarned--;
-        if (mScore < gold)
+        if (mScore < mGold)
             starsEarned--;
 
-        if (newScore < gold)
+        if (newScore < mGold)
         {
             mScore = newScore;
-            Hub.Instance.stars += 3;
+            Hub.Instance.stars += 3 + starsEarned;
         }
-        else if (newScore < silver)
+        else if (newScore < mSilver)
         {
             mScore = newScore;
-            Hub.Instance.stars += 2;
+            Hub.Instance.stars += 2 + starsEarned;
         }
-        else if (newScore < bronze)
+        else if (newScore < mBronze)
         {
             mScore = newScore;
-            Hub.Instance.stars += 1;
+            Hub.Instance.stars += 1 + starsEarned;
         }
 
     }
 
-    public float bronze;
-    public float silver;
-    public float gold;
+    public float mBronze;
+    public float mSilver;
+    public float mGold;
 
-    public StageInfo()
+    public StageInfo(int world, int stage, Hub.STATE stageState)
     {
 
-        name = "Stage:" + count;
-        thumbnail = "Textures/Default";
-        stageState = Hub.STATE.DEFAULT;
+        mWorld = world;
+        mStage = stage;
+
+        mStageState = stageState;
+
+        mStarRequirement = 0;
+        mLocked = false;
+
+        mName = "Stage:" + count;
+        mThumbnail = "Textures/Default";
+
+        mScore = 9999;
+
+        mBronze = 50;
+        mSilver = 30;
+        mGold = 20;
 
         count++;
 

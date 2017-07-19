@@ -51,10 +51,10 @@ public static class Factory
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
     {
 
-        GameObject screen = CreateWorldImage(level, stageInfo.thumbnail);
+        GameObject screen = CreateWorldImage(level, stageInfo.mThumbnail);
         screen.AddComponent<MeshCollider>();
 
-        if (stageInfo.locked || stageInfo.starRequirement > Hub.Instance.stars)
+        if (stageInfo.mLocked || stageInfo.mStarRequirement > Hub.Instance.stars)
         {
 
             GameObject lockImage = CreateWorldImage(level, "Textures/Locked", true);
@@ -65,17 +65,17 @@ public static class Factory
         else
         {
 
-            GameObject name = CreateWorldText(level, stageInfo.name, Color.white);
+            GameObject name = CreateWorldText(level, stageInfo.mName, Color.white);
             name.transform.position -= Vector3.up * 0.6f;
             name.transform.localScale *= 0.3f;
             name.transform.parent = screen.transform;
 
             string medalText = "";
-            if (stageInfo.Score < stageInfo.gold)
+            if (stageInfo.Score < stageInfo.mGold)
                 medalText = "Gold";
-            else if (stageInfo.Score < stageInfo.silver)
+            else if (stageInfo.Score < stageInfo.mSilver)
                 medalText = "Silver";
-            else if (stageInfo.Score < stageInfo.bronze)
+            else if (stageInfo.Score < stageInfo.mBronze)
                 medalText = "Bronze";
 
             GameObject medal = CreateWorldText(level, medalText, Color.white);
@@ -108,9 +108,9 @@ public static class Factory
         UnityEngine.UI.Text textUI = textGO.AddComponent<UnityEngine.UI.Text>();
         textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 5000);
         textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 5000);
-        textUI.transform.localScale *= 0.001f;
+        textUI.transform.localScale *= 0.004f;
         textUI.text = text;
-        textUI.fontSize = 299;
+        textUI.fontSize = 75;
         textUI.color = color;
         textUI.alignment = TextAnchor.MiddleCenter;
         textUI.font = Resources.Load<Font>("Fonts/unispace bd");

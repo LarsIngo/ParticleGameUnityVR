@@ -28,17 +28,14 @@ public class Attractor_lvl_2 : Level
     public Attractor_lvl_2(string name) : base(name)
     {
 
-        stageInfo = new StageInfo();
-        stageInfo.name = "Double Trouble!";
-        stageInfo.thumbnail = "Textures/Attractor_lvl_2";
-        stageInfo.stageState = Hub.STATE.ATTRACTOR_LVL_2;
-        stageInfo.world = 1;
-        stageInfo.stage = 1;
-        stageInfo.starRequirement = 2;
+        stageInfo = new StageInfo(1,1, Hub.STATE.ATTRACTOR_LVL_2);
+        stageInfo.mName = "Double Trouble!";
+        stageInfo.mThumbnail = "Textures/Attractor_lvl_2";
+        stageInfo.mStarRequirement = 2;
 
-        stageInfo.bronze = 30;
-        stageInfo.silver = 15;
-        stageInfo.gold = 10;
+        stageInfo.mBronze = 30;
+        stageInfo.mSilver = 15;
+        stageInfo.mGold = 10;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
