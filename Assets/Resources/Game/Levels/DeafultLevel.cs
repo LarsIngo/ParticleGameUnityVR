@@ -36,11 +36,11 @@ public class DefaultLevel : Level
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
         //Equip a wand.
-        AttractorWand rightWand = rightHand.AddComponent<AttractorWand>();
-        AttractorWand leftWand = leftHand.AddComponent<AttractorWand>();
+        GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
+        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
 
-        rightWand.rightHand = true;
-        leftWand.rightHand = false;
+        rightWand.transform.parent = rightHand.transform;
+        leftWand.transform.parent = leftHand.transform;
 
         //Spawn enemies.
         SpawnEnemies();

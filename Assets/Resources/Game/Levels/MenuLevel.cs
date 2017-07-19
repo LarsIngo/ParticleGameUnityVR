@@ -7,7 +7,7 @@ public class MenuLevel : Level
     /// +++ MEMBERS +++ ///
 
     /// <summary>
-    /// Level currently active.
+    /// Storing all the created scenes.
     /// </summary>
     private List<GameObject> mScreenList;
 
@@ -57,7 +57,17 @@ public class MenuLevel : Level
     public override void Update()
     {
 
+        if (VrInput.RightGrip())
+        {
 
+            for (int i = 0; i < mScreenList.Count; i++)
+            {
+
+                mScreenList[i].transform.position += VrInput.deltaRight.x * Vector3.right;
+    
+            }
+
+        }
 
     }
 

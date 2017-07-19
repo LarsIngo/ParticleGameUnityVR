@@ -8,20 +8,15 @@ public class StageInfo  {
 
     public string name;
     public string thumbnail;
+    public Hub.STATE stageState;
 
     public StageInfo()
     {
 
         name = "Stage:" + count;
         thumbnail = "Textures/Default";
+        stageState = Hub.STATE.DEFAULT;
 
     }
-    public StageInfo(string name)
-    {
-
-        this.name = name;
-
-    }
-
 
 }
