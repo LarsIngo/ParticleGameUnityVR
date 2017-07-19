@@ -229,13 +229,13 @@ public static class Factory
 
         particleEmitter.Active = false;
 
-        Vector4[] colorControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(1, 1, 0, 0.5f), new Vector4(0, 1, 0, 1.0f) };
+        Vector4[] colorControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(1, 1, 0, 0.3f), new Vector4(0, 1, 0, 1.0f) };
         particleEmitter.ColorLifetimePoints = colorControlpoints;
 
         Vector4[] haloControlpoints = { new Vector4(1, 1, 0, 0), new Vector4(1, 1, 0, 1.0f) };
         particleEmitter.HaloLifetimePoints = haloControlpoints;
 
-        Vector4[] scaleControlpoints = { new Vector4(0.05f, 0.05f, 0, 0), new Vector4(0.01f, 0.01f, 0, 1) };
+        Vector4[] scaleControlpoints = { new Vector4(0.04f, 0.04f, 0, 0), new Vector4(0.01f, 0.01f, 0, 0.02f), new Vector4(0.01f, 0.01f, 0, 1) };
         particleEmitter.ScaleLifetimePoints = scaleControlpoints;
 
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
