@@ -105,9 +105,9 @@ public class Attractor_lvl_1 : Level
         enemy2 = CreateGameObject("ENEMY2");
         enemy3 = CreateGameObject("ENEMY3");
 
-        enemy1.AddComponent<BasicEnemy>().Health = 500;
-        enemy2.AddComponent<BasicEnemy>().Health = 500;
-        enemy3.AddComponent<BasicEnemy>().Health = 500;
+        enemy1.AddComponent<BasicEnemy>().Health = 250;
+        enemy2.AddComponent<BasicEnemy>().Health = 250;
+        enemy3.AddComponent<BasicEnemy>().Health = 250;
 
         enemy1.transform.position += Vector3.forward * 3 + Vector3.right * 3;
         enemy2.transform.position += Vector3.forward * 3 + Vector3.right * 0;
