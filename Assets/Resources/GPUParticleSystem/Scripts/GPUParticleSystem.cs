@@ -193,6 +193,12 @@ public class GPUParticleSystem : MonoBehaviour
 
             system.mLifetimeBuffer.GetInputBuffer().SetData(systemData);
             system.mLifetimeBuffer.GetOutputBuffer().SetData(systemData);
+
+            int[] r = new int[sMaxGPUColliderCount];
+            for (int i = 0; i < r.GetLength(0); ++i)
+                r[i] = 0;
+            system.mSphereColliderResultBuffer.SetData(r);
+            system.mSphereColliderResultBuffer.SetData(r);
         }
 
 
@@ -208,6 +214,12 @@ public class GPUParticleSystem : MonoBehaviour
 
         sMergedPositionBuffer.GetInputBuffer().SetData(mergedData);
         sMergedPositionBuffer.GetOutputBuffer().SetData(mergedData);
+
+        int[] data = new int[sMaxGPUColliderCount];
+        for (int i = 0; i < data.GetLength(0); ++i)
+            data[i] = 0;
+        sGPUColliderResultSwapBuffer.GetInputBuffer().SetData(data);
+        sGPUColliderResultSwapBuffer.GetOutputBuffer().SetData(data);
 
 
     }
