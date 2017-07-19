@@ -43,7 +43,7 @@ public class MenuLevel : Level
 
             GameObject screen = Factory.CreateStageScreen(this, Hub.Instance.mStageInfoList[i]);
 
-            screen.transform.position += Vector3.forward * 2 + Vector3.up * 1.5f + Vector3.right * i * 0.1f;
+            screen.transform.position += Vector3.forward * 2 + Vector3.up * 1.5f + Vector3.right * i + Vector3.right * i * 0.1f;
 
             mScreenList.Add(screen);
 
