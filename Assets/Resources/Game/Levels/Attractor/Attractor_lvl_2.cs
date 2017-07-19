@@ -41,11 +41,11 @@ public class Attractor_lvl_2 : Level
 
         //Equip a wand.
         GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
-        GameObject leftWand = Factory.CreateAttractorWand(this, 20, true);
+        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
 
         rightWand.transform.parent = rightHand.transform;
         leftWand.transform.parent = leftHand.transform;
-
+        
         GameObject timerText = Factory.CreateWorldText(this, "Highscore", Color.white);
 
         timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
@@ -63,6 +63,7 @@ public class Attractor_lvl_2 : Level
     {
         //Spawn enemies.
         SpawnEnemies();
+        timer = 0;
     }
 
     /// <summary>
