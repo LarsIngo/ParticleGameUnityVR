@@ -187,7 +187,7 @@ public static class Factory
     }
 
 
-    public static GameObject CreateVatsugWand(Level level, float power, bool rightHand)
+    public static GameObject CreateVatsugWand(Level level, float powerEndAttractor, float powerNormalAttractors, bool rightHand)
     {
         //The wand is the parent object to all the parts.
         GameObject WandGO = level.CreateGameObject("VatsugWand" + count);
@@ -218,9 +218,6 @@ public static class Factory
         GameObject[] attractors;
 
         GameObject endAttractor;
-
-        float powerEndAttractor = 100.0f;
-        float powerNormalAttractors = 25.0f;
 
         //We add the emitter to the tip.
         GPUParticleSystem particleEmitter = TipGO.AddComponent<GPUParticleSystem>();
