@@ -181,13 +181,35 @@ public class GPUParticleSystem : MonoBehaviour
         {
             GPUParticleSystem system = it.Value;
 
-            float[] data = new float[system.mMaxParticleCount * 4];
-            for (int i = 0; i < data.GetLength(0); ++i)
-                data[i] = -1.0f;
+            float[] systemData = new float[system.mMaxParticleCount * 4];
+            for (int i = 0; i < systemData.GetLength(0); ++i)
+                systemData[i] = -100.0f;
 
-            system.mLifetimeBuffer.GetInputBuffer().SetData(data);
-            system.mLifetimeBuffer.GetOutputBuffer().SetData(data);
+            system.mLifetimeBuffer.GetInputBuffer().SetData(systemData);
+            system.mLifetimeBuffer.GetOutputBuffer().SetData(systemData);
+
+            for (int i = 0; i < systemData.GetLength(0); ++i)
+                systemData[i] = float.MaxValue;
+
+            system.mLifetimeBuffer.GetInputBuffer().SetData(systemData);
+            system.mLifetimeBuffer.GetOutputBuffer().SetData(systemData);
         }
+
+
+        float[] mergedData = new float[sMergedParticleCount * 4];
+        for (int i = 0; i < mergedData.GetLength(0); ++i)
+            mergedData[i] = -100.0f;
+
+        sMergedLifetimeBuffer.GetInputBuffer().SetData(mergedData);
+        sMergedLifetimeBuffer.GetOutputBuffer().SetData(mergedData);
+
+        for (int i = 0; i < mergedData.GetLength(0); ++i)
+            mergedData[i] = float.MaxValue;
+
+        sMergedPositionBuffer.GetInputBuffer().SetData(mergedData);
+        sMergedPositionBuffer.GetOutputBuffer().SetData(mergedData);
+
+
     }
 
     /// --- STATIC --- ///
