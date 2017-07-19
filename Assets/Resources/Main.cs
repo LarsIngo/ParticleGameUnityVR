@@ -36,9 +36,7 @@ public class Main : MonoBehaviour
         MenuWand menuWand = mRightController.AddComponent<MenuWand>();
         menuWand.rightHand = true;
 
-        GameObject test = new GameObject("TEST");
-        test.AddComponent<StageScreen>();
-        test.transform.position += Vector3.forward;
+        Factory.CreateStageScreen(new Stage("Best stage"));
 
     }
 

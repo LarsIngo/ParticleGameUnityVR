@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class StageScreen : MonoBehaviour {
 
-    GameObject screen;
+    public Stage stage;
 
 	// Use this for initialization
 	void Awake () {
 
-        screen = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        screen.transform.parent = transform;
-        screen.tag = "StageScreen";
+        transform.parent = transform;
+        tag = "StageScreen";
 		
 	}
 	

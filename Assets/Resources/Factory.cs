@@ -46,4 +46,14 @@ public static class Factory {
         return michael;
     }
 
+    public static GameObject CreateStageScreen(Stage stage)
+    {
+
+        GameObject stageScreen = new GameObject("Stage_" + stage.name + "Screen");
+        stageScreen.AddComponent<StageScreen>();
+
+        return stageScreen;
+
+    }
+
 }
