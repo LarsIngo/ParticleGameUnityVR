@@ -35,7 +35,7 @@ public class VatsugLevel : Level
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
         //Equip a wand.
-        GameObject rightWand = Factory.CreateVatsugWand(this, 60.0f, 10.0f, 4.0f, true);
+        GameObject rightWand = Factory.CreateVatsugWand(this, 80.0f, 40.0f, 5.0f, 15.0f, true);
         GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
 
         rightWand.transform.parent = rightHand.transform;

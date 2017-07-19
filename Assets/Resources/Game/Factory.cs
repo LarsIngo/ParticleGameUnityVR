@@ -187,7 +187,7 @@ public static class Factory
     }
 
 
-    public static GameObject CreateVatsugWand(Level level, float powerEndAttractor, float powerNormalAttractors, float pendulumSpeed, bool rightHand)
+    public static GameObject CreateVatsugWand(Level level, float powerEndAttractor, float powerNormalAttractors, float pendulumSpeed, float reboundDistance, bool rightHand)
     {
         //The wand is the parent object to all the parts.
         GameObject WandGO = level.CreateGameObject("VatsugWand" + count);
@@ -218,8 +218,6 @@ public static class Factory
 
         GameObject emitter = new GameObject("VatsugEmitter");
 
-        //the distance to wich the normal attractors can reach when periodically sinusweaving their way to victory...
-        float normalAttractorReboundDistance = 10.0f;
 
         //We add the emitter to the tip.
         GPUParticleSystem particleEmitter = emitter.AddComponent<GPUParticleSystem>();
@@ -228,7 +226,7 @@ public static class Factory
         //emitter.GetComponent<Renderer>().enabled = false;
         emitter.transform.parent = TipGO.transform;
         emitter.transform.localScale = Vector3.one * 0.2f;
-        emitter.transform.localPosition = new Vector3(1, 0, 0) * normalAttractorReboundDistance;
+        emitter.transform.localPosition = new Vector3(1, 0, 0) * reboundDistance;
 
         particleEmitter.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
         particleEmitter.EmittParticleLifeTime = 5.0f;
@@ -264,7 +262,7 @@ public static class Factory
         wand.mEndAttractor = endAttractor;
         wand.mPowerEndAttractor = powerEndAttractor;
         wand.mPowerAttractors = powerNormalAttractors;
-        wand.mNormalAttractorReboundDistance = normalAttractorReboundDistance;
+        wand.mReboundDistance = reboundDistance;
         wand.mParticleEmitter = emitter;// particleEmitter;
         wand.rightHand = rightHand;
         wand.pendulumSpeed = pendulumSpeed;

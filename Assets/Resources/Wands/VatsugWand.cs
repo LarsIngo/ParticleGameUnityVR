@@ -15,7 +15,7 @@ public class VatsugWand : MonoBehaviour
 
     public bool rightHand;
     public float mPowerAttractors;
-    public float mNormalAttractorReboundDistance;
+    public float mReboundDistance;
 
     public float pendulumSpeed = 1.0f;
 
@@ -38,7 +38,7 @@ public class VatsugWand : MonoBehaviour
             {
                 
 
-                mParticleEmitter.transform.localPosition = new Vector3(Mathf.Cos(Time.time * pendulumSpeed), 0.0f, 0.0f) * mNormalAttractorReboundDistance;
+                mParticleEmitter.transform.localPosition = new Vector3(Mathf.Cos(Time.time * pendulumSpeed), 0.0f, 0.0f) * mReboundDistance;
 
 
                 mParticleEmitter.GetComponent<GPUParticleSystem>().Active = true;
