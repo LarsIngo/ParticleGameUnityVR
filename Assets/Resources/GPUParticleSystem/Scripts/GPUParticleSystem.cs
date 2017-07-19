@@ -934,6 +934,9 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void OnRenderObject()
     {
+        StereoTargetEyeMask targetEye = Camera.current.stereoTargetEye;
+        Debug.Log(targetEye);
+
         if (!sRenderedCameraDictionary.ContainsKey(Camera.current))
         {
             // Add camera to dictionary so we only render system once per camera.
