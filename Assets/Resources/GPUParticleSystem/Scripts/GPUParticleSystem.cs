@@ -102,7 +102,7 @@ public class GPUParticleSystem : MonoBehaviour
     static Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>> sRenderedCameraDictionary = new Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>>();
 
     // STARTUP.
-    public static void StartUp()
+    static void StartUp()
     {
 
         sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
@@ -135,7 +135,7 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     // SHUTDOWN.
-    public static void Shutdown()
+    static void Shutdown()
     {
         sGPUParticleSystemDictionary.Clear();
         sGPUParticleSystemDictionary = null;
@@ -169,6 +169,16 @@ public class GPUParticleSystem : MonoBehaviour
         sSortElementSwapBuffer.Release();
 
         sRenderMaterial = null;
+    }
+
+    public static void RemoveAll()
+    {
+        foreach (KeyValuePair<GPUParticleSystem, GPUParticleSystem> it in sGPUParticleSystemDictionary)
+        {
+            GPUParticleSystem system = it.Value;
+            system.DeInitSystem();
+        }
+        Shutdown();
     }
 
     /// --- STATIC --- ///
