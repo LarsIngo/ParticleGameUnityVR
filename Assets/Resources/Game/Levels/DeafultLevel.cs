@@ -32,6 +32,7 @@ public class DefaultLevel : Level
 
         StageInfo stageInfo = new StageInfo();
         stageInfo.name = "Default Level";
+        
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 

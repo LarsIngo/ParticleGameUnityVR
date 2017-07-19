@@ -236,6 +236,104 @@ public static class Factory
 
     }
 
+
+    public static GameObject CreateVatsugWand(Level level, float powerEndAttractor, float powerNormalAttractors, float pendulumSpeed, float reboundDistance, bool rightHand)
+    {
+        //The wand is the parent object to all the parts.
+        GameObject WandGO = level.CreateGameObject("VatsugWand" + count);
+
+        //The rod
+        //We set its transform.
+        GameObject RodGO = level.CreateGameObject("Rod" + count);
+        RodGO.transform.parent = WandGO.transform;
+        RodGO.transform.localScale += Vector3.up * 8;
+        RodGO.transform.localScale *= 0.2f;
+        RodGO.transform.position += Vector3.forward * 0.2f;
+        TempVisuals(RodGO, PrimitiveType.Cylinder, Color.black);
+
+        //The tip
+        //We set its transform
+        GameObject TipGO = new GameObject("Tip" + count);
+        TipGO.transform.parent = WandGO.transform;
+        TipGO.transform.position += Vector3.up * 2;
+        TipGO.transform.localScale *= 0.5f;
+        TipGO.transform.position += Vector3.forward * 0.2f;
+        TempVisuals(TipGO, PrimitiveType.Sphere, Color.red);
+
+        WandGO.transform.localScale *= 0.1f;
+
+        //++++++++++ WAND ++++++++++
+        
+        GameObject endAttractor;
+
+        GameObject emitter = new GameObject("VatsugEmitter");
+
+
+        //We add the emitter to the tip.
+        GPUParticleSystem particleEmitter = emitter.AddComponent<GPUParticleSystem>();
+        GPUParticleAttractor attractor = emitter.AddComponent<GPUParticleAttractor>();
+        TempVisuals(emitter, PrimitiveType.Sphere, Color.blue);
+        emitter.GetComponent<Renderer>().enabled = false;
+        emitter.transform.parent = TipGO.transform;
+        emitter.transform.localScale = Vector3.one * 0.7f;
+        emitter.transform.localPosition = new Vector3(1, 0, 0) * reboundDistance;
+
+        particleEmitter.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
+        particleEmitter.EmittParticleLifeTime = 5.0f;
+        particleEmitter.EmittFrequency = 500.0f;
+        particleEmitter.EmittInheritVelocity = false;
+
+        particleEmitter.Active = false;
+
+        Vector4[] colorControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(1, 1, 0, 0.3f), new Vector4(0, 1, 0, 1.0f) };
+        particleEmitter.ColorLifetimePoints = colorControlpoints;
+
+        Vector4[] haloControlpoints = { new Vector4(0, 0, 1, 0), new Vector4(1, 0, 1, 1.0f) };
+        particleEmitter.HaloLifetimePoints = haloControlpoints;
+
+        Vector4[] scaleControlpoints = { new Vector4(0.04f, 0.04f, 0, 0), new Vector4(0.01f, 0.01f, 0, 0.02f), new Vector4(0.01f, 0.01f, 0, 1) };
+        particleEmitter.ScaleLifetimePoints = scaleControlpoints;
+
+        Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
+        particleEmitter.TransparencyLifetimePoints = transparencyControlpoints;
+        
+        endAttractor = new GameObject();
+        endAttractor.AddComponent<GPUParticleAttractor>();
+        endAttractor.transform.parent = TipGO.transform;
+        endAttractor.transform.localPosition = Vector3.up * 17.0f;
+
+        
+
+        WandGO.transform.Rotate(90, 0, 0);
+        WandGO.transform.position += Vector3.forward * 0.2f;
+
+
+        VatsugWand wand = TipGO.AddComponent<VatsugWand>();
+        wand.mEndAttractor = endAttractor;
+        wand.mPowerEndAttractor = powerEndAttractor;
+        wand.mPowerAttractors = powerNormalAttractors;
+        wand.mReboundDistance = reboundDistance;
+        wand.mParticleEmitter = emitter;// particleEmitter;
+        wand.rightHand = rightHand;
+        wand.pendulumSpeed = pendulumSpeed;
+
+        count++;
+
+        return WandGO;
+    }
+
+    public static GameObject CreateBasicEnemy(Level level, Vector3 position)
+    {
+        GameObject enemy = level.CreateGameObject("enemy" + count);
+        enemy.AddComponent<BasicEnemy>();
+        enemy.transform.position = position;
+
+        count++;
+
+        return enemy;
+    }
+
+
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
     {
 
