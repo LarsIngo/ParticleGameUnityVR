@@ -74,7 +74,7 @@ public class MenuLevel : Level
             for (int i = 0; i < mScreenList.Count; i++)
             {
 
-                mScreenList[i].transform.position -= VrInput.deltaRight.x * Vector3.right * 5;
+                mScreenList[i].transform.position -= VrInput.deltaRight.x * Vector3.right * 5 + VrInput.deltaRight.y * Vector3.up * 5;
     
             }
 

@@ -51,27 +51,24 @@ public static class Factory
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
     {
 
-        GameObject screen = level.CreateGameObject(stageInfo.name + "_SCREEN");
-        MeshFilter meshFilter = screen.AddComponent<MeshFilter>();
-        MeshRenderer meshRenderer = screen.AddComponent<MeshRenderer>();
-
-        GameObject tmp = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        meshFilter.mesh = tmp.GetComponent<MeshFilter>().mesh;
-        Object.Destroy(tmp);
-
+        GameObject screen = CreateWorldImage(level, stageInfo.thumbnail);
         screen.AddComponent<MeshCollider>();
 
-        Material mat = new Material(Shader.Find("Unlit/Texture"));
-        mat.mainTexture = Resources.Load(stageInfo.thumbnail) as Texture2D;
-        meshRenderer.material = mat;
+        if (stageInfo.locked || stageInfo.starRequirement > Hub.Instance.stars)
+        {
 
-        GameObject name = CreateWorldText(level, stageInfo.name, Color.black);
+            GameObject lockImage = CreateWorldImage(level, "Textures/Locked", true);
+            lockImage.transform.position -= Vector3.forward * 0.1f;
+            lockImage.transform.parent = screen.transform;
+
+        }
+
+        GameObject name = CreateWorldText(level, stageInfo.name, Color.white);
         name.transform.position -= Vector3.up * 0.6f;
         name.transform.localScale *= 0.3f;
         name.transform.parent = screen.transform;
 
-        if (stageInfo.locked || stageInfo.starRequirement > Hub.Instance.stars)
-            screen.transform.localScale *= 0.75f;
+
 
         string medalText = "";
         if (stageInfo.Score < stageInfo.gold)
@@ -119,6 +116,29 @@ public static class Factory
         count++;
 
         return canvasGO;
+
+    }
+
+    public static GameObject CreateWorldImage(Level level, string image, bool transparent = false)
+    {
+
+        GameObject imageGO = level.CreateGameObject("image" + count++);
+        MeshFilter meshFilter = imageGO.AddComponent<MeshFilter>();
+        MeshRenderer meshRenderer = imageGO.AddComponent<MeshRenderer>();
+
+        GameObject tmp = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        meshFilter.mesh = tmp.GetComponent<MeshFilter>().mesh;
+        Object.Destroy(tmp);
+
+        Material mat = new Material(Shader.Find("Unlit/Texture"));
+
+        if(transparent)
+            mat = new Material(Shader.Find("Unlit/Transparent"));
+
+        mat.mainTexture = Resources.Load(image) as Texture2D;
+        meshRenderer.material = mat;
+
+        return imageGO;
 
     }
 
