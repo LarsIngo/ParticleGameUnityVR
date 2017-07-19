@@ -252,7 +252,7 @@ public static class Factory
         float normalAttractorReboundDistance = 5.0f;
 
         float TwoPIdivNrAttractors = Mathf.PI * 2 / nrOfAttractors;
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < nrOfAttractors; ++i)
         {
             attractors[i] = new GameObject("attractorVatsug" + i.ToString());
             attractors[i].transform.parent = TipGO.transform;
