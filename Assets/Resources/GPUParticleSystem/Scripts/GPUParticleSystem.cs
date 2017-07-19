@@ -97,8 +97,9 @@ public class GPUParticleSystem : MonoBehaviour
     // Material.
     static Material sRenderMaterial = null;
 
+    // Flags to make sure we only do some functins onces per frame.
     static bool sLateUpdate;
-    static bool sRender;
+    static Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>> sRenderedCameraDictionary = new Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>>();
 
     // STARTUP.
     public static void StartUp()
@@ -819,7 +820,7 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     // RENDER.
-    private static void RenderSystem()
+    private void RenderSystem()
     {
         Debug.Assert(sTotalParticleCount <= sMergedParticleCount);
 
@@ -857,7 +858,7 @@ public class GPUParticleSystem : MonoBehaviour
     {
         // Used to make static functions get called once.
         sLateUpdate = true;
-        sRender = true;
+        sRenderedCameraDictionary.Clear();
 
         //Update the vertex buffers to match the current transform.
         UpdateVertexBuffers();
@@ -933,9 +934,20 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void OnRenderObject()
     {
-        if (sRender)
+        // Check and make sure to only render particles once per camera/eye.
+
+        Camera.MonoOrStereoscopicEye activeEye = Camera.current.stereoActiveEye;
+
+        if (!sRenderedCameraDictionary.ContainsKey(Camera.current))
         {
-            sRender = false;
+            Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye> activeEyeDictionary = new Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>();
+            sRenderedCameraDictionary[Camera.current] = activeEyeDictionary;
+        }
+
+        if (!sRenderedCameraDictionary[Camera.current].ContainsKey(activeEye))
+        {
+            // Add camera to dictionary so we only render system once per camera.
+            sRenderedCameraDictionary[Camera.current][activeEye] = activeEye;
 
             // Merge particle buffers.
             Merge();

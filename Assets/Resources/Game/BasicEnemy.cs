@@ -25,7 +25,7 @@ public class BasicEnemy : MonoBehaviour {
 
         if (Health < 0)
         {
-
+            Factory.CreateMichaelBayEffect(this.GetComponentInChildren<MeshFilter>().mesh, this.transform, GetComponent<Renderer>().material.color);
             Destroy(gameObject);
 
         }
@@ -47,6 +47,8 @@ public class BasicEnemy : MonoBehaviour {
         MeshFilter filter = target.AddComponent<MeshFilter>();
         filter.mesh = tmp.GetComponent<MeshFilter>().mesh;
         Destroy(tmp);
+
+
 
     }
 
