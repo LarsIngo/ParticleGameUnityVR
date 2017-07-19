@@ -95,7 +95,8 @@ public class GPUParticleSystem : MonoBehaviour
     static SwapBuffer sSortElementSwapBuffer = null;
 
     static bool sLateUpdate;
-    static bool sRender;
+
+    static Dictionary<Camera, Camera> sRenderedCameraDictionary = new Dictionary<Camera, Camera>();
 
     // STARTUP.
     public static void StartUp()
@@ -855,7 +856,7 @@ public class GPUParticleSystem : MonoBehaviour
     {
         // Used to make static functions get called once.
         sLateUpdate = true;
-        sRender = true;
+        sRenderedCameraDictionary.Clear();
 
         //Update the vertex buffers to match the current transform.
         UpdateVertexBuffers();
@@ -931,9 +932,10 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void OnRenderObject()
     {
-        //if (sRender)
-        //{
-        //    sRender = false;
+        if (!sRenderedCameraDictionary.ContainsKey(Camera.current))
+        {
+            // Add camera to dictionary so we only render system once per camera.
+            sRenderedCameraDictionary[Camera.current] = Camera.current;
 
             // Merge particle buffers.
             Merge();
@@ -943,7 +945,7 @@ public class GPUParticleSystem : MonoBehaviour
 
             // Render this frame.
             RenderSystem();
-        //}
+        }
     }
 
     // MONOBEHAVIOUR.
