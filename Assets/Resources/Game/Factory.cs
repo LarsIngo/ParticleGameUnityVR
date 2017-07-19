@@ -219,12 +219,21 @@ public static class Factory
 
         GameObject endAttractor;
 
+        GameObject emitter = new GameObject("VatsugEmitter");
+
+        //the distance to wich the normal attractors can reach when periodically sinusweaving their way to victory...
+        float normalAttractorReboundDistance = 5.0f;
+
         //We add the emitter to the tip.
-        GPUParticleSystem particleEmitter = TipGO.AddComponent<GPUParticleSystem>();
+        GPUParticleSystem particleEmitter = emitter.AddComponent<GPUParticleSystem>();
+        TempVisuals(emitter, PrimitiveType.Cube, Color.blue);
+        emitter.GetComponent<Renderer>().enabled = false;
+        emitter.transform.parent = TipGO.transform;
+        emitter.transform.localPosition = new Vector3(1, 0, 1) * normalAttractorReboundDistance;
+
         particleEmitter.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
-        particleEmitter.EmittParticleLifeTime = 3.0f;
+        particleEmitter.EmittParticleLifeTime = 5.0f;
         particleEmitter.EmittFrequency = 750.0f;
-        particleEmitter.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
         particleEmitter.EmittInheritVelocity = false;
 
         particleEmitter.Active = false;
@@ -248,8 +257,7 @@ public static class Factory
         endAttractor.transform.parent = TipGO.transform;
         endAttractor.transform.localPosition = Vector3.up * 12.0f;
 
-        //the distance to wich the normal attractors can reach when periodically sinusweaving their way to victory...
-        float normalAttractorReboundDistance = 5.0f;
+        
 
         float TwoPIdivNrAttractors = Mathf.PI * 2 / nrOfAttractors;
         for (int i = 0; i < nrOfAttractors; ++i)
@@ -272,7 +280,7 @@ public static class Factory
         wand.mPowerEndAttractor = powerEndAttractor;
         wand.mPowerAttractors = powerNormalAttractors;
         wand.mNormalAttractorReboundDistance = normalAttractorReboundDistance;
-        wand.mParticles = particleEmitter;
+        wand.mParticleEmitter = emitter;// particleEmitter;
         wand.rightHand = rightHand;
 
         count++;
