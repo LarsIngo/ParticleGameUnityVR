@@ -19,7 +19,7 @@ public class LifeTimer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        mLifeTime -= Time.deltaTime;
+        mLifeTime -= Hub.Instance.DeltaTime;
 
         if (mLifeTime < 0.0f)
         {

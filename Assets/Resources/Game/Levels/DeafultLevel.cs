@@ -12,8 +12,6 @@ public class DeafultLevel : Level
     public GameObject mLeftController;
     public GameObject mRightController;
 
-    public UnityEngine.UI.Text highscore;
-
     GameObject enemy1;
     GameObject enemy2;
     GameObject enemy3;
@@ -78,9 +76,8 @@ public class DeafultLevel : Level
         }
 
         if ((enemy1 || enemy2 || enemy3))
-            timer += Time.deltaTime;
+            timer += Hub.Instance.DeltaTime;
 
-        highscore.text = timer + "";
     }
 
     /// <summary>
