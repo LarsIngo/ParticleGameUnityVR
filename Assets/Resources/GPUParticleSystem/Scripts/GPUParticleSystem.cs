@@ -99,7 +99,7 @@ public class GPUParticleSystem : MonoBehaviour
 
     // Flags to make sure we only do some functins onces per frame.
     static bool sLateUpdate;
-    static Dictionary<Camera, Camera> sRenderedCameraDictionary = new Dictionary<Camera, Camera>();
+    static Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>> sRenderedCameraDictionary = new Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>>();
 
     // STARTUP.
     public static void StartUp()
@@ -934,13 +934,20 @@ public class GPUParticleSystem : MonoBehaviour
     // MONOBEHAVIOUR.
     private void OnRenderObject()
     {
-        StereoTargetEyeMask targetEye = Camera.current.stereoTargetEye;
-        Debug.Log(targetEye);
+        // Check and make sure to only render particles once per camera/eye.
+
+        Camera.MonoOrStereoscopicEye activeEye = Camera.current.stereoActiveEye;
 
         if (!sRenderedCameraDictionary.ContainsKey(Camera.current))
         {
+            Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye> activeEyeDictionary = new Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>();
+            sRenderedCameraDictionary[Camera.current] = activeEyeDictionary;
+        }
+
+        if (!sRenderedCameraDictionary[Camera.current].ContainsKey(activeEye))
+        {
             // Add camera to dictionary so we only render system once per camera.
-            sRenderedCameraDictionary[Camera.current] = Camera.current;
+            sRenderedCameraDictionary[Camera.current][activeEye] = activeEye;
 
             // Merge particle buffers.
             Merge();
