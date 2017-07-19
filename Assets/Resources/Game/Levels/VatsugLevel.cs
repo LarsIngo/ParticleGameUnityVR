@@ -59,7 +59,7 @@ public class VatsugLevel : Level
         if (enemy)
             timer += Time.deltaTime;
 
-        enemy.transform.Translate(new Vector3(Mathf.Tan(Time.time / 8.0f) * 20.0f, Mathf.Cos(Time.time * 4) * 5.0f, Mathf.Sin(Time.time) * 3.0f));
+        enemy.transform.position = new Vector3(Mathf.Tan(Time.time / 12.0f), Mathf.Cos(Time.time) * 5.0f * Mathf.Sin(Time.time) * 2, Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f);
 
     }
 
