@@ -31,29 +31,15 @@ public static class Factory
         GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
         exp.Mesh = mesh;
         exp.ExplosionColor = meshColor;
+        exp.ExplosionSpeed = 5;
 
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
-        michaelLifetimer.LifeTime = 1.2f;
+        michaelLifetimer.LifeTime = 4.0f;
 
         GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 10.0f;
-
+        attractor.Power = 1000.0f;
         LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
-        blackHoleLifetimer.LifeTime = 4.0f;
-
-        GPUParticleSystem particles = blackHole.AddComponent<GPUParticleSystem>();
-        particles.EmittParticleLifeTime = 7.0f;
-        particles.EmittFrequency = 50.0f;
-
-        Vector4[] colorLife = new Vector4[2];
-        colorLife[0] = meshColor;
-        colorLife[1] = new Vector4(1.0f, 1.0f, 1.0f, 0.0f);
-        particles.ColorLifetimePoints = colorLife;
-
-        Vector4[] scaleLife = new Vector4[2];
-        scaleLife[0] = new Vector4(0.01f, 0.01f, 0.0f, 0.0f);
-        scaleLife[1] = new Vector4(0.001f, 0.001f, 0.0f, 1.0f);
-        particles.ScaleLifetimePoints = scaleLife;
+        blackHoleLifetimer.LifeTime = 0.5f;
 
         exp.Explode();
 

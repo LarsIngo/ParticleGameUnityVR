@@ -72,7 +72,7 @@ public class Attractor_lvl_1 : Level
     {
 
         if ((enemy1 || enemy2 || enemy3))
-            timer += Hub.Instance.DeltaTime;
+            timer += Time.deltaTime;
         else
         {
 
