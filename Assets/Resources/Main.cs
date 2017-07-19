@@ -27,7 +27,7 @@ public class Main : MonoBehaviour
         mDeafultLevel = new DefaultLevel("LEVEL:DEFAULT");
         mMenuLevel = new MenuLevel("LEVEL:MENU");
         mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
-        Hub.Instance.SetState(Hub.STATE.MENU);
+        Hub.Instance.SetState(Hub.STATE.VATSUG);
         
     }
 

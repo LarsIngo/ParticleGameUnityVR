@@ -256,7 +256,7 @@ public static class Factory
         {
             attractors[i] = new GameObject("attractorVatsug" + i.ToString());
             attractors[i].transform.parent = TipGO.transform;
-            attractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * normalAttractorReboundDistance * Mathf.Sin(TwoPIdivNrAttractors * i);
+            attractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 3.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * normalAttractorReboundDistance;
 
             attractors[i].AddComponent<GPUParticleAttractor>().Power = powerNormalAttractors;
         }
