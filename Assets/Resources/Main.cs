@@ -15,6 +15,7 @@ public class Main : MonoBehaviour
 
     // Levels.
     private Level mDeafultLevel;
+    private Level mMenuLevel;
 
     /// --- SCENES --- ///
 
@@ -23,7 +24,8 @@ public class Main : MonoBehaviour
         Hub.Instance.StartUp();
 
         mDeafultLevel = new DefaultLevel("LEVEL:DEFAULT");
-        Hub.Instance.SetState(Hub.STATE.DEFAULT);
+        mMenuLevel = new MenuLevel("LEVEL:MENU");
+        Hub.Instance.SetState(Hub.STATE.MENU);
     }
 
     private void Update()
@@ -32,6 +34,10 @@ public class Main : MonoBehaviour
         // Check state.
         switch (Hub.Instance.CurrentState)
         {
+            case Hub.STATE.MENU:
+                mCurrentLevel = mMenuLevel;
+                break;
+
             case Hub.STATE.DEFAULT:
                 mCurrentLevel = mDeafultLevel;
                 break;
