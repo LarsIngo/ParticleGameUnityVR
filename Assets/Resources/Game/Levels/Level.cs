@@ -42,9 +42,9 @@ public abstract class Level
 
         Hub.Instance.AddLevel(this);
 
-        rightHand = CreateGameObject("Right Hand");
+        rightHand = CreateGameObject(name + ":Right Hand");
         rightHand.AddComponent<MirrorHandMovement>().rightHand = true;
-        leftHand = CreateGameObject("Left Hand");
+        leftHand = CreateGameObject(name + ":Left Hand");
         leftHand.AddComponent<MirrorHandMovement>().rightHand = false;
 
     }
