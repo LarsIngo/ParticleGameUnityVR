@@ -80,8 +80,7 @@ public class MenuLevel : Level
         for (int i = 0; i < mScreenList.Count; i++)
             Object.Destroy(mScreenList[i]);
 
-        for (int i = 0; i < mScreenList.Count; i++)
-            mScreenList.RemoveAt(i);
+        mScreenList.Clear();
 
     }
 
