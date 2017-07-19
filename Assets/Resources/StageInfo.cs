@@ -9,6 +9,11 @@ public class StageInfo  {
     public string name;
     public string thumbnail;
     public Hub.STATE stageState;
+    public float score;
+
+    public float bronze;
+    public float silver;
+    public float gold;
 
     public StageInfo()
     {
