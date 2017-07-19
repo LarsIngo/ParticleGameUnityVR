@@ -17,7 +17,7 @@ public class VatsugWand : MonoBehaviour
     public float mPowerAttractors;
     public float mNormalAttractorReboundDistance;
 
-    private float timerSpeed = 1.0f;
+    public float pendulumSpeed = 1.0f;
 
 
     // Update is called once per frame
@@ -38,7 +38,7 @@ public class VatsugWand : MonoBehaviour
             {
                 
 
-                mParticleEmitter.transform.localPosition = new Vector3(Mathf.Cos(Time.time * timerSpeed), Mathf.Sin(Time.time * timerSpeed), 0.0f) * mNormalAttractorReboundDistance;
+                mParticleEmitter.transform.localPosition = new Vector3(Mathf.Cos(Time.time * pendulumSpeed), 0.0f, 0.0f) * mNormalAttractorReboundDistance;
 
 
                 mParticleEmitter.GetComponent<GPUParticleSystem>().Active = true;
