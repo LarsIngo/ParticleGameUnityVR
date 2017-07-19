@@ -30,12 +30,17 @@ public class DefaultLevel : Level
     public DefaultLevel(string name) : base(name)
     {
 
-        //Equip a wand.
-        AttractorWand rightWand = rightHand.AddComponent<AttractorWand>();
-        AttractorWand leftWand = leftHand.AddComponent<AttractorWand>();
+        StageInfo stageInfo = new StageInfo();
+        stageInfo.name = "Default Level";
 
-        rightWand.rightHand = true;
-        leftWand.rightHand = false;
+        Hub.Instance.mStageInfoList.Add(stageInfo);
+
+        //Equip a wand.
+        GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
+        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
+
+        rightWand.transform.parent = rightHand.transform;
+        leftWand.transform.parent = leftHand.transform;
 
         //Spawn enemies.
         SpawnEnemies();

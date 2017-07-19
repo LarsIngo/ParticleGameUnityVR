@@ -14,6 +14,7 @@ public class Hub
     public enum STATE
     {
         NONE = 0,
+        MENU,
         DEFAULT,
     };
 
@@ -45,6 +46,12 @@ public class Hub
     /// </summary>
     private Level mActiveLevel = null;
 
+    /// <summary>
+    /// Current active level.
+    /// Default: null
+    /// </summary>
+    public List<StageInfo> mStageInfoList;
+
     /// --- MEMBERS --- ///
 
 
@@ -62,6 +69,7 @@ public class Hub
     {
         // Create dictionary.
         mLevelDic = new Dictionary<string, Level>();
+        mStageInfoList = new List<StageInfo>();
     }
 
     /// <summary>
