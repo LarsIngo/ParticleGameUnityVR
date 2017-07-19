@@ -26,8 +26,6 @@ public class BasicEnemy : MonoBehaviour {
         {
             Factory.CreateMichaelBayEffect(Hub.Instance.ActiveLevel, GetComponent<MeshFilter>().mesh, transform, GetComponent<Renderer>().material.color);
             Destroy(gameObject);
-            GameObject t = new GameObject("BLÄÄ" + Time.time);
-            t.AddComponent<TimerStretcher>();
         }
         else
         {
