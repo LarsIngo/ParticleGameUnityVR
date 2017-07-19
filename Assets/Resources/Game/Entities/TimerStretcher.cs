@@ -43,9 +43,13 @@ public class TimerStretcher : MonoBehaviour
             float lerpFactor = Mathf.Clamp01((mTimer - mTimeIn - mTimeMain) / mTimeOut); // [0,1]
             float slerpFactor = (1.0f - Mathf.Cos(lerpFactor * Mathf.PI)) / 2.0f; // [0,1]
 
-            float timeScale = mTimeScale + slerpFactor * (1.0f - mTimeScale); // []
+            float timeScale = mTimeScale + slerpFactor * (1.0f - mTimeScale);
             Time.timeScale = Mathf.Clamp(timeScale, mTimeScale, 1); ;
         }
+
+        AudioSource[] audioSourceArray = FindObjectsOfType<AudioSource>();
+        for (int i = 0; i < audioSourceArray.GetLength(0); ++i)
+            audioSourceArray[i].pitch = Time.timeScale;
 
         if (mTimer > totalTime)
         {
