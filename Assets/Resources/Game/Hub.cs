@@ -16,6 +16,7 @@ public class Hub
         NONE = 0,
         MENU,
         ATTRACTOR_LVL_1,
+        ATTRACTOR_LVL_2,
         VATSUG,
         DEFAULT
     };
@@ -54,6 +55,12 @@ public class Hub
     /// </summary>
     public List<StageInfo> mStageInfoList;
 
+    /// <summary>
+    /// Current active level.
+    /// Default: null
+    /// </summary>
+    public int stars;
+
     /// --- MEMBERS --- ///
 
 
@@ -75,7 +82,7 @@ public class Hub
 
         GameObject backgroundMusic = new GameObject("BACKGROUNDMUSIC");
         AudioSource audioSource = backgroundMusic.AddComponent<AudioSource>();
-        audioSource.clip = Resources.Load<AudioClip>("Music/MachinimaSound.com_-_Dance_of_the_Pixies");
+        audioSource.clip = Resources.Load<AudioClip>("Music/MachinimaSound.com_-_The_Arcade");
         audioSource.loop = true;
         audioSource.Play();
 

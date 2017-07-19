@@ -19,10 +19,10 @@ public static class Factory
 
     /// +++ FUNCTIONS +++ ///
 
-    public static GameObject CreateMichaelBayEffect(Level level, Mesh mesh, Transform t, Color meshColor)
+    public static void CreateMichaelBayEffect(Level level, Mesh mesh, Transform t, Color meshColor)
     {
-        GameObject michael = level.CreateGameObject("michael" + Time.time);
-        GameObject blackHole = level.CreateGameObject("blackhole" + Time.time);
+        GameObject michael = level.CreateGameObject("michael" + count++);
+        GameObject blackHole = level.CreateGameObject("blackhole" + count++);
         michael.transform.position = t.position;
         michael.transform.rotation = t.rotation;
         blackHole.transform.position = t.position;
@@ -31,61 +31,97 @@ public static class Factory
         GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
         exp.Mesh = mesh;
         exp.ExplosionColor = meshColor;
-        exp.ExplosionSpeed = 5;
+        exp.ExplosionSpeed = 8;
+        exp.ShrinkSpeed = 1.0f;
+        exp.ShrinkTime = 0.25f;
+
+        TimerStretch timeStrech = michael.AddComponent<TimerStretch>();
+        timeStrech.TimePrePhase = 0.5f;
+        timeStrech.TimeMainPhase = 0.2f;
+        timeStrech.TimePostPhase = 0.5f;
+        timeStrech.TargetTimeScale = 0.1f;
 
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
         michaelLifetimer.LifeTime = 4.0f;
 
         GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 1000.0f;
+        attractor.Power = 250.0f;
         LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
-        blackHoleLifetimer.LifeTime = 0.5f;
+        blackHoleLifetimer.LifeTime = 0.2f;
 
-        exp.Explode();
+        AudioSource ceramicSound = michael.AddComponent<AudioSource>();
+        ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");
+        ceramicSound.Play();
 
-        count++;
+        AudioSource artillerySound = michael.AddComponent<AudioSource>();
+        artillerySound.clip = Resources.Load<AudioClip>("Samples/Explosion/Artillery");
+        artillerySound.time = 0.25f;
+        artillerySound.Play();
 
-        return michael;
     }
 
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
     {
 
-        GameObject screen = level.CreateGameObject(stageInfo.name + "_SCREEN");
-        MeshFilter meshFilter = screen.AddComponent<MeshFilter>();
-        MeshRenderer meshRenderer = screen.AddComponent<MeshRenderer>();
-
-        GameObject tmp = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        meshFilter.mesh = tmp.GetComponent<MeshFilter>().mesh;
-        Object.Destroy(tmp);
-
+        GameObject screen = CreateWorldImage(level, stageInfo.mThumbnail);
         screen.AddComponent<MeshCollider>();
 
-        Material mat = new Material(Shader.Find("Unlit/Texture"));
-        mat.mainTexture = Resources.Load(stageInfo.thumbnail) as Texture2D;
-        meshRenderer.material = mat;
+        if (stageInfo.mLocked || stageInfo.mStarRequirement > Hub.Instance.stars)
+        {
 
-        GameObject name = CreateWorldText(level, stageInfo.name, Color.black);
-        name.transform.position -= Vector3.up * 0.6f;
-        name.transform.localScale *= 0.3f;
-        name.transform.parent = screen.transform;
+            GameObject lockImage = CreateWorldImage(level, "Textures/Locked", true);
+            lockImage.transform.position -= Vector3.forward * 0.1f;
+            lockImage.transform.parent = screen.transform;
 
-        string medalText = "test";
-        if (stageInfo.score < stageInfo.gold)
-            medalText = "Gold";
-        else if (stageInfo.score < stageInfo.silver)
-            medalText = "Silver";
-        else if (stageInfo.score < stageInfo.bronze)
-            medalText = "Bronze";
+            GameObject requirement = CreateWorldText(level, stageInfo.mStarRequirement.ToString(), Color.red * 0.9f);
+            requirement.transform.position -= Vector3.forward * 0.15f;
+            requirement.transform.localScale *= 2;
+            requirement.transform.parent = screen.transform;
 
-        GameObject medal = CreateWorldText(level, medalText, Color.black);
-        medal.transform.position -= Vector3.up * 0.8f;
-        medal.transform.localScale *= 0.4f;
-        medal.transform.SetParent(screen.transform);
+        }
+        else
+        {
 
-        screen.AddComponent<StageScreen>().stageInfo = stageInfo;
+            GameObject name = CreateWorldText(level, stageInfo.mName, Color.white);
+            name.transform.position -= Vector3.up * 0.6f;
+            name.transform.localScale *= 0.3f;
+            name.transform.parent = screen.transform;
 
-        count++;
+            GameObject stars = level.CreateGameObject("STARS" + count++);
+
+            if (true || stageInfo.Score < stageInfo.mGold)
+            {
+
+                GameObject gold = CreateWorldImage(level, "Textures/Star");
+                gold.transform.position += Vector3.right * 1.1f;
+                gold.transform.parent = stars.transform;
+
+            }
+            if (true || stageInfo.Score < stageInfo.mSilver)
+            {
+
+                GameObject silver = CreateWorldImage(level, "Textures/Star");
+                silver.transform.parent = stars.transform;
+
+            }
+            if (true || stageInfo.Score < stageInfo.mBronze)
+            {
+
+                GameObject bronze = CreateWorldImage(level, "Textures/Star");
+                bronze.transform.position -= Vector3.right * 1.1f;
+                bronze.transform.parent = stars.transform;
+
+            }
+
+            stars.transform.position -= Vector3.up * 0.8f;
+            stars.transform.localScale *= 0.2f;
+            stars.transform.SetParent(screen.transform);
+
+            screen.AddComponent<StageScreen>().stageInfo = stageInfo;
+
+            count++;
+
+        }
 
         return screen;
 
@@ -94,28 +130,49 @@ public static class Factory
     public static GameObject CreateWorldText(Level level, string text, Color color)
     {
 
-        GameObject canvasGO = level.CreateGameObject("CANVAS" + count);
+        GameObject canvasGO = level.CreateGameObject("CANVAS" + count++);
         Canvas canvas = canvasGO.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.GetComponent<RectTransform>().position = Vector3.zero;
         canvas.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1000);
         canvas.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 1000);
 
-        GameObject textGO = level.CreateGameObject("TEXT" + count);
+        GameObject textGO = level.CreateGameObject("TEXT" + count++);
         textGO.transform.SetParent(canvasGO.transform);
         UnityEngine.UI.Text textUI = textGO.AddComponent<UnityEngine.UI.Text>();
         textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 5000);
         textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 5000);
-        textUI.transform.localScale *= 0.001f;
+        textUI.transform.localScale *= 0.004f;
         textUI.text = text;
-        textUI.fontSize = 299;
+        textUI.fontSize = 75;
         textUI.color = color;
         textUI.alignment = TextAnchor.MiddleCenter;
         textUI.font = Resources.Load<Font>("Fonts/unispace bd");
 
-        count++;
-
         return canvasGO;
+
+    }
+
+    public static GameObject CreateWorldImage(Level level, string image, bool transparent = false)
+    {
+
+        GameObject imageGO = level.CreateGameObject("image" + count++);
+        MeshFilter meshFilter = imageGO.AddComponent<MeshFilter>();
+        MeshRenderer meshRenderer = imageGO.AddComponent<MeshRenderer>();
+
+        GameObject tmp = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        meshFilter.mesh = tmp.GetComponent<MeshFilter>().mesh;
+        Object.Destroy(tmp);
+
+        Material mat = new Material(Shader.Find("Unlit/Texture"));
+
+        if(transparent)
+            mat = new Material(Shader.Find("Unlit/Transparent"));
+
+        mat.mainTexture = Resources.Load(image) as Texture2D;
+        meshRenderer.material = mat;
+
+        return imageGO;
 
     }
 
@@ -123,11 +180,11 @@ public static class Factory
     {
 
         //The wand is the parent object to all the parts.
-        GameObject WandGO = level.CreateGameObject("AttractorWand" + count);
+        GameObject WandGO = level.CreateGameObject("AttractorWand" + count++);
 
         //The rod
         //We set its transform.
-        GameObject RodGO = level.CreateGameObject("Rod" + count);
+        GameObject RodGO = level.CreateGameObject("Rod" + count++);
         RodGO.transform.parent = WandGO.transform;
         RodGO.transform.localScale += Vector3.up * 8;
         RodGO.transform.localScale *= 0.2f;
@@ -136,7 +193,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = new GameObject("Tip" + count);
+        GameObject TipGO = new GameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -180,8 +237,6 @@ public static class Factory
         wand.system = system;
         wand.attractor = attractor;
 
-        count++;
-
         return WandGO;
 
     }
@@ -190,11 +245,11 @@ public static class Factory
     {
 
         //The wand is the parent object to all the parts.
-        GameObject WandGO = level.CreateGameObject("MenuWand" + count);
+        GameObject WandGO = level.CreateGameObject("MenuWand" + count++);
 
         //The rod
         //We set its transform.
-        GameObject RodGO = level.CreateGameObject("Rod" + count);
+        GameObject RodGO = level.CreateGameObject("Rod" + count++);
         RodGO.transform.parent = WandGO.transform;
         RodGO.transform.localScale += Vector3.up * 8;
         RodGO.transform.localScale *= 0.2f;
@@ -203,7 +258,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = new GameObject("Tip" + count);
+        GameObject TipGO = new GameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -223,8 +278,6 @@ public static class Factory
         MenuWand wand = WandGO.AddComponent<MenuWand>();
         wand.lineRenderer = lineRenderer;
         wand.rightHand = rightHand;
-
-        count++;
 
         return WandGO;
 
