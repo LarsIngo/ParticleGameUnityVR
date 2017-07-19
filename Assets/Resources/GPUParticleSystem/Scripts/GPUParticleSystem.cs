@@ -102,7 +102,7 @@ public class GPUParticleSystem : MonoBehaviour
     static Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>> sRenderedCameraDictionary = new Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>>();
 
     // STARTUP.
-    public static void StartUp()
+    static void StartUp()
     {
 
         sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
@@ -135,7 +135,7 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     // SHUTDOWN.
-    public static void Shutdown()
+    static void Shutdown()
     {
         sGPUParticleSystemDictionary.Clear();
         sGPUParticleSystemDictionary = null;
@@ -169,6 +169,22 @@ public class GPUParticleSystem : MonoBehaviour
         sSortElementSwapBuffer.Release();
 
         sRenderMaterial = null;
+    }
+
+    /// <summary>
+    /// Kills all living particles.
+    /// </summary>
+    public static void KillAllParticles()
+    {
+        if (sGPUParticleSystemDictionary == null) return;
+
+        float[] data = new float[sTotalParticleCount * 4];
+
+        for (int i = 0; i < sTotalParticleCount * 4; ++i)
+            data[i] = -1.0f;
+
+        sMergedLifetimeBuffer.GetInputBuffer().SetData(data);
+        sMergedLifetimeBuffer.GetOutputBuffer().SetData(data);
     }
 
     /// --- STATIC --- ///
@@ -504,7 +520,7 @@ public class GPUParticleSystem : MonoBehaviour
     private void EmittUpdate()
     {
         // Update timer.
-        mEmittTimer += Hub.Instance.DeltaTime;
+        mEmittTimer += Time.deltaTime;
 
         int emittCount = (int)(mEmittFrequency * mEmittTimer);
 
@@ -522,7 +538,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
             // Inherit velocity from emitter if true.
-            Vector3 velocity = (emitterVelocity / Hub.Instance.DeltaTime) * (mEmittInheritVelocity ? 1 : 0) + mEmittInitialVelocity;
+            Vector3 velocity = (emitterVelocity / Time.deltaTime) * (mEmittInheritVelocity ? 1 : 0) + mEmittInitialVelocity;
 
             
             Vector3 newInitPos = mLastPosition;
@@ -601,7 +617,7 @@ public class GPUParticleSystem : MonoBehaviour
 
         // SET META DATA.
         sComputeShader.SetInt("gMaxParticleCount", mMaxParticleCount);
-        sComputeShader.SetFloat("gDeltaTime", Hub.Instance.DeltaTime);
+        sComputeShader.SetFloat("gDeltaTime", Time.deltaTime);
 
         sComputeShader.SetFloats("gConstantAcceleration", new float[] {mEmittConstantAcceleration.x, mEmittConstantAcceleration.y, mEmittConstantAcceleration.z });
         sComputeShader.SetFloat("gConstantDrag", mEmittConstantDrag);

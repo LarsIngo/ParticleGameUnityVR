@@ -15,7 +15,7 @@ public class BasicEnemy : MonoBehaviour {
         startHealth = mHealth;
         TempVisuals(gameObject, PrimitiveType.Sphere, Color.green);
 
-        gameObject.AddComponent<GPUParticleSphereCollider>();
+        gameObject.AddComponent<GPUParticleSphereCollider>().Radius = 0.5f;
 
 	}
 	
@@ -26,11 +26,15 @@ public class BasicEnemy : MonoBehaviour {
         {
             Factory.CreateMichaelBayEffect(Hub.Instance.ActiveLevel, GetComponent<MeshFilter>().mesh, transform, GetComponent<Renderer>().material.color);
             Destroy(gameObject);
+            GameObject t = new GameObject("BLÄÄ" + Time.time);
+            t.AddComponent<TimerStretcher>();
         }
+        else
+        {
+            GetComponent<Renderer>().material.color = Color.Lerp(Color.green, Color.red, 1 - ((float)Health / startHealth));
 
-        GetComponent<Renderer>().material.color = Color.Lerp(Color.green, Color.red, 1 - ((float)Health / startHealth));
-
-        mHealth -= GetComponent<GPUParticleSphereCollider>().CollisionsThisFrame;
+            mHealth -= GetComponent<GPUParticleSphereCollider>().CollisionsThisFrame;
+        }
         	
 	}
 

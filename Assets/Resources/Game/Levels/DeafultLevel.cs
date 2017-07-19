@@ -69,7 +69,7 @@ public class DefaultLevel : Level
         }
 
         if ((enemy1 || enemy2 || enemy3))
-            timer += Hub.Instance.DeltaTime;
+            timer += Time.deltaTime;
 
     }
 
