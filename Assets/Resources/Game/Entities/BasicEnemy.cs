@@ -16,7 +16,7 @@ public class BasicEnemy : MonoBehaviour {
         startHealth = mHealth;
         TempVisuals(gameObject, PrimitiveType.Sphere, Color.green);
 
-        gameObject.AddComponent<GPUParticleSphereCollider>();
+        gameObject.AddComponent<GPUParticleSphereCollider>().Radius = 0.5f;
 
 	}
 	
