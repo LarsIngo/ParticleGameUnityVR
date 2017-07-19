@@ -13,6 +13,16 @@ public abstract class Level
     /// </summary>
     private GameObject mLevelGO;
 
+    /// <summary>
+    /// Right hand game object.
+    /// </summary>
+    protected GameObject rightHand;
+
+    /// <summary>
+    /// Left hand game object.
+    /// </summary>
+    protected GameObject leftHand;
+
     /// --- MEMBERS --- ///
 
 
@@ -31,6 +41,12 @@ public abstract class Level
         mLevelGO.SetActive(false);
 
         Hub.Instance.AddLevel(this);
+
+        rightHand = CreateGameObject("Right Hand");
+        rightHand.AddComponent<MirrorHandMovement>().rightHand = true;
+        leftHand = CreateGameObject("Left Hand");
+        leftHand.AddComponent<MirrorHandMovement>().rightHand = false;
+
     }
 
     /// <summary>

@@ -7,6 +7,9 @@ public class VrInput : MonoBehaviour {
     public GameObject left;
     public GameObject right;
 
+    static public GameObject leftHand;
+    static public GameObject rightHand;
+
     static SteamVR_TrackedObject leftController;
     static SteamVR_TrackedObject rightController;
     public static bool controllersFound { get { return leftController.isActiveAndEnabled && rightController.isActiveAndEnabled && leftController; } }
@@ -16,6 +19,9 @@ public class VrInput : MonoBehaviour {
 
         leftController = left.GetComponent<SteamVR_TrackedObject>();
         rightController = right.GetComponent<SteamVR_TrackedObject>();
+
+        leftHand = left;
+        rightHand = right;
 
     }
 
