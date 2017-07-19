@@ -66,7 +66,7 @@ public class VatsugWand : MonoBehaviour
             //mAttractors[i].Power = 1;
             TempVisuals(mAttractors[i], PrimitiveType.Cube, Color.blue);
             mAttractors[i].transform.parent = mTipGO.transform;
-            mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized;
+            mAttractors[i].transform.localPosition = new Vector3(Mathf.Cos(TwoPIdivNrAttractors * i), 0.0f, Mathf.Sin(TwoPIdivNrAttractors * i)).normalized * 6;
             
         }
 
@@ -135,7 +135,7 @@ public class VatsugWand : MonoBehaviour
                 //for (int i = 0; i < mNrOfAttractors; ++i)
                 //  mAttractors[i].Power = power * trigger;
 
-                mParticles.Active = true;
+                mParticles.Active = false;
                 mTimerCurrentEndAttractor = mTimerEndAttractor;
 
                 mEndAttractor.Power = 0.0f;
