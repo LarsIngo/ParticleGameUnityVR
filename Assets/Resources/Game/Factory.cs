@@ -63,42 +63,6 @@ public static class Factory
 
     }
 
-    public static GameObject CreateEnemySkull(Level level)
-    {
-        GameObject gameObject = level.CreateGameObject("SkullEnemy" + count++);
-
-        // RENDERER.
-        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        Material material = new Material(Shader.Find("Standard"));
-        Debug.Assert(material);
-        Texture2D albedo = Resources.Load<Texture2D>("Models/Skull/skull_diffuse");
-        Debug.Assert(albedo);
-        Texture2D normal = Resources.Load<Texture2D>("Models/Skull/skull_normal");
-        Debug.Assert(normal);
-        material.SetTexture("_MainTex", albedo);
-        material.SetTexture("_BumpMap", normal);
-        meshRenderer.material = material;
-
-        // MESH.
-        Mesh mesh = Resources.Load<Mesh>("Models/Skull/skull");
-        Debug.Assert(mesh);
-        gameObject.AddComponent<MeshFilter>().mesh = mesh;
-
-        // PARTICLES.
-        GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
-
-        GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
-        descriptor.Lifetime = 0.2f;
-        descriptor.EmittFrequency = 50.0f;
-        descriptor.EmittMesh = mesh;
-        system.ParticleDescriptor = descriptor;
-
-        // ROTATE.
-        gameObject.transform.Rotate(0, 180, 0);
-
-        return gameObject;
-    }
-
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
     {
 
@@ -463,14 +427,34 @@ public static class Factory
         return WandGO;
     }
 
-    public static GameObject CreateBasicEnemy(Level level, Vector3 position)
+    public static GameObject CreateBasicEnemy(Level level)
     {
-        GameObject enemy = level.CreateGameObject("enemy" + count++);
-        enemy.AddComponent<BasicEnemy>();
-        enemy.transform.position = position;
-        
+        GameObject gameObject = level.CreateGameObject("Basic Enemy " + count++);
 
-        return enemy;
+        // MESH.
+        gameObject.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
+
+        // MATERIAL.
+        Material material = gameObject.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Unlit/Color"));
+        material.color = Color.green;
+
+        // COLLIDER.
+        gameObject.AddComponent<GPUParticleSphereCollider>().Radius = 0.5f;
+
+        // HEALTH.
+        gameObject.AddComponent<Health>();
+
+        return gameObject;
+    }
+
+    private static Mesh CreateMesh(PrimitiveType primitive)
+    {
+
+        GameObject tmp = GameObject.CreatePrimitive(primitive);
+        Mesh mesh = tmp.GetComponent<MeshFilter>().mesh;
+        Object.Destroy(tmp);
+
+        return mesh;
     }
     
 

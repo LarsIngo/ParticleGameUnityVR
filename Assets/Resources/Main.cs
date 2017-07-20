@@ -40,7 +40,7 @@ public class Main : MonoBehaviour
         mSkullLevel = new SkullLevel("LEVEL:SKULL");
         mParticleTestLevel = new ParticleTestScene("LEVEL:PARTICLETEST");
 
-        Hub.Instance.SetState(Hub.STATE.VATSUG);
+        Hub.Instance.SetState(Hub.STATE.MENU);
         
     }
 
