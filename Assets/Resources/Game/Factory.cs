@@ -486,16 +486,6 @@ public static class Factory
 
         
 
-        /*GPUParticleSystem s = StraitenOutFishObject.AddComponent<GPUParticleSystem>();
-        s.Active = false;
-        
-        Vector4[] cPoints = { new Vector4(0.0f, 0.0f, 0.5f, 0.0f), new Vector4(0.0f, 0.0f, 0.8f, 1.0f) };
-        GPUParticleDescriptor desc = new GPUParticleDescriptor();
-        
-        GPUParticleDescriptor.LifetimePoints points;
-        points.Add()
-        */
-
         return;
     }
 

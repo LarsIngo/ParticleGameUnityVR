@@ -14,6 +14,7 @@ public class Vatsug : MonoBehaviour {
     void Start () {
         prevPos = new Vector3(0, 0, 0);
         sound = gameObject.GetComponent<AudioSource>();
+        Debug.Assert(sound);
 
         clips = new AudioClip[nrOfClips];
 
