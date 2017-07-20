@@ -25,7 +25,11 @@ public class ParticleTestScene : Level
         descriptor.ColorOverLifetime = colorPoints;
         GPUParticleDescriptor.LifetimePoints sizePoints = new GPUParticleDescriptor.LifetimePoints();
         sizePoints.Add(new Vector4(0, 0, 0, 0));
-        sizePoints.Add(new Vector4(1, 1, 1, 1));
+        sizePoints.Add(new Vector4(1, 1, 1, 0.2f));
+        sizePoints.Add(new Vector4(0, 0, 0, 0.4f));
+        sizePoints.Add(new Vector4(1, 1, 1, 0.6f));
+        sizePoints.Add(new Vector4(0, 0, 0, 0.8f));
+        sizePoints.Add(new Vector4(1, 1, 1, 1.0f));
         descriptor.ScaleOverLifetime = sizePoints;
 
         GameObject test = CreateGameObject("test");
