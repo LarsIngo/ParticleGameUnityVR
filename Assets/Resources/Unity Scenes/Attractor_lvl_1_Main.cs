@@ -21,6 +21,14 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
+        for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
+        {
+
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_1")
+                stageInfo = Hub.Instance.mStageInfoList[i];
+
+        }
+
         //Equip a wand.
         GameObject rightWand = Factory.CreateAttractorWand(20, true);
 
