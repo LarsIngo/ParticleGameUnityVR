@@ -37,19 +37,6 @@ public class Attractor_lvl_1 : Level
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
-        //Equip a wand.
-        GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
-
-        rightWand.transform.parent = rightHand.transform;
-
-        GameObject timerText = Factory.CreateWorldText(this, "Highscore", Color.white);
-
-        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
-        timerText.transform.localScale *= 100;
-
-        highscore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
-
-
     }
 
 
@@ -58,9 +45,20 @@ public class Attractor_lvl_1 : Level
     /// </summary>
     public override void Awake()
     {
-        //Spawn enemies.
-        SpawnEnemies();
-        timer = 0;
+
+        //Equip a wand.
+        GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
+
+        //GameObject timerText = Factory.CreateWorldText(this, "Highscore", Color.white);
+
+        //timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
+        //timerText.transform.localScale *= 100;
+
+        //highscore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+
+        ////Spawn enemies.
+        //SpawnEnemies();
+        //timer = 0;
     }
 
     /// <summary>
@@ -69,16 +67,16 @@ public class Attractor_lvl_1 : Level
     public override void Update()
     {
 
-        if ((enemy1 || enemy2 || enemy3))
-            timer += Time.deltaTime;
-        else
-        {
+        //if ((enemy1 || enemy2 || enemy3))
+        //    timer += Time.deltaTime;
+        //else
+        //{
 
-            if (stageInfo.Score > timer)
-                stageInfo.SetScore(timer);
+        //    if (stageInfo.Score > timer)
+        //        stageInfo.SetScore(timer);
 
-        }
-        highscore.text = timer.ToString("0.00");
+        //}
+        //highscore.text = timer.ToString("0.00");
 
     }
 

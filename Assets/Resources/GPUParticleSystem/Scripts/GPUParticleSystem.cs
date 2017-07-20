@@ -105,6 +105,8 @@ public class GPUParticleSystem : MonoBehaviour
     static void StartUp()
     {
 
+        Debug.Log("STARTUP");
+
         sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
 
         sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
@@ -137,6 +139,8 @@ public class GPUParticleSystem : MonoBehaviour
     // SHUTDOWN.
     static void Shutdown()
     {
+        Debug.Log("SHUTDOWN");
+
         sGPUParticleSystemDictionary.Clear();
         sGPUParticleSystemDictionary = null;
 
@@ -176,10 +180,14 @@ public class GPUParticleSystem : MonoBehaviour
     /// </summary>
     public static void KillAllParticles()
     {
+        Debug.Log("KILLALLPARTILCES1");
+
         if (sGPUParticleSystemDictionary == null) return;
 
         foreach (KeyValuePair<GPUParticleSystem, GPUParticleSystem> it in sGPUParticleSystemDictionary)
         {
+            Debug.Log("KILLALLPARTILCES2");
+
             GPUParticleSystem system = it.Value;
 
             float[] systemData = new float[system.mMaxParticleCount * 4];
@@ -300,6 +308,9 @@ public class GPUParticleSystem : MonoBehaviour
     // INIT.
     private void InitSystem()
     {
+
+        if (mDescriptor == null)
+            mDescriptor = new GPUParticleDescriptor();
 
         mDescriptor.Update();
 

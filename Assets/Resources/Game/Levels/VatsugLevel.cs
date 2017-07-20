@@ -7,8 +7,6 @@ public class VatsugLevel : Level
     /// +++ MEMBERS +++ ///
     public UnityEngine.UI.Text highscore;
 
-    GameObject enemy;
-
     /// --- MEMBERS --- ///
 
 
@@ -20,31 +18,11 @@ public class VatsugLevel : Level
     /// <param name="name">Name of level, must be unique.</param>
     public VatsugLevel(string name) : base(name)
     {
-        enemy = this.CreateGameObject("TheOneAndOnlyVatsug");
-        Factory.CreateVatsug(this, enemy.transform);
-        enemy.AddComponent<Vatsug>();
-        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
-
-        GameObject boat = Factory.CreateBoat(this);
-
-        GameObject moon = Factory.CreateMoon(this);
-
-        GameObject water = Factory.CreateWater(this);
 
         StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
         stageInfo.mName = "Vatsug Level";
-
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
-        //Equip a wand.
-        GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
-        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
-        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 5.0f);
-        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 5.0f);
-        
-        rightWand.transform.parent = rightHand.transform;
-        leftWand.transform.parent = leftHand.transform;
-        
     }
 
 
@@ -53,6 +31,29 @@ public class VatsugLevel : Level
     /// </summary>
     public override void Awake()
     {
+
+        GameObject enemy = this.CreateGameObject("TheOneAndOnlyVatsug");
+        Factory.CreateVatsug(this, enemy.transform);
+        enemy.AddComponent<Vatsug>();
+
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
+
+        GameObject boat = Factory.CreateBoat(this);
+
+        GameObject moon = Factory.CreateMoon(this);
+
+        GameObject water = Factory.CreateWater(this);
+
+        //Equip a wand.
+        GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
+        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 5.0f);
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 5.0f);
+        
+        //rightWand.transform.parent = rightHand.transform;
+        //leftWand.transform.parent = leftHand.transform;
+        
+   
         // SKYBOX.
         Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
         Debug.Assert(skyboxMat);
@@ -83,9 +84,11 @@ public class VatsugLevel : Level
             Camera.main.GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
         }
         skybox.material = skyboxMat;
-        
-        
 
+
+        AudioSource audioSource = Hub.backgroundMusic.GetComponent<AudioSource>();
+        audioSource.clip = (AudioClip)Resources.Load("Music/MysGitarrreverb");
+        audioSource.Play();
     }
 
     /// <summary>
@@ -101,6 +104,9 @@ public class VatsugLevel : Level
     /// </summary>
     public override void Sleep()
     {
+        AudioSource audioSource = Hub.backgroundMusic.GetComponent<AudioSource>();
+        audioSource.clip = Resources.Load<AudioClip>("Music/MachinimaSound.com_-_The_Arcade");
+        audioSource.Play();
 
     }
     
