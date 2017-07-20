@@ -80,36 +80,12 @@ public static class Factory
         frameLeft.transform.position += Vector3.right / 2;
         frameLeft.transform.parent = screen.transform;
 
-        {
-
-            GPUParticleSystem system = frameLeft.AddComponent<GPUParticleSystem>();
-            system.EmittFrequency = 500;
-            system.EmittMesh = planeMesh;
-            Vector4[] scaleControlpoints = { new Vector4(0.1f, 0.1f, 0, 0), new Vector4(0.01f, 0.01f, 0, 1) };
-            system.ScaleLifetimePoints = scaleControlpoints;
-            Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(1.0f, 0, 0, 1.0f) };
-            system.TransparencyLifetimePoints = transparencyControlpoints;
-
-        }
-
         GameObject frameRight = level.CreateGameObject("FRAME" + count++);
         frameRight.transform.Rotate(90, 0, 0);
         frameRight.transform.localScale *= 0.1f;
         frameRight.transform.localScale = new Vector3(frameLeft.transform.localScale.x * 0.1f, frameLeft.transform.localScale.y, frameLeft.transform.localScale.z);
         frameRight.transform.position -= Vector3.right / 2;
         frameRight.transform.parent = screen.transform;
-
-        {
-
-            GPUParticleSystem system = frameRight.AddComponent<GPUParticleSystem>();
-            system.EmittFrequency = 500;
-            system.EmittMesh = planeMesh;
-            Vector4[] scaleControlpoints = { new Vector4(5.0f, 5.0f, 0, 0), new Vector4(0.03f, 0.03f, 0, 1) };
-            system.ScaleLifetimePoints = scaleControlpoints;
-            Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(1.0f, 0, 0, 1.0f) };
-            system.TransparencyLifetimePoints = transparencyControlpoints;
-
-        }
 
         if (stageInfo.mLocked || stageInfo.mStarRequirement > Hub.Instance.stars)
         {
