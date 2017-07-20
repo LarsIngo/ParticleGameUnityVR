@@ -94,8 +94,11 @@ public class MenuLevel : Level
     /// <summary>
     /// Override update function.
     /// </summary>
-    public override void Update()
+    public void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.Q))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[0].mSceneName);
 
         if (VrInput.RightGripPressed())
         {

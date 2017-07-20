@@ -59,7 +59,7 @@ public class GPUParticleSystem : MonoBehaviour
 
     /// +++ STATIC +++ ///
 
-    static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
+    static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary;
 
     ComputeShader sComputeShader = null;
     int sKernelUpdate = -1;
@@ -104,6 +104,8 @@ public class GPUParticleSystem : MonoBehaviour
     // STARTUP.
     void StartUp()
     {
+
+        sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
 
         sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
         sKernelUpdate = sComputeShader.FindKernel("UPDATE");

@@ -91,6 +91,9 @@ public class MenuSceneMain : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        if (Input.GetKeyDown(KeyCode.Q))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[0].mSceneName);
+
         if (VrInput.RightGripPressed())
         {
 
