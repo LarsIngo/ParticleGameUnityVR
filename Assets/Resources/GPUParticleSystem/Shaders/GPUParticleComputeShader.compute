@@ -176,7 +176,7 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
         float3 pColor;
         float3 pHalo;
-        float2 pScale;
+        float3 pScale;
         float pTransparency;
 
         // COLOR OVER LIFETIME.
@@ -214,16 +214,16 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
         }
 
         // SCALE OVER LIFETIME.
-        for (int i = 1; i < gScaleLifetimeCount; ++i)
+        for (int k = 1; k < gScaleLifetimeCount; ++k)
         {
-            if (gScaleLifetimeBuffer[i].w > currentLifetimeFactor)
+            if (gScaleLifetimeBuffer[k].w > currentLifetimeFactor)
             {
-                float4 c0 = gScaleLifetimeBuffer[i - 1];
-                float4 c1 = gScaleLifetimeBuffer[i];
+                float4 c0 = gScaleLifetimeBuffer[k - 1];
+                float4 c1 = gScaleLifetimeBuffer[k];
 
                 float lerpFactor = (currentLifetimeFactor - c0.w) / (c1.w - c0.w);
 
-                pScale = c0.xy * (1 - lerpFactor) + c1.xy * lerpFactor;
+                pScale = c0.xyz * (1 - lerpFactor) + c1.xyz * lerpFactor;
 
                 //exit
                 break;
@@ -249,7 +249,7 @@ void UPDATE(uint3 id : SV_DispatchThreadID)
 
         gColorOUT[tID] = float4(pColor, 0);
         gHaloOUT[tID] = float4(pHalo, 0);
-        gScaleOUT[tID] = float4(pScale, 0, 0);
+        gScaleOUT[tID] = float4(pScale, 0);
         gTransparencyOUT[tID] = float4(pTransparency, 0, 0, 0);
 
         // Update lifetime.
