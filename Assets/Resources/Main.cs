@@ -17,6 +17,7 @@ public class Main : MonoBehaviour
     private Level mDeafultLevel;
     private Level mVatsugLevel;
     private Level mMenuLevel;
+    private Level mSkullLevel;
 
     //Attractor levels.
     private Level mAttractor_lvl_1;
@@ -33,8 +34,9 @@ public class Main : MonoBehaviour
         mAttractor_lvl_1 = new Attractor_lvl_1("LEVEL:ATTRACTOR_LVL_1");
         mAttractor_lvl_2 = new Attractor_lvl_2("LEVEL:ATTRACTOR_LVL_2");
         //mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
+        mSkullLevel = new SkullLevel("LEVEL:SKULL");
 
-        Hub.Instance.SetState(Hub.STATE.MENU);
+        Hub.Instance.SetState(Hub.STATE.SKULL); // TMP
         
     }
 
@@ -63,7 +65,11 @@ public class Main : MonoBehaviour
             case Hub.STATE.DEFAULT:
                 mCurrentLevel = mDeafultLevel;
                 break;
-            
+
+            case Hub.STATE.SKULL:
+                mCurrentLevel = mSkullLevel;
+                break;
+
             default: Debug.Log("WARNING: No assigned STATE"); break;
         }
 

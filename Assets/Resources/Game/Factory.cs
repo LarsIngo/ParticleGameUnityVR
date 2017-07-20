@@ -19,21 +19,24 @@ public static class Factory
 
     /// +++ FUNCTIONS +++ ///
 
-    public static void CreateMichaelBayEffect(Level level, Mesh mesh, Transform t, Color meshColor)
+    public static void CreateMichaelBayEffect(Mesh mesh, Transform t, Color meshColor)
     {
-        GameObject michael = level.CreateGameObject("michael" + count++);
-        GameObject blackHole = level.CreateGameObject("blackhole" + count++);
+        GameObject michael = new GameObject("michael" + count++);
+        GameObject blackHole = new GameObject("blackhole" + count++);
         michael.transform.position = t.position;
         michael.transform.rotation = t.rotation;
         blackHole.transform.position = t.position;
         blackHole.transform.rotation = t.rotation;
 
-        GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
-        exp.Mesh = mesh;
-        exp.ExplosionColor = meshColor;
-        exp.ExplosionSpeed = 8;
-        exp.ShrinkSpeed = 1.0f;
-        exp.ShrinkTime = 0.25f;
+        if (mesh != null)
+        {
+            GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
+            exp.Mesh = mesh;
+            exp.ExplosionColor = meshColor;
+            exp.ExplosionSpeed = 8;
+            exp.ShrinkSpeed = 1.0f;
+            exp.ShrinkTime = 0.25f;
+        }
 
         TimerStretch timeStrech = michael.AddComponent<TimerStretch>();
         timeStrech.TimePrePhase = 0.5f;
@@ -58,6 +61,40 @@ public static class Factory
         artillerySound.time = 0.25f;
         artillerySound.Play();
 
+    }
+
+    public static GameObject CreateEnemySkull(Level level)
+    {
+        GameObject gameObject = level.CreateGameObject("SkullEnemy" + count++);
+
+        // RENDERER.
+        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+        Material material = new Material(Shader.Find("Standard"));
+        Debug.Assert(material);
+        Texture2D albedo = Resources.Load<Texture2D>("Models/Skull/skull_diffuse");
+        Debug.Assert(albedo);
+        Texture2D normal = Resources.Load<Texture2D>("Models/Skull/skull_normal");
+        Debug.Assert(normal);
+        material.SetTexture("_MainTex", albedo);
+        material.SetTexture("_BumpMap", normal);
+        meshRenderer.material = material;
+
+        // MESH.
+        Mesh mesh = Resources.Load<Mesh>("Models/Skull/skull");
+        Debug.Assert(mesh);
+        gameObject.AddComponent<MeshFilter>().mesh = mesh;
+
+        // PARTICLES.
+        GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
+        system.EmittParticleLifeTime = 0.2f;
+        system.EmittFrequency = 3000.0f;
+        system.EmittConstantAcceleration = new Vector3(0, 0, 1);
+        system.EmittMesh = mesh;
+
+        // ROTATE.
+        gameObject.transform.Rotate(0, 180, 0);
+
+        return gameObject;
     }
 
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
