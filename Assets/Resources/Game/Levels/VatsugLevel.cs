@@ -39,7 +39,7 @@ public class VatsugLevel : Level
         GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 1.0f);
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 1.0f);
-
+        
         rightWand.transform.parent = rightHand.transform;
         leftWand.transform.parent = leftHand.transform;
         
