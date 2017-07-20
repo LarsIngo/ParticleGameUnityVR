@@ -21,7 +21,6 @@ public class VatsugWand : MonoBehaviour
 
     private void Awake()
     {
-        mEndAttractor.GetComponent<GPUParticleAttractor>().Power = 0.0f;
 
     }
 

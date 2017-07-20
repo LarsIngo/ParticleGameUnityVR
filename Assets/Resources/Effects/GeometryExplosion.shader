@@ -76,8 +76,8 @@
 			p[1] = mul(input[1].pos, m);
 			p[2] = mul(input[2].pos, m);
 
-			float3 v1 = normalize(p[1] - p[0]);
-			float3 v2 = normalize(p[2] - p[0]);
+			float3 v1 = normalize(p[0] - p[1]);
+			float3 v2 = normalize(p[0] - p[2]);
 
 			float3 n = cross(v1, v2);
 

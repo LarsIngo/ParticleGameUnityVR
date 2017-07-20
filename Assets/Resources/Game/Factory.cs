@@ -25,6 +25,7 @@ public static class Factory
         //GameObject blackHole = new GameObject("blackhole" + count++);
         michael.transform.position = t.position;
         michael.transform.rotation = t.rotation;
+        michael.transform.localScale = t.localScale;
         //blackHole.transform.position = t.position;
         //blackHole.transform.rotation = t.rotation;
 
@@ -533,7 +534,7 @@ public static class Factory
 
         waterGO.AddComponent<MeshRenderer>().material = mat;
         waterGO.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("WaterOther/Models/WaterPlane", typeof(Mesh));// CreateMesh(PrimitiveType.Plane);
-        waterGO.transform.localScale = new Vector3(8, 1, 8);
+        waterGO.transform.localScale = new Vector3(32, 1, 32);
 
         UnityStandardAssets.Water.Water vann = waterGO.AddComponent<UnityStandardAssets.Water.Water>();
         vann.waterMode = UnityStandardAssets.Water.Water.WaterMode.Reflective;

@@ -39,8 +39,8 @@ public class VatsugLevel : Level
         //Equip a wand.
         GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
         GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
-        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 1.0f);
-        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 1.0f);
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 5.0f);
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 5.0f);
         
         rightWand.transform.parent = rightHand.transform;
         leftWand.transform.parent = leftHand.transform;
@@ -83,6 +83,9 @@ public class VatsugLevel : Level
             Camera.main.GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
         }
         skybox.material = skyboxMat;
+        
+        
+
     }
 
     /// <summary>

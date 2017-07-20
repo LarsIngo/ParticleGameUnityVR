@@ -63,6 +63,7 @@ public class Hub
     /// </summary>
     public int stars;
 
+    public static GameObject backgroundMusic;
 
     /// --- MEMBERS --- ///
 
@@ -83,7 +84,7 @@ public class Hub
         mLevelDic = new Dictionary<string, Level>();
         mStageInfoList = new List<StageInfo>();
 
-        GameObject backgroundMusic = new GameObject("BACKGROUNDMUSIC");
+        backgroundMusic = new GameObject("BACKGROUNDMUSIC");
         AudioSource audioSource = backgroundMusic.AddComponent<AudioSource>();
         audioSource.clip = Resources.Load<AudioClip>("Music/MachinimaSound.com_-_The_Arcade");
         audioSource.loop = true;
