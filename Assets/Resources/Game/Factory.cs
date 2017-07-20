@@ -91,7 +91,7 @@ public static class Factory
         descriptor.Lifetime = 0.2f;
         descriptor.EmittFrequency = 50.0f;
         descriptor.EmittMesh = mesh;
-        system.particleDescriptor = descriptor;
+        system.ParticleDescriptor = descriptor;
 
         // ROTATE.
         gameObject.transform.Rotate(0, 180, 0);
@@ -304,7 +304,7 @@ public static class Factory
 
         descriptor.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
 
-        system.particleDescriptor = descriptor;
+        system.ParticleDescriptor = descriptor;
 
         //We add an attractor to the tip.
         GPUParticleAttractor attractor = TipGO.AddComponent<GPUParticleAttractor>();
@@ -436,7 +436,7 @@ public static class Factory
 
         descriptor.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
 
-        particleEmitter.particleDescriptor = descriptor;
+        particleEmitter.ParticleDescriptor = descriptor;
 
         particleEmitter.Active = false;
         

@@ -19,6 +19,7 @@ public class Hub
         ATTRACTOR_LVL_2,
         VATSUG,
         SKULL,
+        PARTICLETEST,
         DEFAULT
     };
 
