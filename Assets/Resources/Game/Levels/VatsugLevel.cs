@@ -8,11 +8,6 @@ public class VatsugLevel : Level
     public UnityEngine.UI.Text highscore;
 
     GameObject enemy;
-    private Vector3 prevPos;
-
-
-
-    bool swap = false;
 
     /// --- MEMBERS --- ///
 
@@ -26,6 +21,7 @@ public class VatsugLevel : Level
     public VatsugLevel(string name) : base(name)
     {
         enemy = this.CreateGameObject("TheOneAndOnlyVatsug");
+        Factory.CreateVatsug(this, enemy.transform);
         enemy.AddComponent<Vatsug>();
 
         GameObject boat = this.CreateGameObject("ImOnABoat");
@@ -52,7 +48,7 @@ public class VatsugLevel : Level
     /// </summary>
     public override void Awake()
     {
-        prevPos = new Vector3(0, 0, 0);
+
     }
 
     /// <summary>
@@ -61,17 +57,6 @@ public class VatsugLevel : Level
     public override void Update()
     {
         
-        /*
-        float x = Mathf.Tan(Time.time / 8.0f);
-        float y = Mathf.Cos(Time.time) * 3.0f;
-        float z = Mathf.Sin(Time.time / 2) * 4.0f;// Mathf.Cos(Time.time / 3) * 3.0f;
-     
-
-        Vector3 newPos = new Vector3(x, y, z);
-
-        enemy.transform.position = prevPos;
-        enemy.transform.LookAt(newPos);
-        prevPos = newPos;*/
     }
 
     /// <summary>

@@ -401,6 +401,26 @@ public static class Factory
     }
     
 
+    public static void CreateVatsug(Level level, Transform parent)
+    {
+
+
+        GameObject StraitenOutFishObject = level.CreateGameObject("StraitenOutFishObject" + count);
+        StraitenOutFishObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/nnj3de_crucarp/Materials/cruscarp", typeof(Material));
+        StraitenOutFishObject.transform.Rotate(new Vector3(-90, 0, 0));
+        StraitenOutFishObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/nnj3de_crucarp/cruscarp", typeof(Mesh));
+        StraitenOutFishObject.transform.localScale = new Vector3(300, 200, 200);
+        StraitenOutFishObject.transform.parent = parent;
+        StraitenOutFishObject.transform.localPosition = new Vector3(0, 0, -0.25f);
+        
+        GPUParticleSphereCollider particleColider = StraitenOutFishObject.AddComponent<GPUParticleSphereCollider>();
+        particleColider.Radius = 0.25f;
+
+        count++;
+
+        return;
+    }
+
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
     {
 
@@ -414,6 +434,8 @@ public static class Factory
         Object.Destroy(tmp);
 
     }
+
+
 
     /// --- FUNCTIONS --- ///
 }
