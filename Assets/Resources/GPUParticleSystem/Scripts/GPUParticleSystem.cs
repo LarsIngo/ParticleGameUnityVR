@@ -201,6 +201,7 @@ public class GPUParticleSystem : MonoBehaviour
             system.mSphereColliderResultBuffer.SetData(r);
         }
 
+        // TODO: Might not need to reset all this data!!
 
         float[] mergedData = new float[sMergedParticleCount * 4];
         for (int i = 0; i < mergedData.GetLength(0); ++i)
@@ -828,7 +829,9 @@ public class GPUParticleSystem : MonoBehaviour
             sSortElementSwapBuffer.Resize(sMergedParticleCount);
         }
 
-        // CLEAR OLD VALUES
+        // CLEAR OLD VALUES.
+
+        // TODO: Might not need to reset all this data!!
         float[] mergedData = new float[sMergedParticleCount * 4];
         for (int i = 0; i < mergedData.GetLength(0); ++i)
             mergedData[i] = -100.0f;
@@ -989,11 +992,13 @@ public class GPUParticleSystem : MonoBehaviour
         Debug.Assert(sphereColliderList.Count < sMaxSphereColliderCount);
 
         // Reset data.
+
+        // TODO: Might not need to reset all this data!!
         int[] data = new int[sMaxGPUColliderCount];
         for (int i = 0; i < data.GetLength(0); ++i)
             data[i] = 0;
         sGPUColliderResultSwapBuffer.GetInputBuffer().SetData(data);
-        sGPUColliderResultSwapBuffer.GetOutputBuffer().SetData(data); //TMP
+        sGPUColliderResultSwapBuffer.GetOutputBuffer().SetData(data);
 
         int count = 0;
         bool initZero = true;
