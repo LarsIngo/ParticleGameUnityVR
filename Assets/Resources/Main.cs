@@ -17,6 +17,7 @@ public class Main : MonoBehaviour
     private Level mDeafultLevel;
     private Level mVatsugLevel;
     private Level mMenuLevel;
+    private Level mSkullLevel;
 
     //Attractor levels.
     private Level mAttractor_lvl_1;
@@ -33,6 +34,7 @@ public class Main : MonoBehaviour
         mAttractor_lvl_1 = new Attractor_lvl_1("LEVEL:ATTRACTOR_LVL_1");
         mAttractor_lvl_2 = new Attractor_lvl_2("LEVEL:ATTRACTOR_LVL_2");
         //mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
+        mSkullLevel = new SkullLevel("LEVEL:SKULL");
 
         Hub.Instance.SetState(Hub.STATE.MENU);
         
@@ -40,6 +42,18 @@ public class Main : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F1))
+            Hub.Instance.SetState(Hub.STATE.MENU);
+        if (Input.GetKeyDown(KeyCode.F2))
+            Hub.Instance.SetState(Hub.STATE.ATTRACTOR_LVL_1);
+        if (Input.GetKeyDown(KeyCode.F3))
+            Hub.Instance.SetState(Hub.STATE.ATTRACTOR_LVL_2);
+        if (Input.GetKeyDown(KeyCode.F4))
+        //    Hub.Instance.SetState(Hub.STATE.VATSUG);
+        //if (Input.GetKeyDown(KeyCode.F5))
+            Hub.Instance.SetState(Hub.STATE.DEFAULT);
+        if (Input.GetKeyDown(KeyCode.F6))
+            Hub.Instance.SetState(Hub.STATE.SKULL);
 
         // Check state.
         switch (Hub.Instance.CurrentState)
@@ -56,14 +70,18 @@ public class Main : MonoBehaviour
                 mCurrentLevel = mAttractor_lvl_2;
                 break;
 
-            case Hub.STATE.VATSUG:
-                mCurrentLevel = mVatsugLevel;
-                break;
+            //case Hub.STATE.VATSUG:
+            //    mCurrentLevel = mVatsugLevel;
+            //    break;
 
             case Hub.STATE.DEFAULT:
                 mCurrentLevel = mDeafultLevel;
                 break;
-            
+
+            case Hub.STATE.SKULL:
+                mCurrentLevel = mSkullLevel;
+                break;
+
             default: Debug.Log("WARNING: No assigned STATE"); break;
         }
 
@@ -74,7 +92,7 @@ public class Main : MonoBehaviour
                 Hub.Instance.ActiveLevel.Sleep();
 
             // Kill all living particles.
-            //GPUParticleSystem.KillAllParticles();
+            GPUParticleSystem.KillAllParticles();
 
             Hub.Instance.SetActiveLevel(mCurrentLevel);
             mCurrentLevel.Awake();

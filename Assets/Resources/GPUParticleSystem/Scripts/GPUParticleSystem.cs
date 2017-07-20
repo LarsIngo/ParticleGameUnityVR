@@ -177,17 +177,52 @@ public class GPUParticleSystem : MonoBehaviour
     public static void KillAllParticles()
     {
         if (sGPUParticleSystemDictionary == null) return;
+
         foreach (KeyValuePair<GPUParticleSystem, GPUParticleSystem> it in sGPUParticleSystemDictionary)
         {
             GPUParticleSystem system = it.Value;
 
-            float[] data = new float[system.mMaxParticleCount * 4];
-            for (int i = 0; i < data.GetLength(0); ++i)
-                data[i] = -1.0f;
+            float[] systemData = new float[system.mMaxParticleCount * 4];
+            for (int i = 0; i < systemData.GetLength(0); ++i)
+                systemData[i] = -100.0f;
 
-            system.mLifetimeBuffer.GetInputBuffer().SetData(data);
-            system.mLifetimeBuffer.GetOutputBuffer().SetData(data);
+            system.mLifetimeBuffer.GetInputBuffer().SetData(systemData);
+            system.mLifetimeBuffer.GetOutputBuffer().SetData(systemData);
+
+            for (int i = 0; i < systemData.GetLength(0); ++i)
+                systemData[i] = float.MaxValue;
+
+            system.mPositionBuffer.GetInputBuffer().SetData(systemData);
+            system.mPositionBuffer.GetOutputBuffer().SetData(systemData);
+
+            int[] r = new int[sMaxGPUColliderCount];
+            for (int i = 0; i < r.GetLength(0); ++i)
+                r[i] = 0;
+            system.mSphereColliderResultBuffer.SetData(r);
         }
+
+        // TODO: Might not need to reset all this data!!
+
+        float[] mergedData = new float[sMergedParticleCount * 4];
+        for (int i = 0; i < mergedData.GetLength(0); ++i)
+            mergedData[i] = -100.0f;
+
+        sMergedLifetimeBuffer.GetInputBuffer().SetData(mergedData);
+        sMergedLifetimeBuffer.GetOutputBuffer().SetData(mergedData);
+
+        for (int i = 0; i < mergedData.GetLength(0); ++i)
+            mergedData[i] = float.MaxValue;
+
+        sMergedPositionBuffer.GetInputBuffer().SetData(mergedData);
+        sMergedPositionBuffer.GetOutputBuffer().SetData(mergedData);
+
+        int[] data = new int[sMaxGPUColliderCount];
+        for (int i = 0; i < data.GetLength(0); ++i)
+            data[i] = 0;
+        sGPUColliderResultSwapBuffer.GetInputBuffer().SetData(data);
+        sGPUColliderResultSwapBuffer.GetOutputBuffer().SetData(data);
+
+
     }
 
     /// --- STATIC --- ///
@@ -627,6 +662,22 @@ public class GPUParticleSystem : MonoBehaviour
             sSortElementSwapBuffer.Resize(sMergedParticleCount);
         }
 
+        // CLEAR OLD VALUES.
+
+        // TODO: Might not need to reset all this data!!
+        float[] mergedData = new float[sMergedParticleCount * 4];
+        for (int i = 0; i < mergedData.GetLength(0); ++i)
+            mergedData[i] = -100.0f;
+
+        sMergedLifetimeBuffer.GetInputBuffer().SetData(mergedData);
+        sMergedLifetimeBuffer.GetOutputBuffer().SetData(mergedData);
+
+        for (int i = 0; i < mergedData.GetLength(0); ++i)
+            mergedData[i] = float.MaxValue;
+
+        sMergedPositionBuffer.GetInputBuffer().SetData(mergedData);
+        sMergedPositionBuffer.GetOutputBuffer().SetData(mergedData);
+
         // SET BUFFERS.
         sComputeShader.SetBuffer(sKernelMergeInitSort, "mergePositionOUT", sMergedPositionBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelMergeInitSort, "mergeVelocityOUT", sMergedVelocityBuffer.GetOutputBuffer());
@@ -646,6 +697,8 @@ public class GPUParticleSystem : MonoBehaviour
         foreach (KeyValuePair<GPUParticleSystem,GPUParticleSystem> it in sGPUParticleSystemDictionary)
         {
             GPUParticleSystem system = it.Value;
+
+            if (!system.gameObject.activeInHierarchy) continue;
 
             sComputeShader.SetInt("gLocalParticleCount", system.mMaxParticleCount);
             sComputeShader.SetInt("gOffsetIndex", offset);
@@ -771,10 +824,22 @@ public class GPUParticleSystem : MonoBehaviour
 
         Debug.Assert(sphereColliderList.Count < sMaxSphereColliderCount);
 
+        // Reset data.
+
+        // TODO: Might not need to reset all this data!!
+        int[] data = new int[sMaxGPUColliderCount];
+        for (int i = 0; i < data.GetLength(0); ++i)
+            data[i] = 0;
+        sGPUColliderResultSwapBuffer.GetInputBuffer().SetData(data);
+        sGPUColliderResultSwapBuffer.GetOutputBuffer().SetData(data);
+
+        int count = 0;
         bool initZero = true;
         foreach (KeyValuePair<GPUParticleSystem, GPUParticleSystem> it in sGPUParticleSystemDictionary)
         {
             GPUParticleSystem system = it.Value;
+
+            if (!system.gameObject.activeInHierarchy) continue;
 
             sGPUColliderResultSwapBuffer.Swap();
             sComputeShader.SetBuffer(sKernelResult, "gGPUColliderResultBufferIN", sGPUColliderResultSwapBuffer.GetInputBuffer());
@@ -788,6 +853,8 @@ public class GPUParticleSystem : MonoBehaviour
 
             // DISPATCH.
             sComputeShader.Dispatch(sKernelResult, (int)Mathf.Ceil(sMaxSphereColliderCount / 64.0f), 1, 1);
+
+            count++;
         }
 
         // GET DATA FROM GPU TO CPU.

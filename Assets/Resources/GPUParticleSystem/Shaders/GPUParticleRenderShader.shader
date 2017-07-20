@@ -59,7 +59,7 @@
 
 				output.svPosition = float4(gPosition[index].xyz, 1);
 				output.velocity = gVelocity[index].xyz;
-				output.lifetime = gLifetime[index].xy;
+                output.lifetime = gLifetime[index].xy;
                 output.color = gColor[index].xyz;
                 output.halo = gHalo[index].xyz;
                 output.scale = gScale[index].xy;
