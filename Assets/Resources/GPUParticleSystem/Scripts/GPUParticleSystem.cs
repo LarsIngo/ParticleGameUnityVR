@@ -177,6 +177,7 @@ public class GPUParticleSystem : MonoBehaviour
     public static void KillAllParticles()
     {
         if (sGPUParticleSystemDictionary == null) return;
+
         foreach (KeyValuePair<GPUParticleSystem, GPUParticleSystem> it in sGPUParticleSystemDictionary)
         {
             GPUParticleSystem system = it.Value;
@@ -197,7 +198,6 @@ public class GPUParticleSystem : MonoBehaviour
             int[] r = new int[sMaxGPUColliderCount];
             for (int i = 0; i < r.GetLength(0); ++i)
                 r[i] = 0;
-            system.mSphereColliderResultBuffer.SetData(r);
             system.mSphereColliderResultBuffer.SetData(r);
         }
 
@@ -972,10 +972,20 @@ public class GPUParticleSystem : MonoBehaviour
 
         Debug.Assert(sphereColliderList.Count < sMaxSphereColliderCount);
 
+        // Reset data.
+        int[] data = new int[sMaxGPUColliderCount];
+        for (int i = 0; i < data.GetLength(0); ++i)
+            data[i] = 0;
+        sGPUColliderResultSwapBuffer.GetInputBuffer().SetData(data);
+        sGPUColliderResultSwapBuffer.GetOutputBuffer().SetData(data); //TMP
+
+        int count = 0;
         bool initZero = true;
         foreach (KeyValuePair<GPUParticleSystem, GPUParticleSystem> it in sGPUParticleSystemDictionary)
         {
             GPUParticleSystem system = it.Value;
+
+            if (!system.gameObject.activeInHierarchy) continue;
 
             sGPUColliderResultSwapBuffer.Swap();
             sComputeShader.SetBuffer(sKernelResult, "gGPUColliderResultBufferIN", sGPUColliderResultSwapBuffer.GetInputBuffer());
@@ -989,6 +999,8 @@ public class GPUParticleSystem : MonoBehaviour
 
             // DISPATCH.
             sComputeShader.Dispatch(sKernelResult, (int)Mathf.Ceil(sMaxSphereColliderCount / 64.0f), 1, 1);
+
+            count++;
         }
 
         // GET DATA FROM GPU TO CPU.
