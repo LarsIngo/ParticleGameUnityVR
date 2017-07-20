@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ba6a41dc489914734857bb5924eb70ad
+guid: ce8d79c79d11b8f9d00076e98d76c639
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName:
@@ -11,11 +11,13 @@ ModelImporter:
     4300002: nurbsToPoly1
     4300004: pCylinder1
     4300006: waterPlaneMesh
+    4300008: WaterBasicPlane
+    4300010: WaterSimplePlane
     11100000: //RootNode
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 1
-    materialSearch: 1
+    materialSearch: 2
   animations:
     legacyGenerateAnimations: 0
     bakeSimulation: 0
@@ -66,6 +68,6 @@ ModelImporter:
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 1
-  additionalBone: 1
+  additionalBone: 0
   userData: 
   assetBundleName: 

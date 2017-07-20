@@ -474,7 +474,16 @@ public static class Factory
 
         StraitenOutFishObject.AddComponent<Health>().HealthStart = 1000;
 
+
+        /*GPUParticleSystem s = StraitenOutFishObject.AddComponent<GPUParticleSystem>();
+        s.Active = false;
         
+        Vector4[] cPoints = { new Vector4(0.0f, 0.0f, 0.5f, 0.0f), new Vector4(0.0f, 0.0f, 0.8f, 1.0f) };
+        GPUParticleDescriptor desc = new GPUParticleDescriptor();
+        
+        GPUParticleDescriptor.LifetimePoints points;
+        points.Add()
+        */
         
         return;
     }
@@ -483,7 +492,6 @@ public static class Factory
     {
         GameObject moon = level.CreateGameObject("moon" + count++);
         Material mat = (Material)Resources.Load("Moon/Moon_mat");
-        mat.shader = Shader.Find("Standard (Specular setup)");
         
         moon.AddComponent<MeshRenderer>().material = mat;
         moon.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
@@ -506,14 +514,16 @@ public static class Factory
     public static GameObject CreateWater(Level level)
     {
         GameObject waterGO = level.CreateGameObject("water" + count++);
-        waterGO.transform.localScale = new Vector3(5, 1, 5);
+        //waterGO.transform.localScale = new Vector3(5, 1, 5);
 
-        Material mat = (Material)Resources.Load("Water/Materials/WaterProDaytime");
-        mat.shader = Shader.Find("FX/Water");
+        Material mat = (Material)Resources.Load("Water/Materials/WaterBasicNighttime");
+        //mat.shader = Shader.Find("FX/Water");
         
         waterGO.AddComponent<MeshRenderer>().material = mat;
         waterGO.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Plane);
-        waterGO.AddComponent<UnityStandardAssets.Water.Water>();
+
+        waterGO.AddComponent<UnityStandardAssets.Water.WaterBasic>();
+        waterGO.transform.localScale = new Vector3(3, 3, 3);
 
         return waterGO;
     }

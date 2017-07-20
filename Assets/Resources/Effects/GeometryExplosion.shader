@@ -42,9 +42,10 @@
 			gsOutput output;
 			
 			matrix m = 0;
+			//Scaleing with z rotaation
 			float fac = 1.0f / max(gOffset, 1.0f);
-			m._11 = fac;
-			m._22 = fac;
+			m._11 = fac * cos(gOffset);	m._12 = -sin(gOffset);
+			m._22 = fac * cos(gOffset); m._21 = sin(gOffset);
 			m._33 = fac;
 			m._44 = 1.0f;
 
