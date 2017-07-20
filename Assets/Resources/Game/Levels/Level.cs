@@ -72,6 +72,26 @@ public abstract class Level
     }
 
     /// <summary>
+    /// Kills all children.
+    /// </summary>
+    /// <param name="value">Name of game object, must be unique.</param>
+    /// <returns>Returns new game object.</returns>
+    public void KillAll()
+    {
+        KillChildren(mLevelGO);
+    }
+
+    private static void KillChildren(GameObject parent)
+    {
+        Debug.Log("KILL");
+        for (int i = 0; i < parent.transform.childCount; ++i)
+        {
+            KillChildren(parent.transform.GetChild(i).gameObject);
+            Object.DestroyImmediate(parent.transform.GetChild(i).gameObject);
+        }
+    }
+
+    /// <summary>
     /// Set active state of level.
     /// </summary>
     /// <param name="value">Whether level should be active.</param>
