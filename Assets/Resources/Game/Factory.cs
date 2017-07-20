@@ -19,21 +19,24 @@ public static class Factory
 
     /// +++ FUNCTIONS +++ ///
 
-    public static void CreateMichaelBayEffect(Level level, Mesh mesh, Transform t, Color meshColor)
+    public static void CreateMichaelBayEffect(Mesh mesh, Transform t, Color meshColor)
     {
-        GameObject michael = level.CreateGameObject("michael" + count++);
-        GameObject blackHole = level.CreateGameObject("blackhole" + count++);
+        GameObject michael = new GameObject("michael" + count++);
+        //GameObject blackHole = new GameObject("blackhole" + count++);
         michael.transform.position = t.position;
         michael.transform.rotation = t.rotation;
-        blackHole.transform.position = t.position;
-        blackHole.transform.rotation = t.rotation;
+        //blackHole.transform.position = t.position;
+        //blackHole.transform.rotation = t.rotation;
 
-        GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
-        exp.Mesh = mesh;
-        exp.ExplosionColor = meshColor;
-        exp.ExplosionSpeed = 8;
-        exp.ShrinkSpeed = 1.0f;
-        exp.ShrinkTime = 0.25f;
+        if (mesh != null)
+        {
+            GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
+            exp.Mesh = mesh;
+            exp.ExplosionColor = meshColor;
+            exp.ExplosionSpeed = 8;
+            exp.ShrinkSpeed = 1.0f;
+            exp.ShrinkTime = 0.25f;
+        }
 
         TimerStretch timeStrech = michael.AddComponent<TimerStretch>();
         timeStrech.TimePrePhase = 0.5f;
@@ -44,10 +47,10 @@ public static class Factory
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
         michaelLifetimer.LifeTime = 4.0f;
 
-        GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 250.0f;
-        LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
-        blackHoleLifetimer.LifeTime = 0.2f;
+        //GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
+        //attractor.Power = 250.0f;
+        //LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
+        //blackHoleLifetimer.LifeTime = 0.2f;
 
         AudioSource ceramicSound = michael.AddComponent<AudioSource>();
         ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");
@@ -58,6 +61,40 @@ public static class Factory
         artillerySound.time = 0.25f;
         artillerySound.Play();
 
+    }
+
+    public static GameObject CreateEnemySkull(Level level)
+    {
+        GameObject gameObject = level.CreateGameObject("SkullEnemy" + count++);
+
+        // RENDERER.
+        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+        Material material = new Material(Shader.Find("Standard"));
+        Debug.Assert(material);
+        Texture2D albedo = Resources.Load<Texture2D>("Models/Skull/skull_diffuse");
+        Debug.Assert(albedo);
+        Texture2D normal = Resources.Load<Texture2D>("Models/Skull/skull_normal");
+        Debug.Assert(normal);
+        material.SetTexture("_MainTex", albedo);
+        material.SetTexture("_BumpMap", normal);
+        meshRenderer.material = material;
+
+        // MESH.
+        Mesh mesh = Resources.Load<Mesh>("Models/Skull/skull");
+        Debug.Assert(mesh);
+        gameObject.AddComponent<MeshFilter>().mesh = mesh;
+
+        // PARTICLES.
+        GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
+        system.EmittParticleLifeTime = 0.2f;
+        system.EmittFrequency = 3000.0f;
+        system.EmittConstantAcceleration = new Vector3(0, 0, 1);
+        system.EmittMesh = mesh;
+
+        // ROTATE.
+        gameObject.transform.Rotate(0, 180, 0);
+
+        return gameObject;
     }
 
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
@@ -73,25 +110,31 @@ public static class Factory
         Mesh planeMesh = tmp.GetComponent<MeshFilter>().mesh;
         Object.Destroy(tmp);
 
-        //GameObject frameLeft = level.CreateGameObject("FRAMELEFT" + count++);
-        //frameLeft.transform.Rotate(90, 0, 0);
-        //frameLeft.transform.localScale *= 0.1f;
-        //frameLeft.transform.parent = screen.transform;
-        //GPUParticleSystem system = frameLeft.AddComponent<GPUParticleSystem>();
-        //system.EmittFrequency = 500;
-        //system.EmittMesh = planeMesh;
-        
+        GameObject frameLeft = level.CreateGameObject("FRAME" + count++);
+        frameLeft.transform.Rotate(90, 0, 0);
+        frameLeft.transform.localScale *= 0.1f;
+        frameLeft.transform.localScale = new Vector3(frameLeft.transform.localScale.x * 0.1f, frameLeft.transform.localScale.y, frameLeft.transform.localScale.z);
+        frameLeft.transform.position += Vector3.right / 2;
+        frameLeft.transform.parent = screen.transform;
+
+        GameObject frameRight = level.CreateGameObject("FRAME" + count++);
+        frameRight.transform.Rotate(90, 0, 0);
+        frameRight.transform.localScale *= 0.1f;
+        frameRight.transform.localScale = new Vector3(frameLeft.transform.localScale.x * 0.1f, frameLeft.transform.localScale.y, frameLeft.transform.localScale.z);
+        frameRight.transform.position -= Vector3.right / 2;
+        frameRight.transform.parent = screen.transform;
+
         if (stageInfo.mLocked || stageInfo.mStarRequirement > Hub.Instance.stars)
         {
 
             GameObject lockImage = CreateWorldImage(level, "Textures/Locked", true);
             lockImage.transform.position -= Vector3.forward * 0.1f;
-            lockImage.transform.parent = screen.transform;
+            lockImage.transform.SetParent(screen.transform);
 
             GameObject requirement = CreateWorldText(level, stageInfo.mStarRequirement.ToString(), Color.red * 0.9f);
             requirement.transform.position -= Vector3.forward * 0.15f;
             requirement.transform.localScale *= 2;
-            requirement.transform.parent = screen.transform;
+            requirement.transform.SetParent(screen.transform);
 
         }
         else
@@ -100,7 +143,7 @@ public static class Factory
             GameObject name = CreateWorldText(level, stageInfo.mName, Color.white);
             name.transform.position -= Vector3.up * 0.6f;
             name.transform.localScale *= 0.3f;
-            name.transform.parent = screen.transform;
+            name.transform.SetParent(screen.transform);
 
             GameObject stars = level.CreateGameObject("STARS" + count++);
 
