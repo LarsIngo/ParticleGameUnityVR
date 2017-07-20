@@ -828,6 +828,14 @@ public class GPUParticleSystem : MonoBehaviour
             sSortElementSwapBuffer.Resize(sMergedParticleCount);
         }
 
+        // CLEAR OLD VALUES
+        float[] mergedData = new float[sMergedParticleCount * 4];
+        for (int i = 0; i < mergedData.GetLength(0); ++i)
+            mergedData[i] = -100.0f;
+
+        sMergedLifetimeBuffer.GetInputBuffer().SetData(mergedData);
+        sMergedLifetimeBuffer.GetOutputBuffer().SetData(mergedData);
+
         // SET BUFFERS.
         sComputeShader.SetBuffer(sKernelMergeInitSort, "mergePositionOUT", sMergedPositionBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelMergeInitSort, "mergeVelocityOUT", sMergedVelocityBuffer.GetOutputBuffer());
@@ -847,6 +855,8 @@ public class GPUParticleSystem : MonoBehaviour
         foreach (KeyValuePair<GPUParticleSystem,GPUParticleSystem> it in sGPUParticleSystemDictionary)
         {
             GPUParticleSystem system = it.Value;
+
+            if (!system.gameObject.activeInHierarchy) continue;
 
             sComputeShader.SetInt("gLocalParticleCount", system.mMaxParticleCount);
             sComputeShader.SetInt("gOffsetIndex", offset);
