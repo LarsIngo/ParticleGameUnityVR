@@ -836,6 +836,12 @@ public class GPUParticleSystem : MonoBehaviour
         sMergedLifetimeBuffer.GetInputBuffer().SetData(mergedData);
         sMergedLifetimeBuffer.GetOutputBuffer().SetData(mergedData);
 
+        for (int i = 0; i < mergedData.GetLength(0); ++i)
+            mergedData[i] = float.MaxValue;
+
+        sMergedPositionBuffer.GetInputBuffer().SetData(mergedData);
+        sMergedPositionBuffer.GetOutputBuffer().SetData(mergedData);
+
         // SET BUFFERS.
         sComputeShader.SetBuffer(sKernelMergeInitSort, "mergePositionOUT", sMergedPositionBuffer.GetOutputBuffer());
         sComputeShader.SetBuffer(sKernelMergeInitSort, "mergeVelocityOUT", sMergedVelocityBuffer.GetOutputBuffer());
