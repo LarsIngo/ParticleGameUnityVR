@@ -37,8 +37,6 @@ public class GPUParticleDescriptor {
         public Vector4[] Get()
         {
 
-            //List<Vector4> pointsCopy = points.ConvertAll(point => new Vector4(point.x, point.y, point.z, point.w));
-
             bool addStart = points.Count == 0 || points[0].w != 0;
             bool addEnd = points.Count == 0 || points[points.Count - 1].w != 1;
 

@@ -86,10 +86,12 @@ public static class Factory
 
         // PARTICLES.
         GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
-        system.EmittParticleLifeTime = 0.2f;
-        system.EmittFrequency = 3000.0f;
-        system.EmittConstantAcceleration = new Vector3(0, 0, 1);
-        system.EmittMesh = mesh;
+
+        GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
+        descriptor.Lifetime = 0.2f;
+        descriptor.EmittFrequency = 50.0f;
+        descriptor.EmittMesh = mesh;
+        system.particleDescriptor = descriptor;
 
         // ROTATE.
         gameObject.transform.Rotate(0, 180, 0);
@@ -290,8 +292,8 @@ public static class Factory
         descriptor.HaloOverLifetime = haloPoints;
 
         GPUParticleDescriptor.LifetimePoints scalePoints = new GPUParticleDescriptor.LifetimePoints();
-        scalePoints.Add(new Vector4(1f, 1f, 0, 0));
-        scalePoints.Add(new Vector4(0.1f, 0.1f, 0, 1));
+        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 0));
+        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 1));
         descriptor.ScaleOverLifetime = scalePoints;
 
         GPUParticleDescriptor.LifetimePoints opacityPoints = new GPUParticleDescriptor.LifetimePoints();
