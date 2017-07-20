@@ -480,7 +480,7 @@ public static class Factory
 
         StraitenOutFishObject.AddComponent<Health>().HealthStart = 1000;
 
-        AudioSource sound = parent.gameObject.AddComponent<AudioSource>();
+        AudioSource sound = StraitenOutFishObject.AddComponent<AudioSource>();
         sound.volume = 0.1f;
         sound.maxDistance = 10.0f;
 
