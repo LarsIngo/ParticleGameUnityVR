@@ -55,7 +55,7 @@ public class VatsugLevel : Level
         
    
         // SKYBOX.
-        Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
+        /*Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
         Debug.Assert(skyboxMat);
         string skyboxName = "Stars01";
         Texture2D front = Resources.Load<Texture2D>("Skyboxes/" + skyboxName + "/frontImage");
@@ -83,7 +83,7 @@ public class VatsugLevel : Level
             skybox = Camera.main.gameObject.AddComponent<Skybox>();
             Camera.main.GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
         }
-        skybox.material = skyboxMat;
+        skybox.material = skyboxMat;*/
 
 
         AudioSource audioSource = Hub.backgroundMusic.GetComponent<AudioSource>();

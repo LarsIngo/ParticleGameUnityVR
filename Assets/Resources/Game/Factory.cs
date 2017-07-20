@@ -514,7 +514,7 @@ public static class Factory
         moonLight.color = new Color(0.25f, 0.25f, 0.25f, 1.0f);
 
         moon.transform.localScale = new Vector3(5, 5, 5);
-        moon.transform.position = new Vector3(-20, 30, 20);
+        moon.transform.position = new Vector3(-20, 20, 20);
 
 
         moonLight.transform.LookAt(new Vector3(0, 0, 0));
@@ -527,9 +527,9 @@ public static class Factory
         GameObject waterGO = level.CreateGameObject("water" + count++);
         //waterGO.transform.localScale = new Vector3(5, 1, 5);
 
-        //Material mat = (Material)Resources.Load("Water/Materials/WaterBasicNighttime");
+        Material mat = (Material)Resources.Load("Water/Materials/WaterBasicNighttime");
 
-        Material mat = (Material)Resources.Load("WaterOther/Materials/WaterProDaytime");
+        //Material mat = (Material)Resources.Load("WaterOther/Materials/WaterProDaytime");
         //mat.shader = Shader.Find("FX/Water");
 
         waterGO.AddComponent<MeshRenderer>().material = mat;
