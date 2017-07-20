@@ -1,5 +1,9 @@
 ﻿Shader "Custom/GeometryExplosion" 
 {
+	Properties
+	{
+		diffuseTexture("Texture", 2D) = "red" {}
+	}
 
 	SubShader{
 		Pass{
@@ -18,9 +22,9 @@
 		uniform float gOffset;
 		
 		
+
 		struct vsOutput {
 			float4 pos : SV_POSITION;
-			float3 n : NORMAL;
 			uint id : VERTID;
 		};
 
@@ -28,7 +32,6 @@
 		{
 			vsOutput o;
 			o.pos = float4(v.vertex.xyz, 1.0f);
-			o.n = v.normal;
 			o.id = vid;
 			
 			return o;
@@ -47,11 +50,14 @@
 
 			matrix m = 0;
 			//Scaleing with z rotaation
-			float fac = 1.0f / max(gOffset * rID, 0.6f);
 
+			float fac = 1.0f / max(gOffset * rID, 1.0f) + exp(gOffset / 2) - 0.7f;
 			
-			m._11 = fac * cos(gOffset / rID);	m._12 = -sin(gOffset / rID);
-			m._22 = fac * cos(gOffset / rID); m._21 = sin(gOffset / rID);
+
+			float rot = gOffset / rID;
+			
+			m._11 = fac * cos(rot);	m._12 = -sin(rot);
+			m._22 = fac * cos(rot); m._21 = sin(rot);
 			m._33 = fac;
 			m._44 = 1.0f;
 
@@ -71,14 +77,14 @@
 			for (int i = 0; i < 3; ++i)
 			{
 				 
-				output.pos = UnityObjectToClipPos(float4(p[i] + n * gOffset * rID / 16.0f, 1.0f));
+				output.pos = UnityObjectToClipPos(float4(p[i] + n * gOffset * rID / 10.0f, 1.0f));
 
 				TriStream.Append(output);
 			}
 
 			TriStream.RestartStrip();
 		}
-
+		sampler2D diffuseTexture;
 
 		fixed4 frag() : SV_Target
 		{
