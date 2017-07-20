@@ -501,7 +501,6 @@ public static class Factory
         moonLight.shadows = LightShadows.Soft;
         moonLight.color = new Color(0.25f, 0.25f, 0.25f, 1.0f);
 
-
         moon.transform.localScale = new Vector3(5, 5, 5);
         moon.transform.position = new Vector3(-20, 30, 20);
 
@@ -516,17 +515,23 @@ public static class Factory
         GameObject waterGO = level.CreateGameObject("water" + count++);
         //waterGO.transform.localScale = new Vector3(5, 1, 5);
 
-        Material mat = (Material)Resources.Load("Water/Materials/WaterBasicNighttime");
-        //mat.shader = Shader.Find("FX/Water");
-        
-        waterGO.AddComponent<MeshRenderer>().material = mat;
-        waterGO.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Plane);
+        //Material mat = (Material)Resources.Load("Water/Materials/WaterBasicNighttime");
 
-        waterGO.AddComponent<UnityStandardAssets.Water.WaterBasic>();
-        waterGO.transform.localScale = new Vector3(3, 3, 3);
+        Material mat = (Material)Resources.Load("WaterOther/Materials/WaterProDaytime");
+        //mat.shader = Shader.Find("FX/Water");
+
+        waterGO.AddComponent<MeshRenderer>().material = mat;
+        waterGO.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("WaterOther/Models/WaterPlane", typeof(Mesh));// CreateMesh(PrimitiveType.Plane);
+        waterGO.transform.localScale = new Vector3(8, 1, 8);
+
+        UnityStandardAssets.Water.Water vann = waterGO.AddComponent<UnityStandardAssets.Water.Water>();
+        vann.waterMode = UnityStandardAssets.Water.Water.WaterMode.Reflective;
+        vann.textureSize = 128;
 
         return waterGO;
     }
+
+    
 
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
     {

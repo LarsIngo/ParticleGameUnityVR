@@ -74,7 +74,7 @@ half4 frag( v2f i ) : COLOR
 	half3 bump = (bump1 + bump2) * 0.5;
 	
 	half fresnel = dot( i.viewDir, bump );
-	half4 water = tex2D( _ColorControl, float2(fresnel,fresnel) );
+	half4 water = tex2D(_ColorControl, float2(fresnel, fresnel)) -half4(0.02f, 0.02f, 0.04f, 0.0f);
 	
 	half4 col;
 	col.rgb = lerp( water.rgb, _horizonColor.rgb, water.a );
