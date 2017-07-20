@@ -769,6 +769,8 @@ public class GPUParticleSystem : MonoBehaviour
 
     public int Count { get { return mMaxParticleCount; } }
 
+    private bool mInitiated = false;
+
     // MONOBEHAVIOUR.
     public GPUParticleDescriptor ParticleDescriptor {
         set
@@ -776,9 +778,16 @@ public class GPUParticleSystem : MonoBehaviour
 
             mDescriptor = value;
 
-            if (sGPUParticleSystemDictionary == null) StartUp();
-            InitSystem();
-            sGPUParticleSystemDictionary[this] = this;
+            if (!mInitiated)
+            {
+
+                if (sGPUParticleSystemDictionary == null) StartUp();
+                InitSystem();
+                sGPUParticleSystemDictionary[this] = this;
+                mInitiated = true;
+
+            }
+            else Apply();
 
         }
     }
