@@ -73,8 +73,8 @@ public class GPUParticleDescriptor {
                 if (points.Count == 0)
                 {
 
-                    array[0] = basePoint;
-                    array[0].w = 1;
+                    array[array.Length - 1] = basePoint;
+                    array[array.Length - 1].w = 1;
 
                 }
                 else

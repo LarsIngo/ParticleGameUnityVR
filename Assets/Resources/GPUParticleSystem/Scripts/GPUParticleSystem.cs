@@ -270,7 +270,7 @@ public class GPUParticleSystem : MonoBehaviour
 
     // APPLY.
     private bool mApply = false;
-    private void Apply() { DeInitSystem(); InitSystem(); }
+    private void Apply() { DeInitSystem(); InitSystem(); mApply = false; }
 
     private void UpdateMesh()
     {
@@ -338,10 +338,10 @@ public class GPUParticleSystem : MonoBehaviour
         // ------- Halo -------
         UpdateLifetimeBuffer(out mHaloLifetimePointsBuffer, mDescriptor.HaloOverLifetime.Get());
 
-        // ------ Scale ------
+        // ------ Scale -------
         UpdateLifetimeBuffer(out mScaleLifetimePointsBuffer, mDescriptor.ScaleOverLifetime.Get());
 
-        // ------ Transparency -
+        // ------ Opacity -----
         UpdateLifetimeBuffer(out mTransparencyLifetimePointsBuffer, mDescriptor.OpacityOverLifetime.Get());
 
         // COLLISION.
@@ -774,8 +774,6 @@ public class GPUParticleSystem : MonoBehaviour
 
     void Awake()
     {
-
-        mDescriptor = new GPUParticleDescriptor();
 
         if (sGPUParticleSystemDictionary == null) StartUp();
         InitSystem();
