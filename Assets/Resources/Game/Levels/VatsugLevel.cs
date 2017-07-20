@@ -49,13 +49,13 @@ public class VatsugLevel : Level
         GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 5.0f);
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 5.0f);
-
+        
         //rightWand.transform.parent = rightHand.transform;
         //leftWand.transform.parent = leftHand.transform;
-
-
+        
+   
         // SKYBOX.
-        /*Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
+        Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
         Debug.Assert(skyboxMat);
         string skyboxName = "Stars01";
         Texture2D front = Resources.Load<Texture2D>("Skyboxes/" + skyboxName + "/frontImage");
@@ -83,16 +83,8 @@ public class VatsugLevel : Level
             skybox = Camera.main.gameObject.AddComponent<Skybox>();
             Camera.main.GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
         }
-        skybox.material = skyboxMat;*/
+        skybox.material = skyboxMat;
 
-        Skybox skybox = Camera.main.GetComponent<Skybox>();
-        if (skybox == null)
-        {
-            skybox = Camera.main.gameObject.AddComponent<Skybox>();
-            Camera.main.GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
-        }
-        skybox.material = new Material(Shader.Find("Unlit/Color"));
-        skybox.material.color = Color.black;
 
         AudioSource audioSource = Hub.backgroundMusic.GetComponent<AudioSource>();
         audioSource.clip = (AudioClip)Resources.Load("Music/MysGitarrreverb");
