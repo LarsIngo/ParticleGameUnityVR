@@ -18,10 +18,11 @@ public class ParticleTestScene : Level
     public ParticleTestScene(string name) : base(name)
     {
 
-        GameObject test = CreateGameObject("test");
         GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
-
-        GPUParticleSystem system = test.AddComponent<GPUParticleSystem>();
+        GameObject screen = Factory.CreateWorldImage(this, "Textures/Default");
+        screen.transform.position += Vector3.forward;
+        descriptor.EmittMesh = screen.GetComponent<MeshFilter>().mesh;
+        GPUParticleSystem system = screen.AddComponent<GPUParticleSystem>();
         system.ParticleDescriptor = descriptor;
 
     }

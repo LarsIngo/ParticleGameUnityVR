@@ -153,10 +153,10 @@ public class GPUParticleDescriptor {
     /// </summary>
     public float Lifetime { get { return mLifetime; } set { mNewLifetime = value; mOutOfDate = true; } }
 
-    private bool mInheritVelocity = true;
+    private bool mInheritVelocity = false;
     /// <summary>
     /// Whether emitted particles inherit velocity from emitter.
-    /// Default: true
+    /// Default: false
     /// </summary>
     public bool InheritVelocity { get { return mInheritVelocity; } set { mInheritVelocity = value; } }
 
