@@ -21,10 +21,7 @@ public class SpawnSystem : MonoBehaviour {
     public void AddGameObjectWithDelay(GameObject go, float delay)
     {
         go.SetActive(false);
-        DelayInfo d = new DelayInfo();
-        d.currentDelay = delay;
-        d.go = go;
-        mDelayInfoList.Add(d);
+        mDelayInfoList.Add(new DelayInfo(go, delay));
 
         return;
     }
