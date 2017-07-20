@@ -99,7 +99,11 @@ public class Main : MonoBehaviour
         if (Hub.Instance.ActiveLevel != mCurrentLevel)
         {
             if (Hub.Instance.ActiveLevel != null)
-                Hub.Instance.ActiveLevel.Sleep();
+            {
+                //Hub.Instance.ActiveLevel.Sleep();
+                Hub.Instance.ActiveLevel.KillAll();
+            }
+                
 
             // Kill all living particles.
             GPUParticleSystem.KillAllParticles();
