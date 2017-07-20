@@ -17,7 +17,7 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Current health of entity.
     /// </summary>
-    public int HealthCurrent { get { return mHealthCurrent; } set { mHealthCurrent = value; } }
+    public int HealthCurrent { get { return mHealthCurrent; } }
 
     void Start ()
     {
@@ -26,18 +26,21 @@ public class Health : MonoBehaviour
 
 	void Update ()
     {
-        float healthFactor = mHealthCurrent / mHealthStart;
+        float healthFactor = (float)mHealthCurrent / mHealthStart;
 
         Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null)
-            renderer.material.color = Color.Lerp(Color.green, Color.red, 1 - healthFactor);
+        Debug.Assert(renderer);
+        renderer.material.color = Color.Lerp(Color.green, Color.red, 1 - healthFactor);
 
         GPUParticleSphereCollider collider = GetComponent<GPUParticleSphereCollider>();
         Debug.Assert(collider);
-        mHealthCurrent -= collider.CollisionsThisFrame;
 
-        if (mHealthCurrent <= 0.0f)
+        mHealthCurrent -= collider.CollisionsThisFrame;
+        Debug.Log(mHealthCurrent);
+
+        if (mHealthCurrent <= 0)
         {
+            Debug.Log("DESTORY");
             Destroy(gameObject);
             MeshFilter meshFilter = GetComponent<MeshFilter>();
             Debug.Assert(meshFilter);
