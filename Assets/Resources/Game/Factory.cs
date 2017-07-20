@@ -527,9 +527,9 @@ public static class Factory
         GameObject waterGO = level.CreateGameObject("water" + count++);
         //waterGO.transform.localScale = new Vector3(5, 1, 5);
 
-        Material mat = (Material)Resources.Load("Water/Materials/WaterBasicNighttime");
+        //Material mat = (Material)Resources.Load("Water/Materials/WaterBasicNighttime");
 
-        //Material mat = (Material)Resources.Load("WaterOther/Materials/WaterProDaytime");
+        Material mat = (Material)Resources.Load("WaterOther/Materials/WaterProDaytime");
         //mat.shader = Shader.Find("FX/Water");
 
         waterGO.AddComponent<MeshRenderer>().material = mat;
