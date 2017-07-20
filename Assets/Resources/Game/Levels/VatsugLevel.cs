@@ -44,7 +44,36 @@ public class VatsugLevel : Level
     /// </summary>
     public override void Awake()
     {
+        // SKYBOX.
+        Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
+        Debug.Assert(skyboxMat);
+        string skyboxName = "Stars01";
+        Texture2D front = Resources.Load<Texture2D>("Skyboxes/" + skyboxName + "/frontImage");
+        Texture2D back = Resources.Load<Texture2D>("Skyboxes/" + skyboxName + "/backImage");
+        Texture2D left = Resources.Load<Texture2D>("Skyboxes/" + skyboxName + "/leftImage");
+        Texture2D right = Resources.Load<Texture2D>("Skyboxes/" + skyboxName + "/rightImage");
+        Texture2D up = Resources.Load<Texture2D>("Skyboxes/" + skyboxName + "/upImage");
+        Texture2D down = Resources.Load<Texture2D>("Skyboxes/" + skyboxName + "/downImage");
+        Debug.Assert(front);
+        Debug.Assert(back);
+        Debug.Assert(left);
+        Debug.Assert(right);
+        Debug.Assert(up);
+        Debug.Assert(down);
+        skyboxMat.SetTexture("_FrontTex", front);
+        skyboxMat.SetTexture("_BackTex", back);
+        skyboxMat.SetTexture("_LeftTex", left);
+        skyboxMat.SetTexture("_RightTex", right);
+        skyboxMat.SetTexture("_UpTex", up);
+        skyboxMat.SetTexture("_DownTex", down);
 
+        Skybox skybox = Camera.main.GetComponent<Skybox>();
+        if (skybox == null)
+        {
+            skybox = Camera.main.gameObject.AddComponent<Skybox>();
+            Camera.main.GetComponent<Camera>().clearFlags = CameraClearFlags.Skybox;
+        }
+        skybox.material = skyboxMat;
     }
 
     /// <summary>

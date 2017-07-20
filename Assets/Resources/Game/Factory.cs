@@ -84,12 +84,16 @@ public static class Factory
         Debug.Assert(mesh);
         gameObject.AddComponent<MeshFilter>().mesh = mesh;
 
+        // HEALTH.
+        Health health = gameObject.AddComponent<Health>();
+        health.HealthStart = 
+
         // PARTICLES.
-        GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
-        system.EmittParticleLifeTime = 0.2f;
-        system.EmittFrequency = 3000.0f;
-        system.EmittConstantAcceleration = new Vector3(0, 0, 1);
-        system.EmittMesh = mesh;
+        //GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
+        //system.EmittParticleLifeTime = 0.2f;
+        //system.EmittFrequency = 3000.0f;
+        //system.EmittConstantAcceleration = new Vector3(0, 0, 1);
+        //system.EmittMesh = mesh;
 
         // ROTATE.
         gameObject.transform.Rotate(0, 180, 0);
