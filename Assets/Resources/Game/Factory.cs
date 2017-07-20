@@ -22,11 +22,11 @@ public static class Factory
     public static void CreateMichaelBayEffect(Mesh mesh, Transform t, Color meshColor)
     {
         GameObject michael = new GameObject("michael" + count++);
-        GameObject blackHole = new GameObject("blackhole" + count++);
+        //GameObject blackHole = new GameObject("blackhole" + count++);
         michael.transform.position = t.position;
         michael.transform.rotation = t.rotation;
-        blackHole.transform.position = t.position;
-        blackHole.transform.rotation = t.rotation;
+        //blackHole.transform.position = t.position;
+        //blackHole.transform.rotation = t.rotation;
 
         if (mesh != null)
         {
@@ -47,10 +47,10 @@ public static class Factory
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
         michaelLifetimer.LifeTime = 4.0f;
 
-        GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 250.0f;
-        LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
-        blackHoleLifetimer.LifeTime = 0.2f;
+        //GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
+        //attractor.Power = 250.0f;
+        //LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
+        //blackHoleLifetimer.LifeTime = 0.2f;
 
         AudioSource ceramicSound = michael.AddComponent<AudioSource>();
         ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");

@@ -40,7 +40,7 @@ public class Health : MonoBehaviour
         {
             Destroy(gameObject);
             MeshFilter meshFilter = GetComponent<MeshFilter>();
-            // Factory.CreateMichaelBayEffect(meshFilter != null ? meshFilter.mesh : null, transform, renderer != null ? renderer.material.color : Color.red); // TMP
+            Factory.CreateMichaelBayEffect(meshFilter != null ? meshFilter.mesh : null, transform, renderer != null ? renderer.material.color : Color.red);
         }
     }
 }
