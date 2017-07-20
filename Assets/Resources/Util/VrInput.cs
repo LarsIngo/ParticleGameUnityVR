@@ -106,7 +106,7 @@ public class VrInput : MonoBehaviour {
     {
 
         deltaRight = oldRight - right.transform.position;
-        deltaLeft = oldRight - right.transform.position;
+        deltaLeft = oldLeft - right.transform.position;
 
         oldRight = right.transform.position;
         oldLeft = left.transform.position;

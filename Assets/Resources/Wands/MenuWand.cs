@@ -62,7 +62,7 @@ public class MenuWand : MonoBehaviour {
         lineRenderer.SetPosition(0, ray.origin);
         lineRenderer.SetPosition(1, point);
 
-        if (VrInput.controllersFound)
+        if (VrInput.controllersFound && target != null)
         {
 
             float trigger = 0;
