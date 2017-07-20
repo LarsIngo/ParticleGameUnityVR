@@ -23,6 +23,9 @@ public class Main : MonoBehaviour
     private Level mAttractor_lvl_1;
     private Level mAttractor_lvl_2;
 
+    //Particle Test level.
+    private Level mParticleTestLevel;
+
     /// --- SCENES --- ///
 
     private void Start ()
@@ -35,6 +38,7 @@ public class Main : MonoBehaviour
         mAttractor_lvl_2 = new Attractor_lvl_2("LEVEL:ATTRACTOR_LVL_2");
         //mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
         mSkullLevel = new SkullLevel("LEVEL:SKULL");
+        mParticleTestLevel = new ParticleTestScene("LEVEL:PARTICLETEST");
 
         Hub.Instance.SetState(Hub.STATE.MENU);
         
@@ -54,6 +58,8 @@ public class Main : MonoBehaviour
             Hub.Instance.SetState(Hub.STATE.DEFAULT);
         if (Input.GetKeyDown(KeyCode.F6))
             Hub.Instance.SetState(Hub.STATE.SKULL);
+        if (Input.GetKeyDown(KeyCode.F7))
+            Hub.Instance.SetState(Hub.STATE.PARTICLETEST);
 
         // Check state.
         switch (Hub.Instance.CurrentState)
@@ -80,6 +86,10 @@ public class Main : MonoBehaviour
 
             case Hub.STATE.SKULL:
                 mCurrentLevel = mSkullLevel;
+                break;
+
+            case Hub.STATE.PARTICLETEST:
+                mCurrentLevel = mParticleTestLevel;
                 break;
 
             default: Debug.Log("WARNING: No assigned STATE"); break;

@@ -29,7 +29,7 @@ public class VrInput : MonoBehaviour {
     {
 
         if (!controllersFound)
-            return -1;
+            return 0;
 
         SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)leftController.index);
         return controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
@@ -39,7 +39,7 @@ public class VrInput : MonoBehaviour {
     {
 
         if (!controllersFound)
-            return -1;
+            return 0;
 
         SteamVR_Controller.Device controller = SteamVR_Controller.Input((int)rightController.index);
         return controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;

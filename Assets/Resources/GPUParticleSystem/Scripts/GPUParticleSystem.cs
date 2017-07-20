@@ -251,7 +251,7 @@ public class GPUParticleSystem : MonoBehaviour
 
     private float mEmittTimer = 0.0f;
 
-    public GPUParticleDescriptor particleDescriptor;
+    private GPUParticleDescriptor mDescriptor = null;
 
     private ComputeBuffer mColorLifetimePointsBuffer = null;
 
@@ -274,14 +274,14 @@ public class GPUParticleSystem : MonoBehaviour
     private void UpdateMesh()
     {
         // Return early if mesh is null.
-        if (particleDescriptor.EmittMesh == null) return;
+        if (mDescriptor.EmittMesh == null) return;
 
         // Return early if mesh is loaded.
-        if (sEmittMeshInfoDictionary.ContainsKey(particleDescriptor.EmittMesh)) return;
+        if (sEmittMeshInfoDictionary.ContainsKey(mDescriptor.EmittMesh)) return;
 
-        Vector3[] vertices = particleDescriptor.EmittMesh.vertices;
+        Vector3[] vertices = mDescriptor.EmittMesh.vertices;
 
-        int[] indices = particleDescriptor.EmittMesh.triangles;
+        int[] indices = mDescriptor.EmittMesh.triangles;
 
         // Create new emitt mesh info from mesh.
         EmittMeshInfo emittMeshInfo = new EmittMeshInfo();
@@ -293,16 +293,16 @@ public class GPUParticleSystem : MonoBehaviour
         emittMeshInfo.mIndexBuffer.SetData(indices);
 
         // Add to dictionary.
-        sEmittMeshInfoDictionary[particleDescriptor.EmittMesh] = emittMeshInfo;
+        sEmittMeshInfoDictionary[mDescriptor.EmittMesh] = emittMeshInfo;
     }
 
     // INIT.
     private void InitSystem()
     {
 
-        particleDescriptor.Update();
+        mDescriptor.Update();
 
-        mMaxParticleCount = (int)Mathf.Ceil(particleDescriptor.EmittFrequency * particleDescriptor.Lifetime);
+        mMaxParticleCount = (int)Mathf.Ceil(mDescriptor.EmittFrequency * mDescriptor.Lifetime);
         mLastPosition = transform.position;
 
         sTotalParticleCount += mMaxParticleCount;
@@ -332,16 +332,16 @@ public class GPUParticleSystem : MonoBehaviour
 
         //LIFETIME POINT BUFFERS
         // ------- Color ------
-        UpdateLifetimeBuffer(out mColorLifetimePointsBuffer, particleDescriptor.ColorOverLifetime.Get());
+        UpdateLifetimeBuffer(out mColorLifetimePointsBuffer, mDescriptor.ColorOverLifetime.Get());
 
         // ------- Halo -------
-        UpdateLifetimeBuffer(out mHaloLifetimePointsBuffer, particleDescriptor.HaloOverLifetime.Get());
+        UpdateLifetimeBuffer(out mHaloLifetimePointsBuffer, mDescriptor.HaloOverLifetime.Get());
 
         // ------ Scale ------
-        UpdateLifetimeBuffer(out mScaleLifetimePointsBuffer, particleDescriptor.ScaleOverLifetime.Get());
+        UpdateLifetimeBuffer(out mScaleLifetimePointsBuffer, mDescriptor.ScaleOverLifetime.Get());
 
         // ------ Transparency -
-        UpdateLifetimeBuffer(out mTransparencyLifetimePointsBuffer, particleDescriptor.OpacityOverLifetime.Get());
+        UpdateLifetimeBuffer(out mTransparencyLifetimePointsBuffer, mDescriptor.OpacityOverLifetime.Get());
 
         // COLLISION.
         mSphereColliderResultBuffer = new ComputeBuffer(sMaxSphereColliderCount, sizeof(int));
@@ -376,11 +376,11 @@ public class GPUParticleSystem : MonoBehaviour
         // Update timer.
         mEmittTimer += Time.deltaTime;
 
-        int emittCount = (int)(particleDescriptor.EmittFrequency * mEmittTimer);
+        int emittCount = (int)(mDescriptor.EmittFrequency * mEmittTimer);
 
         if (emittCount == 0) return;
 
-        mEmittTimer -= emittCount * 1.0f / particleDescriptor.EmittFrequency;
+        mEmittTimer -= emittCount * 1.0f / mDescriptor.EmittFrequency;
 
         Vector3 emitterVelocity = transform.position - mLastPosition;
 
@@ -392,7 +392,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetBuffer(sKernelEmitt, "gLifetimeBuffer", mLifetimeBuffer.GetOutputBuffer());
 
             // Inherit velocity from emitter if true.
-            Vector3 velocity = (emitterVelocity / Time.deltaTime) * (particleDescriptor.InheritVelocity ? 1 : 0) + particleDescriptor.InitialVelocity;
+            Vector3 velocity = (emitterVelocity / Time.deltaTime) * (mDescriptor.InheritVelocity ? 1 : 0) + mDescriptor.InitialVelocity;
             
             Vector3 newInitPos = mLastPosition;
             float delta = i / emittCount;
@@ -402,10 +402,10 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.SetInt("gEmittIndex", mEmittIndex);
             sComputeShader.SetFloats("gPosition", new float[] { newInitPos.x, newInitPos.y, newInitPos.z });
             sComputeShader.SetFloats("gVelocity", new float[] { velocity.x, velocity.y, velocity.z });
-            sComputeShader.SetFloats("gLifetime", new float[] { particleDescriptor.Lifetime });
+            sComputeShader.SetFloats("gLifetime", new float[] { mDescriptor.Lifetime });
 
             // EMITT MESH.
-            if (particleDescriptor.EmittMesh == null)
+            if (mDescriptor.EmittMesh == null)
             {
                 // Set count to 0.
                 sComputeShader.SetInt("gEmittMeshVertexCount", 0);
@@ -414,9 +414,9 @@ public class GPUParticleSystem : MonoBehaviour
             }
             else
             {
-                Debug.Assert(sEmittMeshInfoDictionary.ContainsKey(particleDescriptor.EmittMesh));
+                Debug.Assert(sEmittMeshInfoDictionary.ContainsKey(mDescriptor.EmittMesh));
 
-                EmittMeshInfo emittMeshInfo = sEmittMeshInfoDictionary[particleDescriptor.EmittMesh];
+                EmittMeshInfo emittMeshInfo = sEmittMeshInfoDictionary[mDescriptor.EmittMesh];
 
                 // Set index and vertex buffer.
                 sComputeShader.SetBuffer(sKernelEmitt, "gEmittMeshVertexBuffer", emittMeshInfo.mVertexBuffer);
@@ -459,21 +459,21 @@ public class GPUParticleSystem : MonoBehaviour
         sComputeShader.SetBuffer(sKernelUpdate, "gTransparencyOUT", mTransperancyBuffer);
 
         // BIND VALUE OF LIFETIME BUFFERS.
-        sComputeShader.SetInt("gColorLifetimeCount", particleDescriptor.ColorOverLifetime.Length());
+        sComputeShader.SetInt("gColorLifetimeCount", mDescriptor.ColorOverLifetime.Length());
         sComputeShader.SetBuffer(sKernelUpdate, "gColorLifetimeBuffer", mColorLifetimePointsBuffer);
-        sComputeShader.SetInt("gHaloLifetimeCount", particleDescriptor.HaloOverLifetime.Length());
+        sComputeShader.SetInt("gHaloLifetimeCount", mDescriptor.HaloOverLifetime.Length());
         sComputeShader.SetBuffer(sKernelUpdate, "gHaloLifetimeBuffer", mHaloLifetimePointsBuffer);
-        sComputeShader.SetInt("gScaleLifetimeCount", particleDescriptor.ScaleOverLifetime.Length());
+        sComputeShader.SetInt("gScaleLifetimeCount", mDescriptor.ScaleOverLifetime.Length());
         sComputeShader.SetBuffer(sKernelUpdate, "gScaleLifetimeBuffer", mScaleLifetimePointsBuffer);
-        sComputeShader.SetInt("gTransparencyLifetimeCount", particleDescriptor.OpacityOverLifetime.Length());
+        sComputeShader.SetInt("gTransparencyLifetimeCount", mDescriptor.OpacityOverLifetime.Length());
         sComputeShader.SetBuffer(sKernelUpdate, "gTransparencyLifetimeBuffer", mTransparencyLifetimePointsBuffer);
 
         // SET META DATA.
         sComputeShader.SetInt("gMaxParticleCount", mMaxParticleCount);
         sComputeShader.SetFloat("gDeltaTime", Time.deltaTime);
 
-        sComputeShader.SetFloats("gConstantAcceleration", new float[] {particleDescriptor.ConstantAcceleration.x, particleDescriptor.ConstantAcceleration.y, particleDescriptor.ConstantAcceleration.z });
-        sComputeShader.SetFloat("gConstantDrag", particleDescriptor.ConstantDrag);
+        sComputeShader.SetFloats("gConstantAcceleration", new float[] {mDescriptor.ConstantAcceleration.x, mDescriptor.ConstantAcceleration.y, mDescriptor.ConstantAcceleration.z });
+        sComputeShader.SetFloat("gConstantDrag", mDescriptor.ConstantDrag);
 
         // ACCELERATOR.
         Dictionary<GPUParticleAttractor, GPUParticleAttractor> attractorDictionary = GPUParticleAttractor.GetGPUParticleAttractorDictionary();
@@ -606,10 +606,10 @@ public class GPUParticleSystem : MonoBehaviour
     private void UpdateVertexBuffers()
     {
 
-        if (particleDescriptor.EmittMesh)
+        if (mDescriptor.EmittMesh)
         {
 
-            Vector3[] vertices = particleDescriptor.EmittMesh.vertices;
+            Vector3[] vertices = mDescriptor.EmittMesh.vertices;
 
             for (int i = 0; i < vertices.Length; i++)
             {
@@ -618,7 +618,7 @@ public class GPUParticleSystem : MonoBehaviour
 
             }
 
-            sEmittMeshInfoDictionary[particleDescriptor.EmittMesh].mVertexBuffer.SetData(vertices);
+            sEmittMeshInfoDictionary[mDescriptor.EmittMesh].mVertexBuffer.SetData(vertices);
 
         }
 
@@ -770,11 +770,17 @@ public class GPUParticleSystem : MonoBehaviour
     public int Count { get { return mMaxParticleCount; } }
 
     // MONOBEHAVIOUR.
-    private void Awake()
-    {
-        if (sGPUParticleSystemDictionary == null) StartUp();
-        InitSystem();
-        sGPUParticleSystemDictionary[this] = this;
+    public GPUParticleDescriptor ParticleDescriptor {
+        set
+        {
+
+            mDescriptor = value;
+
+            if (sGPUParticleSystemDictionary == null) StartUp();
+            InitSystem();
+            sGPUParticleSystemDictionary[this] = this;
+
+        }
     }
 
     // MONOBEHAVIOUR.
@@ -788,7 +794,7 @@ public class GPUParticleSystem : MonoBehaviour
         UpdateVertexBuffers();
 
         // Update buffers if needed (updated).
-        if (particleDescriptor.OutOfDate)
+        if (mDescriptor.OutOfDate)
             Apply();
 
         // Emitt new particles this frame if active.
