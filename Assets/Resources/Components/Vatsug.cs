@@ -17,7 +17,8 @@ public class Vatsug : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         
-        Vector3 newPos = new Vector3(Mathf.Tan((Time.time + 3.0f) / 8.0f), Mathf.Cos(Time.time + 3.0f) * 3.0f + 1.0f, Mathf.Sin((3.0f + Time.time) / 2) * 3.0f);
+        Vector3 newPos = new Vector3(Mathf.Tan((Time.time + 3.0f) / 8.0f), 
+            Mathf.Cos(Time.time + 3.0f) * 3.0f + 1.0f, Mathf.Sin((3.0f + Time.time) / 2) * 3.0f);
 
         gameObject.transform.position = prevPos;
         gameObject.transform.LookAt(newPos);

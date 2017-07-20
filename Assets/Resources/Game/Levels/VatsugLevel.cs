@@ -29,6 +29,8 @@ public class VatsugLevel : Level
         boat.AddComponent<Boat>();
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(boat, 1.0f);
 
+        GameObject moon = Factory.CreateMoon(this);
+
         StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
         stageInfo.mName = "Vatsug Level";
 

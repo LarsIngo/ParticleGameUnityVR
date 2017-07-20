@@ -495,6 +495,25 @@ public static class Factory
         return;
     }
 
+    public static GameObject CreateMoon(Level level)
+    {
+        GameObject moon = level.CreateGameObject("moon" + count++);
+        moon.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Unlit/Color"));
+        
+
+        Light moonLight = moon.AddComponent<Light>();
+        moonLight.type = LightType.Directional;
+        moonLight.shadows = LightShadows.Soft;
+        moonLight.color = new Color(0.25f, 0.25f, 0.25f, 1.0f);
+        
+
+        moonLight.transform.LookAt(new Vector3(0, 0, 0));
+
+        moon.transform.position = new Vector3(-20, 45, 20);
+
+        return moon;
+    }
+
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
     {
 
