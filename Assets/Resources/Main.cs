@@ -36,12 +36,24 @@ public class Main : MonoBehaviour
         //mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
         mSkullLevel = new SkullLevel("LEVEL:SKULL");
 
-        Hub.Instance.SetState(Hub.STATE.SKULL); // TMP
+        Hub.Instance.SetState(Hub.STATE.MENU);
         
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F1))
+            Hub.Instance.SetState(Hub.STATE.MENU);
+        if (Input.GetKeyDown(KeyCode.F2))
+            Hub.Instance.SetState(Hub.STATE.ATTRACTOR_LVL_1);
+        if (Input.GetKeyDown(KeyCode.F3))
+            Hub.Instance.SetState(Hub.STATE.ATTRACTOR_LVL_2);
+        if (Input.GetKeyDown(KeyCode.F4))
+        //    Hub.Instance.SetState(Hub.STATE.VATSUG);
+        //if (Input.GetKeyDown(KeyCode.F5))
+            Hub.Instance.SetState(Hub.STATE.DEFAULT);
+        if (Input.GetKeyDown(KeyCode.F6))
+            Hub.Instance.SetState(Hub.STATE.SKULL);
 
         // Check state.
         switch (Hub.Instance.CurrentState)
@@ -58,9 +70,9 @@ public class Main : MonoBehaviour
                 mCurrentLevel = mAttractor_lvl_2;
                 break;
 
-            case Hub.STATE.VATSUG:
-                mCurrentLevel = mVatsugLevel;
-                break;
+            //case Hub.STATE.VATSUG:
+            //    mCurrentLevel = mVatsugLevel;
+            //    break;
 
             case Hub.STATE.DEFAULT:
                 mCurrentLevel = mDeafultLevel;
