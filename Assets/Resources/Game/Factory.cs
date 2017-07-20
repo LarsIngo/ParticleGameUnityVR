@@ -73,25 +73,31 @@ public static class Factory
         Mesh planeMesh = tmp.GetComponent<MeshFilter>().mesh;
         Object.Destroy(tmp);
 
-        //GameObject frameLeft = level.CreateGameObject("FRAMELEFT" + count++);
-        //frameLeft.transform.Rotate(90, 0, 0);
-        //frameLeft.transform.localScale *= 0.1f;
-        //frameLeft.transform.parent = screen.transform;
-        //GPUParticleSystem system = frameLeft.AddComponent<GPUParticleSystem>();
-        //system.EmittFrequency = 500;
-        //system.EmittMesh = planeMesh;
-        
+        GameObject frameLeft = level.CreateGameObject("FRAME" + count++);
+        frameLeft.transform.Rotate(90, 0, 0);
+        frameLeft.transform.localScale *= 0.1f;
+        frameLeft.transform.localScale = new Vector3(frameLeft.transform.localScale.x * 0.1f, frameLeft.transform.localScale.y, frameLeft.transform.localScale.z);
+        frameLeft.transform.position += Vector3.right / 2;
+        frameLeft.transform.parent = screen.transform;
+
+        GameObject frameRight = level.CreateGameObject("FRAME" + count++);
+        frameRight.transform.Rotate(90, 0, 0);
+        frameRight.transform.localScale *= 0.1f;
+        frameRight.transform.localScale = new Vector3(frameLeft.transform.localScale.x * 0.1f, frameLeft.transform.localScale.y, frameLeft.transform.localScale.z);
+        frameRight.transform.position -= Vector3.right / 2;
+        frameRight.transform.parent = screen.transform;
+
         if (stageInfo.mLocked || stageInfo.mStarRequirement > Hub.Instance.stars)
         {
 
             GameObject lockImage = CreateWorldImage(level, "Textures/Locked", true);
             lockImage.transform.position -= Vector3.forward * 0.1f;
-            lockImage.transform.parent = screen.transform;
+            lockImage.transform.SetParent(screen.transform);
 
             GameObject requirement = CreateWorldText(level, stageInfo.mStarRequirement.ToString(), Color.red * 0.9f);
             requirement.transform.position -= Vector3.forward * 0.15f;
             requirement.transform.localScale *= 2;
-            requirement.transform.parent = screen.transform;
+            requirement.transform.SetParent(screen.transform);
 
         }
         else
@@ -100,7 +106,7 @@ public static class Factory
             GameObject name = CreateWorldText(level, stageInfo.mName, Color.white);
             name.transform.position -= Vector3.up * 0.6f;
             name.transform.localScale *= 0.3f;
-            name.transform.parent = screen.transform;
+            name.transform.SetParent(screen.transform);
 
             GameObject stars = level.CreateGameObject("STARS" + count++);
 
