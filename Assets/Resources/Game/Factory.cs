@@ -482,20 +482,40 @@ public static class Factory
     public static GameObject CreateMoon(Level level)
     {
         GameObject moon = level.CreateGameObject("moon" + count++);
-        moon.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Unlit/Color"));
+        Material mat = (Material)Resources.Load("Moon/Moon_mat");
+        mat.shader = Shader.Find("Standard (Specular setup)");
         
+        moon.AddComponent<MeshRenderer>().material = mat;
+        moon.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
 
         Light moonLight = moon.AddComponent<Light>();
         moonLight.type = LightType.Directional;
         moonLight.shadows = LightShadows.Soft;
         moonLight.color = new Color(0.25f, 0.25f, 0.25f, 1.0f);
-        
+
+
+        moon.transform.localScale = new Vector3(5, 5, 5);
+        moon.transform.position = new Vector3(-20, 30, 20);
+
 
         moonLight.transform.LookAt(new Vector3(0, 0, 0));
 
-        moon.transform.position = new Vector3(-20, 45, 20);
-
         return moon;
+    }
+
+    public static GameObject CreateWater(Level level)
+    {
+        GameObject waterGO = level.CreateGameObject("water" + count++);
+        waterGO.transform.localScale = new Vector3(5, 1, 5);
+
+        Material mat = (Material)Resources.Load("Water/Materials/WaterProDaytime");
+        mat.shader = Shader.Find("FX/Water");
+        
+        waterGO.AddComponent<MeshRenderer>().material = mat;
+        waterGO.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Plane);
+        waterGO.AddComponent<UnityStandardAssets.Water.Water>();
+
+        return waterGO;
     }
 
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)

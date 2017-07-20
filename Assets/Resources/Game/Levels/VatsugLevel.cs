@@ -31,6 +31,8 @@ public class VatsugLevel : Level
 
         GameObject moon = Factory.CreateMoon(this);
 
+        GameObject water = Factory.CreateWater(this);
+
         StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
         stageInfo.mName = "Vatsug Level";
 
