@@ -283,6 +283,8 @@ public static class Factory
         wand.system = system;
         wand.attractor = attractor;
 
+        WandGO.AddComponent<MirrorHandMovement>().rightHand = rightHand;
+
         return WandGO;
 
     }
@@ -324,6 +326,8 @@ public static class Factory
         MenuWand wand = WandGO.AddComponent<MenuWand>();
         wand.lineRenderer = lineRenderer;
         wand.rightHand = rightHand;
+
+        WandGO.AddComponent<MirrorHandMovement>().rightHand = rightHand;
 
         return WandGO;
 
@@ -422,7 +426,8 @@ public static class Factory
         wand.mParticleEmitter = emitter;// particleEmitter;
         wand.rightHand = rightHand;
         wand.pendulumSpeed = pendulumSpeed;
-        
+
+        WandGO.AddComponent<MirrorHandMovement>();
 
         return WandGO;
     }

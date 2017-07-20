@@ -30,7 +30,6 @@ public class MenuLevel : Level
 
         //Equip a wand.
         GameObject menuWand = Factory.CreateMenuWand(this, true);
-        menuWand.transform.parent = rightHand.transform;
 
         mScreenList = new List<GameObject>();
 

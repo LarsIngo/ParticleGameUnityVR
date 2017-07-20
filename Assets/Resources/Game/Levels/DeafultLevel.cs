@@ -35,15 +35,6 @@ public class DefaultLevel : Level
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
-        //Equip a wand.
-        GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
-        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
-
-        rightWand.transform.parent = rightHand.transform;
-        leftWand.transform.parent = leftHand.transform;
-
-        //Spawn enemies.
-        SpawnEnemies();
     }
 
 
@@ -52,6 +43,14 @@ public class DefaultLevel : Level
     /// </summary>
     public override void Awake()
     {
+
+        //Equip a wand.
+        GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
+        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
+
+        //Spawn enemies.
+        SpawnEnemies();
+
         // SKYBOX.
         Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
         Debug.Assert(skyboxMat);

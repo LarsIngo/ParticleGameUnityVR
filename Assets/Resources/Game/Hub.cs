@@ -175,10 +175,6 @@ public class Hub
     /// <param name="level">Level to set active.</param>
     public void SetActiveLevel(Level level)
     {
-        if (mActiveLevel != null) mActiveLevel.SetActive(false);
-
-        level.SetActive(true);
-
         mActiveLevel = level;
     }
 

@@ -36,7 +36,6 @@ public class Health : MonoBehaviour
         Debug.Assert(collider);
 
         mHealthCurrent -= collider.CollisionsThisFrame;
-        Debug.Log(mHealthCurrent);
 
         if (mHealthCurrent <= 0)
         {

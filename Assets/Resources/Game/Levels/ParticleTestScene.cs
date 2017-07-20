@@ -18,6 +18,17 @@ public class ParticleTestScene : Level
     public ParticleTestScene(string name) : base(name)
     {
 
+
+
+    }
+
+
+    /// <summary>
+    /// Override awake function.
+    /// </summary>
+    public override void Awake()
+    {
+
         GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
         GPUParticleDescriptor.LifetimePoints colorPoints = new GPUParticleDescriptor.LifetimePoints();
         colorPoints.Add(new Vector4(1, 1, 1, 0));
@@ -40,17 +51,6 @@ public class ParticleTestScene : Level
 
         GPUParticleSystem system = sphere.AddComponent<GPUParticleSystem>();
         system.ParticleDescriptor = descriptor;
-
-    }
-
-
-    /// <summary>
-    /// Override awake function.
-    /// </summary>
-    public override void Awake()
-    {
-
-
 
     }
 

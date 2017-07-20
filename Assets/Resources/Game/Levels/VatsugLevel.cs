@@ -7,8 +7,6 @@ public class VatsugLevel : Level
     /// +++ MEMBERS +++ ///
     public UnityEngine.UI.Text highscore;
 
-    GameObject enemy;
-
     /// --- MEMBERS --- ///
 
 
@@ -20,29 +18,11 @@ public class VatsugLevel : Level
     /// <param name="name">Name of level, must be unique.</param>
     public VatsugLevel(string name) : base(name)
     {
-        enemy = this.CreateGameObject("TheOneAndOnlyVatsug");
-        Factory.CreateVatsug(this, enemy.transform);
-        enemy.AddComponent<Vatsug>();
-        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
-
-        GameObject boat = this.CreateGameObject("ImOnABoat");
-        boat.AddComponent<Boat>();
-        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(boat, 1.0f);
 
         StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
         stageInfo.mName = "Vatsug Level";
-
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
-        //Equip a wand.
-        GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
-        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
-        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 1.0f);
-        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 1.0f);
-        
-        rightWand.transform.parent = rightHand.transform;
-        leftWand.transform.parent = leftHand.transform;
-        
     }
 
 
@@ -51,6 +31,22 @@ public class VatsugLevel : Level
     /// </summary>
     public override void Awake()
     {
+
+        GameObject enemy = this.CreateGameObject("TheOneAndOnlyVatsug");
+        Factory.CreateVatsug(this, enemy.transform);
+        enemy.AddComponent<Vatsug>();
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
+
+        GameObject boat = this.CreateGameObject("ImOnABoat");
+        boat.AddComponent<Boat>();
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(boat, 1.0f);
+
+        //Equip a wand.
+        GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
+        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 1.0f);
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 1.0f);
+
         // SKYBOX.
         Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
         Debug.Assert(skyboxMat);

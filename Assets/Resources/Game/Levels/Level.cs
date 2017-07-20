@@ -11,18 +11,12 @@ public abstract class Level
     /// <summary>
     /// Level game object.
     /// </summary>
-    private GameObject mLevelGO;
+    private GameObject mLevelGO = null;
 
     /// <summary>
-    /// Right hand game object.
+    /// Name of level.
     /// </summary>
-    protected GameObject rightHand;
-
-    /// <summary>
-    /// Left hand game object.
-    /// </summary>
-    protected GameObject leftHand;
-
+    private string mName = null;
 
     public GameObject mSpawnSystem;
 
@@ -38,20 +32,10 @@ public abstract class Level
     public Level(string name)
     {
         Debug.Assert(!GameObject.Find(name));
-        
-        mLevelGO = new GameObject(name);
 
-        mSpawnSystem = this.CreateGameObject("spawnSystem" + name);
-        mSpawnSystem.AddComponent<SpawnSystem>();
-
-        mLevelGO.SetActive(false);
+        mName = name;
 
         Hub.Instance.AddLevel(this);
-
-        rightHand = CreateGameObject(name + ":Right Hand");
-        rightHand.AddComponent<MirrorHandMovement>().rightHand = true;
-        leftHand = CreateGameObject(name + ":Left Hand");
-        leftHand.AddComponent<MirrorHandMovement>().rightHand = false;
 
     }
 
@@ -62,6 +46,14 @@ public abstract class Level
     /// <returns>Returns new game object.</returns>
     public GameObject CreateGameObject(string name)
     {
+
+        if(mLevelGO == null)
+        {
+
+            mLevelGO = new GameObject("LEVEL:" + name);
+
+        }
+
         Debug.Assert(!GameObject.Find(name));
 
         GameObject go = new GameObject(name);
@@ -72,23 +64,23 @@ public abstract class Level
     }
 
     /// <summary>
-    /// Kills all children.
+    /// Kill level.
     /// </summary>
-    /// <param name="value">Name of game object, must be unique.</param>
-    /// <returns>Returns new game object.</returns>
-    public void KillAll()
+    public void Kill()
     {
-        KillChildren(mLevelGO);
+        Object.DestroyImmediate(mLevelGO);
+        mLevelGO = null;
     }
 
-    private static void KillChildren(GameObject parent)
+    /// <summary>
+    /// Create level.
+    /// </summary>
+    public void Create()
     {
-        Debug.Log("KILL");
-        for (int i = 0; i < parent.transform.childCount; ++i)
-        {
-            KillChildren(parent.transform.GetChild(i).gameObject);
-            Object.DestroyImmediate(parent.transform.GetChild(i).gameObject);
-        }
+
+        mSpawnSystem = this.CreateGameObject("spawnSystem" + mName);
+        mSpawnSystem.AddComponent<SpawnSystem>();
+
     }
 
     /// <summary>
@@ -113,7 +105,7 @@ public abstract class Level
     /// </summary>
     public string Name
     {
-        get { return mLevelGO.name; }
+        get { return mName; }
     }
 
     /// <summary>
