@@ -28,6 +28,7 @@ public class Vatsug : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
         if (VrInput.LeftTrigger() == 1.0f || VrInput.RightTrigger() == 1.0f)
         {
             Factory.CreateMichaelBayEffect(Hub.Instance.ActiveLevel, GetComponent<MeshFilter>().mesh, transform, new Color(1, 1, 1, 1));
@@ -38,11 +39,8 @@ public class Vatsug : MonoBehaviour {
             mHP -= particleColider.CollisionsThisFrame;
         }
 
-        float x = Mathf.Tan(Time.time / 8.0f);
-        float y = Mathf.Cos(Time.time) * 3.0f + 1.0f;
-        float z = Mathf.Sin(Time.time / 2) * 3.0f;// Mathf.Cos(Time.time / 3) * 3.0f;
 
-        Vector3 newPos = new Vector3(x, y, z);
+        Vector3 newPos = new Vector3(Mathf.Tan(Time.time / 8.0f), Mathf.Cos(Time.time) * 3.0f + 1.0f, Mathf.Sin(Time.time / 2) * 3.0f);
 
         gameObject.transform.position = prevPos;
         gameObject.transform.LookAt(newPos);
