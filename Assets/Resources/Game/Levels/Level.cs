@@ -23,6 +23,9 @@ public abstract class Level
     /// </summary>
     protected GameObject leftHand;
 
+
+    public GameObject mSpawnSystem;
+
     /// --- MEMBERS --- ///
 
 
@@ -35,8 +38,11 @@ public abstract class Level
     public Level(string name)
     {
         Debug.Assert(!GameObject.Find(name));
-
+        
         mLevelGO = new GameObject(name);
+
+        mSpawnSystem = this.CreateGameObject("spawnSystem" + name);
+        mSpawnSystem.AddComponent<SpawnSystem>();
 
         mLevelGO.SetActive(false);
 

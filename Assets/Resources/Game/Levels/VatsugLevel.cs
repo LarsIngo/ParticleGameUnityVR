@@ -23,10 +23,11 @@ public class VatsugLevel : Level
         enemy = this.CreateGameObject("TheOneAndOnlyVatsug");
         Factory.CreateVatsug(this, enemy.transform);
         enemy.AddComponent<Vatsug>();
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
 
         GameObject boat = this.CreateGameObject("ImOnABoat");
         boat.AddComponent<Boat>();
-        
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(boat, 1.0f);
 
         StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
         stageInfo.mName = "Vatsug Level";
@@ -34,10 +35,12 @@ public class VatsugLevel : Level
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
         //Equip a wand.
-        //GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
+        GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
         GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 1.0f);
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 1.0f);
 
-        //rightWand.transform.parent = rightHand.transform;
+        rightWand.transform.parent = rightHand.transform;
         leftWand.transform.parent = leftHand.transform;
         
     }

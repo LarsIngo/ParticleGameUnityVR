@@ -9,9 +9,6 @@ public class Vatsug : MonoBehaviour {
     
     // Use this for initialization
     void Start () {
-
-        Debug.Assert(gameObject.GetComponent<GPUParticleSphereCollider>());
-
         prevPos = new Vector3(0, 0, 0);
         
 
