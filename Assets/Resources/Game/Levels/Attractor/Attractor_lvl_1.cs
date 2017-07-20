@@ -98,13 +98,13 @@ public class Attractor_lvl_1 : Level
         Object.DestroyImmediate(enemy3);
 
         //Spawn enemies.
-        enemy1 = CreateGameObject("ENEMY1");
-        enemy2 = CreateGameObject("ENEMY2");
-        enemy3 = CreateGameObject("ENEMY3");
+        enemy1 = Factory.CreateBasicEnemy(this);
+        enemy2 = Factory.CreateBasicEnemy(this);
+        enemy3 = Factory.CreateBasicEnemy(this);
 
-        enemy1.AddComponent<BasicEnemy>().Health = 250;
-        enemy2.AddComponent<BasicEnemy>().Health = 250;
-        enemy3.AddComponent<BasicEnemy>().Health = 250;
+        enemy1.GetComponent<Health>().HealthStart = 250;
+        enemy2.GetComponent<Health>().HealthStart = 250;
+        enemy3.GetComponent<Health>().HealthStart = 250;
 
         enemy1.transform.position += Vector3.forward * 3 + Vector3.right * 3;
         enemy2.transform.position += Vector3.forward * 3 + Vector3.right * 0;

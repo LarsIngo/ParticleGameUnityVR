@@ -22,7 +22,8 @@ public class VatsugLevel : Level
     /// <param name="name">Name of level, must be unique.</param>
     public VatsugLevel(string name) : base(name)
     {
-        enemy = Factory.CreateBasicEnemy(this, new Vector3(0, 0, 3.0f));
+        enemy = Factory.CreateBasicEnemy(this);
+        enemy.transform.position = new Vector3(0, 0, 3.0f);
 
         StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
         stageInfo.mName = "Vatsug Level";

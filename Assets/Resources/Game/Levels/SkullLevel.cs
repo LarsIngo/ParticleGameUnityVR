@@ -117,9 +117,9 @@ public class SkullLevel : Level
         Object.DestroyImmediate(enemy3);
 
         //Spawn enemies.
-        enemy1 = Factory.CreateEnemySkull(this);
-        enemy2 = Factory.CreateEnemySkull(this);
-        enemy3 = Factory.CreateEnemySkull(this);
+        enemy1 = Factory.CreateBasicEnemy(this);
+        enemy2 = Factory.CreateBasicEnemy(this);
+        enemy3 = Factory.CreateBasicEnemy(this);
 
         enemy1.transform.position += Vector3.forward * 3 + Vector3.right * 3;
         enemy2.transform.position += Vector3.forward * 3 + Vector3.right * 0;

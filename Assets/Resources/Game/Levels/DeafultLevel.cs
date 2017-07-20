@@ -117,13 +117,9 @@ public class DefaultLevel : Level
         Object.Destroy(enemy3);
 
         //Spawn enemies.
-        enemy1 = CreateGameObject("ENEMY1");
-        enemy2 = CreateGameObject("ENEMY2");
-        enemy3 = CreateGameObject("ENEMY3");
-
-        enemy1.AddComponent<BasicEnemy>();
-        enemy2.AddComponent<BasicEnemy>();
-        enemy3.AddComponent<BasicEnemy>();
+        enemy1 = Factory.CreateBasicEnemy(this);
+        enemy2 = Factory.CreateBasicEnemy(this);
+        enemy3 = Factory.CreateBasicEnemy(this);
 
         enemy1.transform.position += Vector3.forward * 3 + Vector3.right * 3;
         enemy2.transform.position += Vector3.forward * 3 + Vector3.right * 0;

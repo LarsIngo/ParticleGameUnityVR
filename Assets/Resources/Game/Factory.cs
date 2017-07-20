@@ -63,44 +63,6 @@ public static class Factory
 
     }
 
-    public static GameObject CreateEnemySkull(Level level)
-    {
-        GameObject gameObject = level.CreateGameObject("SkullEnemy" + count++);
-
-        // RENDERER.
-        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        Material material = new Material(Shader.Find("Standard"));
-        Debug.Assert(material);
-        Texture2D albedo = Resources.Load<Texture2D>("Models/Skull/skull_diffuse");
-        Debug.Assert(albedo);
-        Texture2D normal = Resources.Load<Texture2D>("Models/Skull/skull_normal");
-        Debug.Assert(normal);
-        material.SetTexture("_MainTex", albedo);
-        material.SetTexture("_BumpMap", normal);
-        meshRenderer.material = material;
-
-        // MESH.
-        Mesh mesh = Resources.Load<Mesh>("Models/Skull/skull");
-        Debug.Assert(mesh);
-        gameObject.AddComponent<MeshFilter>().mesh = mesh;
-
-        // HEALTH.
-        Health health = gameObject.AddComponent<Health>();
-        health.HealthStart = 
-
-        // PARTICLES.
-        //GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
-        //system.EmittParticleLifeTime = 0.2f;
-        //system.EmittFrequency = 3000.0f;
-        //system.EmittConstantAcceleration = new Vector3(0, 0, 1);
-        //system.EmittMesh = mesh;
-
-        // ROTATE.
-        gameObject.transform.Rotate(0, 180, 0);
-
-        return gameObject;
-    }
-
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
     {
 
@@ -266,25 +228,47 @@ public static class Factory
 
         //We add the emitter to the tip.
         GPUParticleSystem system = TipGO.AddComponent<GPUParticleSystem>();
-        system.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
-        system.EmittParticleLifeTime = 5.0f;
-        system.EmittFrequency = 500.0f;
-        system.EmittInitialVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-        system.EmittInheritVelocity = false;
 
-        Vector4[] colorControlpoints = { new Vector4(0, 1, 0, 0), new Vector4(1, 1, 0, 0.1f), new Vector4(0, 1, 0, 0.2f), new Vector4(1, 0, 0, 0.3f), new Vector4(0, 1, 0, 0.4f),
-            new Vector4(0, 0, 1, 0.5f), new Vector4(1, 0, 1, 0.6f), new Vector4(0, 1, 1, 0.7f), new Vector4(0, 1, 0, 0.8f), new Vector4(1, 1, 1, 0.9f), new Vector4(1, 1, 0, 1) };
+        GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
+        descriptor.EmittFrequency = 500.0f;
+        descriptor.Lifetime = 5.0f;
+        descriptor.InheritVelocity = false;
 
-        system.ColorLifetimePoints = colorControlpoints;
+        GPUParticleDescriptor.LifetimePoints colorPoints = new GPUParticleDescriptor.LifetimePoints();
+        colorPoints.Add(new Vector4(0, 1, 0, 0));
+        colorPoints.Add(new Vector4(1, 1, 0, 0.1f));
+        colorPoints.Add(new Vector4(0, 1, 0, 0.2f));
+        colorPoints.Add(new Vector4(1, 0, 0, 0.3f));
+        colorPoints.Add(new Vector4(0, 1, 0, 0.4f));
+        colorPoints.Add(new Vector4(0, 0, 1, 0.5f));
+        colorPoints.Add(new Vector4(1, 0, 1, 0.6f));
+        colorPoints.Add(new Vector4(0, 1, 1, 0.7f));
+        colorPoints.Add(new Vector4(0, 1, 0, 0.8f));
+        colorPoints.Add(new Vector4(1, 1, 1, 0.9f));
+        colorPoints.Add(new Vector4(1, 1, 0, 1));
+        descriptor.ColorOverLifetime = colorPoints;
 
-        Vector4[] haloControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(0, 1, 0, 0.333f), new Vector4(0, 0, 1, 0.666f), new Vector4(0.5f, 0, 0.5f, 1) };
-        system.HaloLifetimePoints = haloControlpoints;
+        GPUParticleDescriptor.LifetimePoints haloPoints = new GPUParticleDescriptor.LifetimePoints();
+        haloPoints.Add(new Vector4(1, 0, 0, 0));
+        haloPoints.Add(new Vector4(0, 1, 0, 0.333f));
+        haloPoints.Add(new Vector4(0, 0, 1, 0.666f));
+        haloPoints.Add(new Vector4(0.5f, 0, 0.5f, 1));
+        descriptor.HaloOverLifetime = haloPoints;
 
-        Vector4[] scaleControlpoints = { new Vector4(0.01f, 0.01f, 0, 0), new Vector4(0.01f, 0.01f, 0, 1) };
-        system.ScaleLifetimePoints = scaleControlpoints;
+        GPUParticleDescriptor.LifetimePoints scalePoints = new GPUParticleDescriptor.LifetimePoints();
+        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 0));
+        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 1));
+        descriptor.ScaleOverLifetime = scalePoints;
 
-        Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
-        system.TransparencyLifetimePoints = transparencyControlpoints;
+        GPUParticleDescriptor.LifetimePoints opacityPoints = new GPUParticleDescriptor.LifetimePoints();
+        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0));
+        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0.8f));
+        opacityPoints.Add(new Vector4(0.0f, 0, 0, 1.0f));
+        descriptor.OpacityOverLifetime = opacityPoints;
+
+        descriptor.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
+
+        system.particleDescriptor = descriptor;
 
         //We add an attractor to the tip.
         GPUParticleAttractor attractor = TipGO.AddComponent<GPUParticleAttractor>();
@@ -386,31 +370,43 @@ public static class Factory
         emitter.transform.localScale = Vector3.one * 0.7f;
         emitter.transform.localPosition = new Vector3(1, 0, 0) * reboundDistance;
 
-        particleEmitter.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
-        particleEmitter.EmittParticleLifeTime = 5.0f;
-        particleEmitter.EmittFrequency = 500.0f;
-        particleEmitter.EmittInheritVelocity = false;
+        GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
+        descriptor.EmittFrequency = 500.0f;
+        descriptor.Lifetime = 5.0f;
+        descriptor.InheritVelocity = false;
+
+        GPUParticleDescriptor.LifetimePoints colorPoints = new GPUParticleDescriptor.LifetimePoints();
+        colorPoints.Add(new Vector4(1, 0, 0, 0));
+        colorPoints.Add(new Vector4(1, 1, 0, 0.3f));
+        colorPoints.Add(new Vector4(0, 1, 0, 1.0f));
+        descriptor.ColorOverLifetime = colorPoints;
+
+        GPUParticleDescriptor.LifetimePoints haloPoints = new GPUParticleDescriptor.LifetimePoints();
+        haloPoints.Add(new Vector4(0, 0, 1, 0));
+        haloPoints.Add(new Vector4(1, 0, 1, 1.0f));
+        descriptor.HaloOverLifetime = haloPoints;
+
+        GPUParticleDescriptor.LifetimePoints scalePoints = new GPUParticleDescriptor.LifetimePoints();
+        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 0));
+        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 1));
+        descriptor.ScaleOverLifetime = scalePoints;
+
+        GPUParticleDescriptor.LifetimePoints opacityPoints = new GPUParticleDescriptor.LifetimePoints();
+        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0));
+        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0.8f));
+        opacityPoints.Add(new Vector4(0.0f, 0, 0, 1.0f));
+        descriptor.OpacityOverLifetime = opacityPoints;
+
+        descriptor.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
+
+        particleEmitter.particleDescriptor = descriptor;
 
         particleEmitter.Active = false;
-
-        Vector4[] colorControlpoints = { new Vector4(1, 0, 0, 0), new Vector4(1, 1, 0, 0.3f), new Vector4(0, 1, 0, 1.0f) };
-        particleEmitter.ColorLifetimePoints = colorControlpoints;
-
-        Vector4[] haloControlpoints = { new Vector4(0, 0, 1, 0), new Vector4(1, 0, 1, 1.0f) };
-        particleEmitter.HaloLifetimePoints = haloControlpoints;
-
-        Vector4[] scaleControlpoints = { new Vector4(0.04f, 0.04f, 0, 0), new Vector4(0.01f, 0.01f, 0, 0.02f), new Vector4(0.01f, 0.01f, 0, 1) };
-        particleEmitter.ScaleLifetimePoints = scaleControlpoints;
-
-        Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
-        particleEmitter.TransparencyLifetimePoints = transparencyControlpoints;
         
         endAttractor = new GameObject();
         endAttractor.AddComponent<GPUParticleAttractor>();
         endAttractor.transform.parent = TipGO.transform;
         endAttractor.transform.localPosition = Vector3.up * 17.0f;
-
-        
 
         WandGO.transform.Rotate(90, 0, 0);
         WandGO.transform.position += Vector3.forward * 0.2f;
@@ -430,15 +426,34 @@ public static class Factory
         return WandGO;
     }
 
-    public static GameObject CreateBasicEnemy(Level level, Vector3 position)
+    public static GameObject CreateBasicEnemy(Level level)
     {
-        GameObject enemy = level.CreateGameObject("enemy" + count);
-        enemy.AddComponent<BasicEnemy>();
-        enemy.transform.position = position;
+        GameObject gameObject = level.CreateGameObject("Basic Enemy " + count++);
 
-        count++;
+        // MESH.
+        gameObject.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
 
-        return enemy;
+        // MATERIAL.
+        Material material = gameObject.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Unlit/Color"));
+        material.color = Color.green;
+
+        // COLLIDER.
+        gameObject.AddComponent<GPUParticleSphereCollider>().Radius = 0.5f;
+
+        // HEALTH.
+        gameObject.AddComponent<Health>();
+
+        return gameObject;
+    }
+
+    private static Mesh CreateMesh(PrimitiveType primitive)
+    {
+
+        GameObject tmp = GameObject.CreatePrimitive(primitive);
+        Mesh mesh = tmp.GetComponent<MeshFilter>().mesh;
+        Object.Destroy(tmp);
+
+        return mesh;
     }
 
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
