@@ -19,21 +19,24 @@ public static class Factory
 
     /// +++ FUNCTIONS +++ ///
 
-    public static void CreateMichaelBayEffect(Level level, Mesh mesh, Transform t, Color meshColor)
+    public static void CreateMichaelBayEffect(Mesh mesh, Transform t, Color meshColor)
     {
-        GameObject michael = level.CreateGameObject("michael" + count++);
-        GameObject blackHole = level.CreateGameObject("blackhole" + count++);
+        GameObject michael = new GameObject("michael" + count++);
+        //GameObject blackHole = new GameObject("blackhole" + count++);
         michael.transform.position = t.position;
         michael.transform.rotation = t.rotation;
-        blackHole.transform.position = t.position;
-        blackHole.transform.rotation = t.rotation;
+        //blackHole.transform.position = t.position;
+        //blackHole.transform.rotation = t.rotation;
 
-        GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
-        exp.Mesh = mesh;
-        exp.ExplosionColor = meshColor;
-        exp.ExplosionSpeed = 8;
-        exp.ShrinkSpeed = 1.0f;
-        exp.ShrinkTime = 0.25f;
+        if (mesh != null)
+        {
+            GeometryExplosion exp = michael.AddComponent<GeometryExplosion>();
+            exp.Mesh = mesh;
+            exp.ExplosionColor = meshColor;
+            exp.ExplosionSpeed = 8;
+            exp.ShrinkSpeed = 1.0f;
+            exp.ShrinkTime = 0.25f;
+        }
 
         TimerStretch timeStrech = michael.AddComponent<TimerStretch>();
         timeStrech.TimePrePhase = 0.5f;
@@ -44,10 +47,10 @@ public static class Factory
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
         michaelLifetimer.LifeTime = 4.0f;
 
-        GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
-        attractor.Power = 250.0f;
-        LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
-        blackHoleLifetimer.LifeTime = 0.2f;
+        //GPUParticleAttractor attractor = blackHole.AddComponent<GPUParticleAttractor>();
+        //attractor.Power = 250.0f;
+        //LifeTimer blackHoleLifetimer = blackHole.AddComponent<LifeTimer>();
+        //blackHoleLifetimer.LifeTime = 0.2f;
 
         AudioSource ceramicSound = michael.AddComponent<AudioSource>();
         ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");
@@ -58,6 +61,40 @@ public static class Factory
         artillerySound.time = 0.25f;
         artillerySound.Play();
 
+    }
+
+    public static GameObject CreateEnemySkull(Level level)
+    {
+        GameObject gameObject = level.CreateGameObject("SkullEnemy" + count++);
+
+        // RENDERER.
+        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+        Material material = new Material(Shader.Find("Standard"));
+        Debug.Assert(material);
+        Texture2D albedo = Resources.Load<Texture2D>("Models/Skull/skull_diffuse");
+        Debug.Assert(albedo);
+        Texture2D normal = Resources.Load<Texture2D>("Models/Skull/skull_normal");
+        Debug.Assert(normal);
+        material.SetTexture("_MainTex", albedo);
+        material.SetTexture("_BumpMap", normal);
+        meshRenderer.material = material;
+
+        // MESH.
+        Mesh mesh = Resources.Load<Mesh>("Models/Skull/skull");
+        Debug.Assert(mesh);
+        gameObject.AddComponent<MeshFilter>().mesh = mesh;
+
+        // PARTICLES.
+        GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
+        system.EmittParticleLifeTime = 0.2f;
+        system.EmittFrequency = 3000.0f;
+        system.EmittConstantAcceleration = new Vector3(0, 0, 1);
+        system.EmittMesh = mesh;
+
+        // ROTATE.
+        gameObject.transform.Rotate(0, 180, 0);
+
+        return gameObject;
     }
 
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
@@ -214,7 +251,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = new GameObject("Tip" + count++);
+        GameObject TipGO = level.CreateGameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -279,7 +316,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = new GameObject("Tip" + count++);
+        GameObject TipGO = level.CreateGameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -307,11 +344,11 @@ public static class Factory
     public static GameObject CreateVatsugWand(Level level, float powerEndAttractor, float powerNormalAttractors, float pendulumSpeed, float reboundDistance, bool rightHand)
     {
         //The wand is the parent object to all the parts.
-        GameObject WandGO = level.CreateGameObject("VatsugWand" + count);
+        GameObject WandGO = level.CreateGameObject("VatsugWand" + count++);
 
         //The rod
         //We set its transform.
-        GameObject RodGO = level.CreateGameObject("Rod" + count);
+        GameObject RodGO = level.CreateGameObject("Rod" + count++);
         RodGO.transform.parent = WandGO.transform;
         RodGO.transform.localScale += Vector3.up * 8;
         RodGO.transform.localScale *= 0.2f;
@@ -320,7 +357,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = new GameObject("Tip" + count);
+        GameObject TipGO = level.CreateGameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -333,7 +370,7 @@ public static class Factory
         
         GameObject endAttractor;
 
-        GameObject emitter = new GameObject("VatsugEmitter");
+        GameObject emitter = level.CreateGameObject("VatsugEmitter" + count++);
 
 
         //We add the emitter to the tip.
@@ -363,8 +400,8 @@ public static class Factory
 
         Vector4[] transparencyControlpoints = { new Vector4(1.0f, 0, 0, 0), new Vector4(1.0f, 0, 0, 0.8f), new Vector4(0.0f, 0, 0, 1.0f) };
         particleEmitter.TransparencyLifetimePoints = transparencyControlpoints;
-        
-        endAttractor = new GameObject();
+
+        endAttractor = level.CreateGameObject("endAttractor" + count++);
         endAttractor.AddComponent<GPUParticleAttractor>();
         endAttractor.transform.parent = TipGO.transform;
         endAttractor.transform.localPosition = Vector3.up * 17.0f;
@@ -383,19 +420,17 @@ public static class Factory
         wand.mParticleEmitter = emitter;// particleEmitter;
         wand.rightHand = rightHand;
         wand.pendulumSpeed = pendulumSpeed;
-
-        count++;
+        
 
         return WandGO;
     }
 
     public static GameObject CreateBasicEnemy(Level level, Vector3 position)
     {
-        GameObject enemy = level.CreateGameObject("enemy" + count);
+        GameObject enemy = level.CreateGameObject("enemy" + count++);
         enemy.AddComponent<BasicEnemy>();
         enemy.transform.position = position;
-
-        count++;
+        
 
         return enemy;
     }
@@ -405,19 +440,19 @@ public static class Factory
     {
 
 
-        GameObject StraitenOutFishObject = level.CreateGameObject("StraitenOutFishObject" + count);
+        GameObject StraitenOutFishObject = level.CreateGameObject("StraitenOutFishObject" + count++);
         StraitenOutFishObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/nnj3de_crucarp/Materials/cruscarp", typeof(Material));
         StraitenOutFishObject.transform.Rotate(new Vector3(-90, 0, 0));
         StraitenOutFishObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/nnj3de_crucarp/cruscarp", typeof(Mesh));
         StraitenOutFishObject.transform.localScale = new Vector3(300, 200, 200);
         StraitenOutFishObject.transform.parent = parent;
         StraitenOutFishObject.transform.localPosition = new Vector3(0, 0, -0.25f);
-        
+
+        StraitenOutFishObject.AddComponent<Health>().HealthStart = 1000;
+
         GPUParticleSphereCollider particleColider = StraitenOutFishObject.AddComponent<GPUParticleSphereCollider>();
         particleColider.Radius = 0.25f;
-
-        count++;
-
+        
         return;
     }
 

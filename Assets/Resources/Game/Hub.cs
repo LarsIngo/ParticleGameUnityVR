@@ -18,6 +18,7 @@ public class Hub
         ATTRACTOR_LVL_1,
         ATTRACTOR_LVL_2,
         VATSUG,
+        SKULL,
         DEFAULT
     };
 
