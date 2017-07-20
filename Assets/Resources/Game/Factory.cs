@@ -546,14 +546,17 @@ public static class Factory
 
     public static void CreateIsland(Level level)
     {
-         GameObject island = level.CreateGameObject("Island" + count++);
+        GameObject island = level.CreateGameObject("Island" + count++);
 
         island.AddComponent<MeshRenderer>().material = (Material)Resources.Load("Moon/sand_mat");
         island.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
         island.transform.localScale = new Vector3(5, 0.5f, 5);
         island.transform.position = new Vector3(0, -0.1f, 0);
-        
-
+        /*
+        GameObject palmTree = level.CreateGameObject("Palmtree" + count++);
+        palmTree.AddComponent<MeshRenderer>().material = (Material)Resources.Load("Palm/Materials/leaf");
+        palmTree.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("Palm/Meshes/PalmTree_dual_trunk");*/
+        //PalmTree_dual_leafs_1sided
 
 
         return;

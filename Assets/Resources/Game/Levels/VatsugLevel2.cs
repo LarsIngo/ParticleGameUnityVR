@@ -32,8 +32,8 @@ public class VatsugLevel2 : Level
     public override void Awake()
     {
         GameObject enemy = this.CreateGameObject("TheOneAndOnlyVatsug2");
-        /*Factory.CreateVatsug(this, enemy.transform);
-        enemy.AddComponent<Vatsug>();*/
+        Factory.CreateVatsug(this, enemy.transform);
+        enemy.AddComponent<Vatsug2>();
 
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
 
@@ -52,9 +52,7 @@ public class VatsugLevel2 : Level
         GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 5.0f);
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 5.0f);
-
-        //rightWand.transform.parent = rightHand.transform;
-        //leftWand.transform.parent = leftHand.transform;
+        
 
 
         // SKYBOX.
