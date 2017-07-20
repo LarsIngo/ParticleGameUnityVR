@@ -269,6 +269,7 @@ public class GPUParticleSystem : MonoBehaviour
     public bool Active { get { return mActive; } set { mActive = value; } }
 
     // APPLY.
+    private bool mApply = false;
     private void Apply() { DeInitSystem(); InitSystem(); }
 
     private void UpdateMesh()
@@ -771,23 +772,24 @@ public class GPUParticleSystem : MonoBehaviour
 
     private bool mInitiated = false;
 
+    void Awake()
+    {
+
+        mDescriptor = new GPUParticleDescriptor();
+
+        if (sGPUParticleSystemDictionary == null) StartUp();
+        InitSystem();
+        sGPUParticleSystemDictionary[this] = this;
+
+    }
+
     // MONOBEHAVIOUR.
     public GPUParticleDescriptor ParticleDescriptor {
         set
         {
 
             mDescriptor = value;
-
-            if (!mInitiated)
-            {
-
-                if (sGPUParticleSystemDictionary == null) StartUp();
-                InitSystem();
-                sGPUParticleSystemDictionary[this] = this;
-                mInitiated = true;
-
-            }
-            else Apply();
+            mApply = true;
 
         }
     }
@@ -803,7 +805,7 @@ public class GPUParticleSystem : MonoBehaviour
         UpdateVertexBuffers();
 
         // Update buffers if needed (updated).
-        if (mDescriptor.OutOfDate)
+        if (mDescriptor.OutOfDate || mApply)
             Apply();
 
         // Emitt new particles this frame if active.
