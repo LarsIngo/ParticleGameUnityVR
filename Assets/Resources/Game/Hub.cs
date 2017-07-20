@@ -19,6 +19,7 @@ public class Hub
         ATTRACTOR_LVL_2,
         VATSUG,
         SKULL,
+        PARTICLETEST,
         DEFAULT
     };
 
@@ -61,6 +62,7 @@ public class Hub
     /// Default: null
     /// </summary>
     public int stars;
+
 
     /// --- MEMBERS --- ///
 

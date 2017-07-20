@@ -9,8 +9,6 @@ public class VatsugLevel : Level
 
     GameObject enemy;
 
-    float timer = 0;
-
     /// --- MEMBERS --- ///
 
 
@@ -22,8 +20,14 @@ public class VatsugLevel : Level
     /// <param name="name">Name of level, must be unique.</param>
     public VatsugLevel(string name) : base(name)
     {
-        enemy = Factory.CreateBasicEnemy(this);
-        enemy.transform.position = new Vector3(0, 0, 3.0f);
+        enemy = this.CreateGameObject("TheOneAndOnlyVatsug");
+        Factory.CreateVatsug(this, enemy.transform);
+        enemy.AddComponent<Vatsug>();
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
+
+        GameObject boat = this.CreateGameObject("ImOnABoat");
+        boat.AddComponent<Boat>();
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(boat, 1.0f);
 
         StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
         stageInfo.mName = "Vatsug Level";
@@ -33,7 +37,9 @@ public class VatsugLevel : Level
         //Equip a wand.
         GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
         GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
-
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 1.0f);
+        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 1.0f);
+        
         rightWand.transform.parent = rightHand.transform;
         leftWand.transform.parent = leftHand.transform;
         
@@ -82,22 +88,7 @@ public class VatsugLevel : Level
     /// </summary>
     public override void Update()
     {
-
-        if (enemy)
-            timer += Time.deltaTime;
-
-        float x = Mathf.Tan(Time.time / 12.0f);
-        float y = Mathf.Cos(Time.time) * 3.0f + 2.0f;
-        float z = Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f;
-
-        if (z < 3.0f && z > 3.0f && x < 3.0f && x > 3.0f && y < 3.9f)
-        {
-            y = 3.9f;
-        }
-
-
-        enemy.transform.position.Set(x, y, z);// = ;= new Vector3(Mathf.Tan(Time.time / 12.0f), Mathf.Cos(Time.time) * 5.0f * Mathf.Sin(Time.time) * 2, Mathf.Sin(Time.time / 3) * 3.0f + Mathf.Cos(Time.time / 3) * 3.0f);
-
+        
     }
 
     /// <summary>

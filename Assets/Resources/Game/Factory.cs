@@ -217,7 +217,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = new GameObject("Tip" + count++);
+        GameObject TipGO = level.CreateGameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -268,7 +268,7 @@ public static class Factory
 
         descriptor.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
 
-        system.particleDescriptor = descriptor;
+        system.ParticleDescriptor = descriptor;
 
         //We add an attractor to the tip.
         GPUParticleAttractor attractor = TipGO.AddComponent<GPUParticleAttractor>();
@@ -304,7 +304,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = new GameObject("Tip" + count++);
+        GameObject TipGO = level.CreateGameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -332,11 +332,11 @@ public static class Factory
     public static GameObject CreateVatsugWand(Level level, float powerEndAttractor, float powerNormalAttractors, float pendulumSpeed, float reboundDistance, bool rightHand)
     {
         //The wand is the parent object to all the parts.
-        GameObject WandGO = level.CreateGameObject("VatsugWand" + count);
+        GameObject WandGO = level.CreateGameObject("VatsugWand" + count++);
 
         //The rod
         //We set its transform.
-        GameObject RodGO = level.CreateGameObject("Rod" + count);
+        GameObject RodGO = level.CreateGameObject("Rod" + count++);
         RodGO.transform.parent = WandGO.transform;
         RodGO.transform.localScale += Vector3.up * 8;
         RodGO.transform.localScale *= 0.2f;
@@ -345,7 +345,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = new GameObject("Tip" + count);
+        GameObject TipGO = level.CreateGameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -358,17 +358,18 @@ public static class Factory
         
         GameObject endAttractor;
 
-        GameObject emitter = new GameObject("VatsugEmitter");
+        GameObject emitter = level.CreateGameObject("VatsugEmitter" + count++);
 
 
         //We add the emitter to the tip.
         GPUParticleSystem particleEmitter = emitter.AddComponent<GPUParticleSystem>();
-        GPUParticleAttractor attractor = emitter.AddComponent<GPUParticleAttractor>();
+        emitter.AddComponent<GPUParticleAttractor>().Power = 0.0f;
         TempVisuals(emitter, PrimitiveType.Sphere, Color.blue);
         emitter.GetComponent<Renderer>().enabled = false;
         emitter.transform.parent = TipGO.transform;
         emitter.transform.localScale = Vector3.one * 0.7f;
         emitter.transform.localPosition = new Vector3(1, 0, 0) * reboundDistance;
+        
 
         GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
         descriptor.EmittFrequency = 500.0f;
@@ -399,14 +400,15 @@ public static class Factory
 
         descriptor.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
 
-        particleEmitter.particleDescriptor = descriptor;
+        particleEmitter.ParticleDescriptor = descriptor;
 
         particleEmitter.Active = false;
         
         endAttractor = new GameObject();
-        endAttractor.AddComponent<GPUParticleAttractor>();
+        endAttractor.AddComponent<GPUParticleAttractor>().Power = 0.0f;
         endAttractor.transform.parent = TipGO.transform;
         endAttractor.transform.localPosition = Vector3.up * 17.0f;
+        
 
         WandGO.transform.Rotate(90, 0, 0);
         WandGO.transform.position += Vector3.forward * 0.2f;
@@ -420,8 +422,7 @@ public static class Factory
         wand.mParticleEmitter = emitter;// particleEmitter;
         wand.rightHand = rightHand;
         wand.pendulumSpeed = pendulumSpeed;
-
-        count++;
+        
 
         return WandGO;
     }
@@ -455,6 +456,28 @@ public static class Factory
 
         return mesh;
     }
+    
+
+    public static void CreateVatsug(Level level, Transform parent)
+    {
+
+
+        GameObject StraitenOutFishObject = level.CreateGameObject("StraitenOutFishObject" + count++);
+        StraitenOutFishObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/nnj3de_crucarp/Materials/cruscarp", typeof(Material));
+        StraitenOutFishObject.transform.Rotate(new Vector3(-90, 0, 0));
+        StraitenOutFishObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/nnj3de_crucarp/cruscarp", typeof(Mesh));
+        GPUParticleSphereCollider particleColider = StraitenOutFishObject.AddComponent<GPUParticleSphereCollider>();
+        particleColider.Radius = 0.001f;
+        StraitenOutFishObject.transform.localScale = new Vector3(300, 200, 200);
+        StraitenOutFishObject.transform.parent = parent;
+        StraitenOutFishObject.transform.localPosition = new Vector3(0, 0, -0.25f);
+
+        StraitenOutFishObject.AddComponent<Health>().HealthStart = 1000;
+
+        
+        
+        return;
+    }
 
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
     {
@@ -469,6 +492,8 @@ public static class Factory
         Object.Destroy(tmp);
 
     }
+
+
 
     /// --- FUNCTIONS --- ///
 }

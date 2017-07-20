@@ -181,31 +181,41 @@ public class GPUParticleDescriptor {
     /// </summary>
     public Vector3 InitialVelocity { get { return mInitialVelocity; } set { mInitialVelocity = value; } }
 
-    private LifetimePoints mColorOverLifetime = new LifetimePoints(); private LifetimePoints mNewColorOverLifetime;
+    private LifetimePoints mColorOverLifetime; private LifetimePoints mNewColorOverLifetime;
     /// <summary>
     /// Points describing how the color should change over its lifetime.
     /// </summary>
     public LifetimePoints ColorOverLifetime { get { return mColorOverLifetime; } set { mNewColorOverLifetime = value; mOutOfDate = true; } }
 
-    private LifetimePoints mHaloOverLifetime = new LifetimePoints(); private LifetimePoints mNewHaloOverLifetime;
+    private LifetimePoints mHaloOverLifetime; private LifetimePoints mNewHaloOverLifetime;
     /// <summary>
     /// Points describing how the color should change over its lifetime.
     /// </summary>
     public LifetimePoints HaloOverLifetime { get { return mHaloOverLifetime; } set { mNewHaloOverLifetime = value; mOutOfDate = true; } }
 
-    private LifetimePoints mScaleOverLifetime = new LifetimePoints(); private LifetimePoints mNewScaleOverLifetime;
+    private LifetimePoints mScaleOverLifetime; private LifetimePoints mNewScaleOverLifetime;
     /// <summary>
     /// Points describing how the color should change over its lifetime.
     /// </summary>
     public LifetimePoints ScaleOverLifetime { get { return mScaleOverLifetime; } set { mNewScaleOverLifetime = value; mOutOfDate = true; } }
 
-    private LifetimePoints mOpacityOverLifetime = new LifetimePoints(); private LifetimePoints mNewOpacityOverLifetime;
+    private LifetimePoints mOpacityOverLifetime; private LifetimePoints mNewOpacityOverLifetime;
     /// <summary>
     /// Points describing how the color should change over its lifetime.
     /// </summary>
     public LifetimePoints OpacityOverLifetime { get { return mOpacityOverLifetime; } set { mNewOpacityOverLifetime = value; mOutOfDate = true; } }
 
     /// --- MEMBERS --- ///
+
+    public GPUParticleDescriptor()
+    {
+
+        mNewColorOverLifetime = new LifetimePoints();
+        mNewHaloOverLifetime = new LifetimePoints();
+        mNewScaleOverLifetime = new LifetimePoints();
+        mNewOpacityOverLifetime = new LifetimePoints();
+
+    }
 
     public void Update()
     {

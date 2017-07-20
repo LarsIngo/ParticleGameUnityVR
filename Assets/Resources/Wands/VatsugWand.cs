@@ -19,6 +19,11 @@ public class VatsugWand : MonoBehaviour
 
     public float pendulumSpeed = 1.0f;
 
+    private void Awake()
+    {
+        mEndAttractor.GetComponent<GPUParticleAttractor>().Power = 0.0f;
+
+    }
 
     // Update is called once per frame
     void Update()
