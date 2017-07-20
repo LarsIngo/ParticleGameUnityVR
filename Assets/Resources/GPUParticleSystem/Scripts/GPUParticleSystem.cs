@@ -186,14 +186,14 @@ public class GPUParticleSystem : MonoBehaviour
             for (int i = 0; i < systemData.GetLength(0); ++i)
                 systemData[i] = -100.0f;
 
-            system.mPositionBuffer.GetInputBuffer().SetData(systemData);
-            system.mPositionBuffer.GetOutputBuffer().SetData(systemData);
+            system.mLifetimeBuffer.GetInputBuffer().SetData(systemData);
+            system.mLifetimeBuffer.GetOutputBuffer().SetData(systemData);
 
             for (int i = 0; i < systemData.GetLength(0); ++i)
                 systemData[i] = float.MaxValue;
 
-            system.mLifetimeBuffer.GetInputBuffer().SetData(systemData);
-            system.mLifetimeBuffer.GetOutputBuffer().SetData(systemData);
+            system.mPositionBuffer.GetInputBuffer().SetData(systemData);
+            system.mPositionBuffer.GetOutputBuffer().SetData(systemData);
 
             int[] r = new int[sMaxGPUColliderCount];
             for (int i = 0; i < r.GetLength(0); ++i)
