@@ -25,9 +25,7 @@ public class VatsugLevel : Level
         enemy.AddComponent<Vatsug>();
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
 
-        GameObject boat = this.CreateGameObject("ImOnABoat");
-        boat.AddComponent<Boat>();
-        this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(boat, 1.0f);
+        GameObject boat = Factory.CreateBoat(this);
 
         GameObject moon = Factory.CreateMoon(this);
 

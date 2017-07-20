@@ -488,6 +488,17 @@ public static class Factory
         return;
     }
 
+    public static GameObject CreateBoat(Level level)
+    {
+        GameObject boat = level.CreateGameObject("dasBoot" + count++);
+
+        boat.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/Boat/Meshes/Materials/Boat_MAT", typeof(Material));
+        boat.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/Boat/Meshes/Boat_Mesh", typeof(Mesh));
+        boat.transform.Rotate(new Vector3(-90, 90, 0));
+        
+        return boat;
+    }
+
     public static GameObject CreateMoon(Level level)
     {
         GameObject moon = level.CreateGameObject("moon" + count++);
