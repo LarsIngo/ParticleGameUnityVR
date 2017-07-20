@@ -63,10 +63,10 @@ public static class Factory
 
     }
 
-    public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
+    public static GameObject CreateStageScreen(StageInfo stageInfo)
     {
 
-        GameObject screen = CreateWorldImage(level, stageInfo.mThumbnail);
+        GameObject screen = CreateWorldImage(stageInfo.mThumbnail);
         screen.AddComponent<MeshCollider>();
         screen.AddComponent<GPUParticleAttractor>();
         screen.GetComponent<GPUParticleAttractor>().Max = 1;
@@ -76,28 +76,14 @@ public static class Factory
         Mesh planeMesh = tmp.GetComponent<MeshFilter>().mesh;
         Object.Destroy(tmp);
 
-        GameObject frameLeft = level.CreateGameObject("FRAME" + count++);
-        frameLeft.transform.Rotate(90, 0, 0);
-        frameLeft.transform.localScale *= 0.1f;
-        frameLeft.transform.localScale = new Vector3(frameLeft.transform.localScale.x * 0.1f, frameLeft.transform.localScale.y, frameLeft.transform.localScale.z);
-        frameLeft.transform.position += Vector3.right / 2;
-        frameLeft.transform.parent = screen.transform;
-
-        GameObject frameRight = level.CreateGameObject("FRAME" + count++);
-        frameRight.transform.Rotate(90, 0, 0);
-        frameRight.transform.localScale *= 0.1f;
-        frameRight.transform.localScale = new Vector3(frameLeft.transform.localScale.x * 0.1f, frameLeft.transform.localScale.y, frameLeft.transform.localScale.z);
-        frameRight.transform.position -= Vector3.right / 2;
-        frameRight.transform.parent = screen.transform;
-
         if (stageInfo.mLocked || stageInfo.mStarRequirement > Hub.Instance.stars)
         {
 
-            GameObject lockImage = CreateWorldImage(level, "Textures/Locked", true);
+            GameObject lockImage = CreateWorldImage("Textures/Locked", true);
             lockImage.transform.position -= Vector3.forward * 0.1f;
             lockImage.transform.SetParent(screen.transform);
 
-            GameObject requirement = CreateWorldText(level, stageInfo.mStarRequirement.ToString(), Color.red * 0.9f);
+            GameObject requirement = CreateWorldText(stageInfo.mStarRequirement.ToString(), Color.red * 0.9f);
             requirement.transform.position -= Vector3.forward * 0.15f;
             requirement.transform.localScale *= 2;
             requirement.transform.SetParent(screen.transform);
@@ -106,17 +92,17 @@ public static class Factory
         else
         {
 
-            GameObject name = CreateWorldText(level, stageInfo.mName, Color.white);
+            GameObject name = CreateWorldText(stageInfo.mName, Color.white);
             name.transform.position -= Vector3.up * 0.6f;
             name.transform.localScale *= 0.3f;
             name.transform.SetParent(screen.transform);
 
-            GameObject stars = level.CreateGameObject("STARS" + count++);
+            GameObject stars = new GameObject("STARS" + count++);
 
             if (stageInfo.Score < stageInfo.mGold)
             {
 
-                GameObject gold = CreateWorldImage(level, "Textures/Star");
+                GameObject gold = CreateWorldImage("Textures/Star");
                 gold.transform.position += Vector3.right * 1.1f;
                 gold.transform.parent = stars.transform;
 
@@ -124,14 +110,14 @@ public static class Factory
             if (stageInfo.Score < stageInfo.mSilver)
             {
 
-                GameObject silver = CreateWorldImage(level, "Textures/Star");
+                GameObject silver = CreateWorldImage("Textures/Star");
                 silver.transform.parent = stars.transform;
 
             }
             if (stageInfo.Score < stageInfo.mBronze)
             {
 
-                GameObject bronze = CreateWorldImage(level, "Textures/Star");
+                GameObject bronze = CreateWorldImage("Textures/Star");
                 bronze.transform.position -= Vector3.right * 1.1f;
                 bronze.transform.parent = stars.transform;
 
@@ -151,17 +137,17 @@ public static class Factory
 
     }
 
-    public static GameObject CreateWorldText(Level level, string text, Color color)
+    public static GameObject CreateWorldText(string text, Color color)
     {
 
-        GameObject canvasGO = level.CreateGameObject("CANVAS" + count++);
+        GameObject canvasGO = new GameObject("CANVAS" + count++);
         Canvas canvas = canvasGO.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.GetComponent<RectTransform>().position = Vector3.zero;
         canvas.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1000);
         canvas.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 1000);
 
-        GameObject textGO = level.CreateGameObject("TEXT" + count++);
+        GameObject textGO = new GameObject("TEXT" + count++);
         textGO.transform.SetParent(canvasGO.transform);
         UnityEngine.UI.Text textUI = textGO.AddComponent<UnityEngine.UI.Text>();
         textUI.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 5000);
@@ -177,10 +163,10 @@ public static class Factory
 
     }
 
-    public static GameObject CreateWorldImage(Level level, string image, bool transparent = false)
+    public static GameObject CreateWorldImage(string image, bool transparent = false)
     {
 
-        GameObject imageGO = level.CreateGameObject("image" + count++);
+        GameObject imageGO = new GameObject("image" + count++);
         MeshFilter meshFilter = imageGO.AddComponent<MeshFilter>();
         MeshRenderer meshRenderer = imageGO.AddComponent<MeshRenderer>();
 
@@ -200,15 +186,15 @@ public static class Factory
 
     }
 
-    public static GameObject CreateAttractorWand(Level level, float power, bool rightHand)
+    public static GameObject CreateAttractorWand(float power, bool rightHand)
     {
 
         //The wand is the parent object to all the parts.
-        GameObject WandGO = level.CreateGameObject("AttractorWand" + count++);
+        GameObject WandGO = new GameObject("AttractorWand" + count++);
 
         //The rod
         //We set its transform.
-        GameObject RodGO = level.CreateGameObject("Rod" + count++);
+        GameObject RodGO = new GameObject("Rod" + count++);
         RodGO.transform.parent = WandGO.transform;
         RodGO.transform.localScale += Vector3.up * 8;
         RodGO.transform.localScale *= 0.2f;
@@ -217,7 +203,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = level.CreateGameObject("Tip" + count++);
+        GameObject TipGO = new GameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -283,21 +269,25 @@ public static class Factory
         wand.system = system;
         wand.attractor = attractor;
 
-        WandGO.AddComponent<MirrorHandMovement>().rightHand = rightHand;
+        GameObject hand = new GameObject(rightHand ? "Right" : "Left" + "hand");
 
-        return WandGO;
+        WandGO.transform.parent = hand.transform;
+
+        hand.AddComponent<MirrorHandMovement>().rightHand = rightHand;
+
+        return hand;
 
     }
 
-    public static GameObject CreateMenuWand(Level level, bool rightHand)
+    public static GameObject CreateMenuWand(bool rightHand)
     {
 
         //The wand is the parent object to all the parts.
-        GameObject WandGO = level.CreateGameObject("MenuWand" + count++);
+        GameObject WandGO = new GameObject("MenuWand" + count++);
 
         //The rod
         //We set its transform.
-        GameObject RodGO = level.CreateGameObject("Rod" + count++);
+        GameObject RodGO = new GameObject("Rod" + count++);
         RodGO.transform.parent = WandGO.transform;
         RodGO.transform.localScale += Vector3.up * 8;
         RodGO.transform.localScale *= 0.2f;
@@ -306,7 +296,7 @@ public static class Factory
 
         //The tip
         //We set its transform
-        GameObject TipGO = level.CreateGameObject("Tip" + count++);
+        GameObject TipGO = new GameObject("Tip" + count++);
         TipGO.transform.parent = WandGO.transform;
         TipGO.transform.position += Vector3.up * 2;
         TipGO.transform.localScale *= 0.5f;
@@ -322,14 +312,17 @@ public static class Factory
 
         WandGO.transform.Rotate(90, 0, 0);
 
-
         MenuWand wand = WandGO.AddComponent<MenuWand>();
         wand.lineRenderer = lineRenderer;
         wand.rightHand = rightHand;
 
-        WandGO.AddComponent<MirrorHandMovement>().rightHand = rightHand;
+        GameObject hand = new GameObject(rightHand ? "Right" : "Left" + "hand");
 
-        return WandGO;
+        WandGO.transform.parent = hand.transform;
+
+        hand.AddComponent<MirrorHandMovement>().rightHand = rightHand;
+
+        return hand;
 
     }
 
@@ -432,9 +425,9 @@ public static class Factory
         return WandGO;
     }
 
-    public static GameObject CreateBasicEnemy(Level level)
+    public static GameObject CreateBasicEnemy()
     {
-        GameObject gameObject = level.CreateGameObject("Basic Enemy " + count++);
+        GameObject gameObject = new GameObject("Basic Enemy " + count++);
 
         // MESH.
         gameObject.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);

@@ -9,7 +9,7 @@ public class StageInfo  {
     public int mWorld;
     public int mStage;
 
-    public Hub.STATE mStageState;
+    public string mSceneName;
 
     public int mStarRequirement;
     public bool mLocked;
@@ -56,13 +56,13 @@ public class StageInfo  {
     public float mSilver;
     public float mGold;
 
-    public StageInfo(int world, int stage, Hub.STATE stageState)
+    public StageInfo(int world, int stage, string SceneName)
     {
 
         mWorld = world;
         mStage = stage;
 
-        mStageState = stageState;
+        mSceneName = SceneName;
 
         mStarRequirement = 0;
         mLocked = false;

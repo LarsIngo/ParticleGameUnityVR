@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Attractor_lvl_2 : Level
-{
+public class Attractor_lvl_2_Main : MonoBehaviour {
+
     /// +++ MEMBERS +++ ///
 
     StageInfo stageInfo;
@@ -18,25 +18,8 @@ public class Attractor_lvl_2 : Level
 
     /// --- MEMBERS --- ///
 
-
-    /// +++ FUNCTIONS +++ ///
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="name">Name of level, must be unique.</param>
-    public Attractor_lvl_2(string name) : base(name)
-    {
-
-
-    }
-
-
-    /// <summary>
-    /// Override awake function.
-    /// </summary>
-    public override void Awake()
-    {
+    // Use this for initialization
+    void Start () {
 
         //Equip a wand.
         GameObject rightWand = Factory.CreateAttractorWand(20, true);
@@ -52,13 +35,11 @@ public class Attractor_lvl_2 : Level
         //Spawn enemies.
         SpawnEnemies();
         timer = 0;
-    }
 
-    /// <summary>
-    /// Override update function.
-    /// </summary>
-    public override void Update()
-    {
+    }
+	
+	// Update is called once per frame
+	void Update () {
 
         if ((enemy1 || enemy2 || enemy3))
             timer += Time.deltaTime;
@@ -72,14 +53,6 @@ public class Attractor_lvl_2 : Level
 
         highscore.text = timer.ToString("0.00");
 
-    }
-
-    /// <summary>
-    /// Override sleep function.
-    /// </summary>
-    public override void Sleep()
-    {
-        
     }
 
     void SpawnEnemies()
@@ -103,5 +76,4 @@ public class Attractor_lvl_2 : Level
 
     }
 
-    /// --- FUNCTIONS --- ///
 }
