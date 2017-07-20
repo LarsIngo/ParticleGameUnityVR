@@ -15,7 +15,11 @@ public class Main : MonoBehaviour
 
     // Levels.
     private Level mDeafultLevel;
+
+    //vatsug levels
     private Level mVatsugLevel;
+    private Level mVatsugLevel2;
+
     private Level mMenuLevel;
     private Level mSkullLevel;
 
@@ -37,6 +41,7 @@ public class Main : MonoBehaviour
         mAttractor_lvl_1 = new Attractor_lvl_1("LEVEL:ATTRACTOR_LVL_1");
         mAttractor_lvl_2 = new Attractor_lvl_2("LEVEL:ATTRACTOR_LVL_2");
         mVatsugLevel = new VatsugLevel("LEVEL:VATSUG");
+        mVatsugLevel2 = new VatsugLevel2("LEVEL:VATSUG2");
         mSkullLevel = new SkullLevel("LEVEL:SKULL");
         mParticleTestLevel = new ParticleTestScene("LEVEL:PARTICLETEST");
 
@@ -55,10 +60,12 @@ public class Main : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F4))
             Hub.Instance.SetState(Hub.STATE.VATSUG);
         if (Input.GetKeyDown(KeyCode.F5))
-            Hub.Instance.SetState(Hub.STATE.DEFAULT);
+            Hub.Instance.SetState(Hub.STATE.VATSUG2);
         if (Input.GetKeyDown(KeyCode.F6))
-            Hub.Instance.SetState(Hub.STATE.SKULL);
+            Hub.Instance.SetState(Hub.STATE.DEFAULT);
         if (Input.GetKeyDown(KeyCode.F7))
+            Hub.Instance.SetState(Hub.STATE.SKULL);
+        if (Input.GetKeyDown(KeyCode.F8))
             Hub.Instance.SetState(Hub.STATE.PARTICLETEST);
 
         // Check state.
@@ -78,6 +85,10 @@ public class Main : MonoBehaviour
 
             case Hub.STATE.VATSUG:
                 mCurrentLevel = mVatsugLevel;
+                break;
+
+            case Hub.STATE.VATSUG2:
+                mCurrentLevel = mVatsugLevel2;
                 break;
 
             case Hub.STATE.DEFAULT:

@@ -20,7 +20,7 @@ public class Vatsug : MonoBehaviour {
 
         
         for (int i = 1; i < nrOfClips + 1; ++i)
-            clips[i] = Resources.Load<AudioClip>("Samples/Vatsug/splish" + i.ToString());
+            clips[i - 1] = Resources.Load<AudioClip>("Samples/Vatsug/splish" + i);
     }
 	
 	// Update is called once per frame
@@ -39,7 +39,8 @@ public class Vatsug : MonoBehaviour {
         }
         if (Mathf.Abs(gameObject.transform.position.y) <= 0.1f)
         {
-            sound.clip = clips[Random.Range(1, nrOfClips + 1)];
+            sound.Stop();
+            sound.clip = clips[Random.Range(1, nrOfClips) - 1];
             sound.Play();
         }
     }

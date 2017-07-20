@@ -489,6 +489,8 @@ public static class Factory
         return;
     }
 
+    
+
     public static GameObject CreateBoat(Level level)
     {
         GameObject boat = level.CreateGameObject("dasBoot" + count++);
@@ -540,6 +542,21 @@ public static class Factory
         
 
         return waterGO;
+    }
+
+    public static void CreateIsland(Level level)
+    {
+         GameObject island = level.CreateGameObject("Island" + count++);
+
+        island.AddComponent<MeshRenderer>().material = (Material)Resources.Load("Moon/sand_mat");
+        island.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
+        island.transform.localScale = new Vector3(5, 0.5f, 5);
+        island.transform.position = new Vector3(0, -0.1f, 0);
+        
+
+
+
+        return;
     }
 
     
