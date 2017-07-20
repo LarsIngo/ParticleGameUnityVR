@@ -536,9 +536,8 @@ public static class Factory
         waterGO.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("WaterOther/Models/WaterPlane", typeof(Mesh));// CreateMesh(PrimitiveType.Plane);
         waterGO.transform.localScale = new Vector3(32, 1, 32);
 
-        UnityStandardAssets.Water.Water vann = waterGO.AddComponent<UnityStandardAssets.Water.Water>();
-        vann.waterMode = UnityStandardAssets.Water.Water.WaterMode.Refractive;
-        vann.textureSize = 256;
+        UnityStandardAssets.Water.WaterBasic vann = waterGO.AddComponent<UnityStandardAssets.Water.WaterBasic>();
+        
 
         return waterGO;
     }
