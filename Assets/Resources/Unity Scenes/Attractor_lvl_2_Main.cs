@@ -53,6 +53,13 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
 
         highscore.text = timer.ToString("0.00");
 
+        if (VrInput.Menu() || Input.GetKeyDown(KeyCode.Escape))
+        {
+
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+
+        }
+
     }
 
     void SpawnEnemies()
