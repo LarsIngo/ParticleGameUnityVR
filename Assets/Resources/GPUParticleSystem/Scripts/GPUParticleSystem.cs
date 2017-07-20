@@ -775,8 +775,6 @@ public class GPUParticleSystem : MonoBehaviour
     void Awake()
     {
 
-        mDescriptor = new GPUParticleDescriptor();
-
         if (sGPUParticleSystemDictionary == null) StartUp();
         InitSystem();
         sGPUParticleSystemDictionary[this] = this;
