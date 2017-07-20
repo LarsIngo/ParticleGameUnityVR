@@ -59,55 +59,51 @@ public class GPUParticleSystem : MonoBehaviour
 
     /// +++ STATIC +++ ///
 
-    static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary = null;
+    static Dictionary<GPUParticleSystem, GPUParticleSystem> sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
 
-    static ComputeShader sComputeShader = null;
-    static int sKernelUpdate = -1;
-    static int sKernelEmitt = -1;
-    static int sKernelResult = -1;
-    static int sKernelMergeInitSort = -1;
-    static int sKernelSort = -1;
+    ComputeShader sComputeShader = null;
+    int sKernelUpdate = -1;
+    int sKernelEmitt = -1;
+    int sKernelResult = -1;
+    int sKernelMergeInitSort = -1;
+    int sKernelSort = -1;
 
-    static Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
+    Dictionary<Mesh, EmittMeshInfo> sEmittMeshInfoDictionary = null;
 
-    static ComputeBuffer sGPUParticleAttractorBuffer = null;
+    ComputeBuffer sGPUParticleAttractorBuffer = null;
     const int sMaxAttractorCount = 64;
 
-    static ComputeBuffer sGPUParticleVectorFieldBuffer = null;
+    ComputeBuffer sGPUParticleVectorFieldBuffer = null;
     const int sMaxVectorFieldCount = 64;
 
-    static ComputeBuffer sGPUParticleSphereColliderBuffer = null;
+    ComputeBuffer sGPUParticleSphereColliderBuffer = null;
     const int sMaxSphereColliderCount = 64;
 
-    static SwapBuffer sGPUColliderResultSwapBuffer = null;
+    SwapBuffer sGPUColliderResultSwapBuffer = null;
     const int sMaxGPUColliderCount = sMaxSphereColliderCount;
 
     // Merge Particle Buffers.
-    static SwapBuffer sMergedPositionBuffer = null;
-    static SwapBuffer sMergedVelocityBuffer = null;
-    static SwapBuffer sMergedLifetimeBuffer = null;
-    static SwapBuffer sMergedColorBuffer = null;
-    static SwapBuffer sMergedHaloBuffer = null;
-    static SwapBuffer sMergedScaleBuffer = null;
-    static SwapBuffer sMergedTransperancyBuffer = null;
-    static int sMergedParticleCount = 0;
-    static int sTotalParticleCount = 0;
-    static SwapBuffer sSortElementSwapBuffer = null;
+    SwapBuffer sMergedPositionBuffer = null;
+    SwapBuffer sMergedVelocityBuffer = null;
+    SwapBuffer sMergedLifetimeBuffer = null;
+    SwapBuffer sMergedColorBuffer = null;
+    SwapBuffer sMergedHaloBuffer = null;
+    SwapBuffer sMergedScaleBuffer = null;
+    SwapBuffer sMergedTransperancyBuffer = null;
+    int sMergedParticleCount = 0;
+    int sTotalParticleCount = 0;
+    SwapBuffer sSortElementSwapBuffer = null;
 
     // Material.
-    static Material sRenderMaterial = null;
+    Material sRenderMaterial = null;
 
     // Flags to make sure we only do some functins onces per frame.
-    static bool sLateUpdate;
-    static Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>> sRenderedCameraDictionary = new Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>>();
+    bool sLateUpdate;
+    Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>> sRenderedCameraDictionary = new Dictionary<Camera, Dictionary<Camera.MonoOrStereoscopicEye, Camera.MonoOrStereoscopicEye>>();
 
     // STARTUP.
-    static void StartUp()
+    void StartUp()
     {
-
-        Debug.Log("STARTUP");
-
-        sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
 
         sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
         sKernelUpdate = sComputeShader.FindKernel("UPDATE");
@@ -137,7 +133,7 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     // SHUTDOWN.
-    static void Shutdown()
+    void Shutdown()
     {
         Debug.Log("SHUTDOWN");
 
@@ -178,7 +174,7 @@ public class GPUParticleSystem : MonoBehaviour
     /// <summary>
     /// Kills all living particles.
     /// </summary>
-    public static void KillAllParticles()
+    public void KillAllParticles()
     {
         Debug.Log("KILLALLPARTILCES1");
 
@@ -655,7 +651,7 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     // MERGE.
-    private static void Merge()
+    private void Merge()
     {
         if (sMergedParticleCount < sTotalParticleCount)
         {
@@ -730,7 +726,7 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     // SORT.
-    private static void Sort()
+    private void Sort()
     {
         Debug.Assert(sTotalParticleCount <= sMergedParticleCount);
         Debug.Assert(Mathf.IsPowerOfTwo(sMergedParticleCount));
@@ -840,7 +836,7 @@ public class GPUParticleSystem : MonoBehaviour
     }
 
     // FETCH COLLISION RESULTS.
-    private static void FetchCollisionResults()
+    private void FetchCollisionResults()
     {
         List<GPUParticleSphereCollider> sphereColliderList = GPUParticleSphereCollider.GetGPUParticleSphereColliderList();
 
