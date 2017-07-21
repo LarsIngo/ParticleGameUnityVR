@@ -22,7 +22,7 @@ public class StageInfo  {
     public void SetScore(float newScore)
     {
 
-        if (mScore < newScore)
+        if (mScore > newScore)
             return;
 
         int starsEarned = 0;
