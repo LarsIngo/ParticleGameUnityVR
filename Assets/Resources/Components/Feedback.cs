@@ -45,7 +45,6 @@ public class FeedBack : MonoBehaviour
 
             Debug.Assert(mLastFrameHealth > health.HealthCurrent);
             mDamageTaken += mLastFrameHealth - health.HealthCurrent;
-            Debug.Log(health.HealthCurrent);
 
             // Update state.
             if (mDamageTaken > 500)
@@ -64,6 +63,7 @@ public class FeedBack : MonoBehaviour
         else if (mTimeSinceLastHit > mResetTime)
         {
             mDamageTaken = 0;
+            mLastState = mCurrentState = STATE.NONE;
         }
 
         // Check state.
@@ -76,15 +76,15 @@ public class FeedBack : MonoBehaviour
                     break;
 
                 case STATE.COOL:
-                    Factory.CreateFeedbackText("COOL", Color.red, transform.position + Vector3.up, new Vector3(0,0,0));
+                    Factory.CreateFeedbackText("COOL", Color.red, transform.position + Vector3.up, new Vector3(-1, 2, 0.1f));
                     break;
 
                 case STATE.AWESOME:
-                    Factory.CreateFeedbackText("AWESOME", Color.red, transform.position + Vector3.up, new Vector3(0, 0, 0));
+                    Factory.CreateFeedbackText("AWESOME", Color.red, transform.position + Vector3.up, new Vector3(0, 2, 0.1f));
                     break;
 
                 case STATE.OMFG:
-                    Factory.CreateFeedbackText("O M G!!", Color.red, transform.position + Vector3.up, new Vector3(0, 0, 0));
+                    Factory.CreateFeedbackText("O M G!!", Color.red, transform.position + Vector3.up, new Vector3(1, 2, 0.1f));
                     break;
 
                 default:

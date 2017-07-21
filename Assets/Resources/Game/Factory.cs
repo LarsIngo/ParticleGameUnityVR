@@ -202,15 +202,15 @@ public static class Factory
         gameObject.AddComponent<LifeTimer>().LifeTime = 5.0f;
     }
 
-    public static void CreateFeedbackText(string text, Color color, Vector3 origin, Vector3 direction)
+    public static void CreateFeedbackText(string text, Color color, Vector3 origin, Vector3 velocity)
     {
         GameObject gameObject = CreateWorldText(text, color);
 
         gameObject.transform.position = origin;
 
-        gameObject.AddComponent<LifeTimer>().LifeTime = 5.0f;
+        gameObject.AddComponent<LifeTimer>().LifeTime = 0.5f;
 
-        gameObject.AddComponent<Rigidbody>();
+        gameObject.AddComponent<Rigidbody>().velocity = velocity;
     }
 
     public static GameObject CreateStageScreen(StageInfo stageInfo)
