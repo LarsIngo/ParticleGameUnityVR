@@ -10,16 +10,21 @@ public class VatsugMain : MonoBehaviour
     
     
     UnityEngine.UI.Text highscore;
-    float controllerSpawnDelay;
-    bool once;
+    private float controllerSpawnDelay;
+    private bool once;
+    private const int nrOfVatsugs = 20;
+    private GameObject[] enemies;
+    private float timer;
 
 
     /// --- MEMBERS --- ///
+    
 
     // Use this for initialization
     void Start()
     {
-        int nrOfVatsugs = 20;
+        
+        enemies = new GameObject[nrOfVatsugs];
         for (int i = 0; i < nrOfVatsugs; ++i)
         {
             GameObject enemy = new GameObject("TheOneAndOnlyVatsug");
@@ -36,6 +41,10 @@ public class VatsugMain : MonoBehaviour
 
         controllerSpawnDelay = 1.0f;
         once = false;
+
+
+        //30 sec on the clock
+        timer = 30.0f;
         //Equip a wand.
         /*GameObject rightWand = Factory.CreateAttractorWand(20, false);
         GameObject leftWand = Factory.CreateAttractorWand(20, false);
@@ -93,6 +102,18 @@ public class VatsugMain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        timer -= Time.deltaTime;
+        if (timer <= 0.0f)
+        {
+            int counter = 0;
+            for (int i = 0; i < nrOfVatsugs; ++i)
+            {
+                if (!enemies[i])
+                {
+                    ++counter;
+                }
+            }
+        }
         if (controllerSpawnDelay <= 0 && !once)
         {
             Factory.CreateAttractorWand(20, true);

@@ -33,9 +33,9 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo.mThumbnail = "Textures/vatsugicon";
 
 
-        stageInfo.mBronze = 30;
-        stageInfo.mSilver = 20;
-        stageInfo.mGold = 10;
+        stageInfo.mBronze = 5;
+        stageInfo.mSilver = 10;
+        stageInfo.mGold = 15;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
