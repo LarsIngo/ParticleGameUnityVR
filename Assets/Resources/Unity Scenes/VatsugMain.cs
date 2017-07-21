@@ -17,13 +17,24 @@ public class VatsugMain : MonoBehaviour
     private float timer;
 
 
+    private StageInfo mStageInfo;
+
+
     /// --- MEMBERS --- ///
-    
+
 
     // Use this for initialization
     void Start()
     {
-        
+        for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
+        {
+
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Vatsug2")
+                mStageInfo = Hub.Instance.mStageInfoList[i];
+
+        }
+
+
         enemies = new GameObject[nrOfVatsugs];
         for (int i = 0; i < nrOfVatsugs; ++i)
         {
@@ -111,6 +122,8 @@ public class VatsugMain : MonoBehaviour
                     ++counter;
                 }
             }
+            if (mStageInfo.Score > counter)
+                mStageInfo.SetScore(counter);
         }
         if (controllerSpawnDelay <= 0 && !once)
         {

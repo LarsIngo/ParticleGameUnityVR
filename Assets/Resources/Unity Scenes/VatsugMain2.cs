@@ -14,17 +14,32 @@ public class VatsugMain2 : MonoBehaviour
     float controllerSpawnDelay;
     bool once;
 
+
+    private float timer;
+    private const int nrOfVatsugs = 20;
+    GameObject[] enemies;
+
+    private StageInfo mStageInfo;
+
     /// --- MEMBERS --- ///
 
     // Use this for initialization
     void Start()
     {
-        int nrOfVatsugs = 10;
+        timer = 30.0f;
+        for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
+        {
+
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Vatsug2")
+                mStageInfo = Hub.Instance.mStageInfoList[i];
+
+        }
+        enemies = new GameObject[nrOfVatsugs];
         for (int i = 0; i < nrOfVatsugs; ++i)
         {
-            GameObject enemy = new GameObject("TheOneAndOnlyVatsug2" + i);
-            Factory.CreateVatsug2(enemy.transform);
-            enemy.AddComponent<Vatsug2>();
+            enemies[i] = new GameObject("TheOneAndOnlyVatsug2" + i);
+            Factory.CreateVatsug2(enemies[i].transform);
+            enemies[i].AddComponent<Vatsug2>();
         }
         //this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
 
@@ -95,7 +110,20 @@ public class VatsugMain2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        timer -= Time.deltaTime;
+        if (timer <= 0.0f)
+        {
+            int counter = 0;
+            for (int i = 0; i < nrOfVatsugs; ++i)
+            {
+                if (!enemies[i])
+                {
+                    ++counter;
+                }
+            }
+            if (mStageInfo.Score > counter)
+                mStageInfo.SetScore(counter);
+        }
         if (controllerSpawnDelay <= 0 && !once)
         {
             Factory.CreateAttractorWand(20, true);
