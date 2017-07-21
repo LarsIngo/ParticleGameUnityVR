@@ -28,16 +28,7 @@ public class VatsugMain : MonoBehaviour
     void Start()
     {
         counter = 0;
-        // TIMER.
-        GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);
-        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
-        timerText.transform.localScale *= 100;
-        mCurrentScore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
-       
-        // Highscore.
-        GameObject Highscore = Factory.CreateWorldText("Highscore:" + mStageInfo.highscore, Color.white);
-        Highscore.transform.position += Vector3.forward * 100 + Vector3.up * 30;
-        Highscore.transform.localScale *= 20;
+        
 
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
@@ -46,6 +37,17 @@ public class VatsugMain : MonoBehaviour
                 mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
+
+        // TIMER.
+        GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);
+        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
+        timerText.transform.localScale *= 100;
+        mCurrentScore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+
+        // Highscore.
+        GameObject Highscore = Factory.CreateWorldText("Highscore:" + mStageInfo.highscore, Color.white);
+        Highscore.transform.position += Vector3.forward * 100 + Vector3.up * 30;
+        Highscore.transform.localScale *= 20;
 
 
         enemies = new List<GameObject>();

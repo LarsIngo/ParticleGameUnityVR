@@ -27,17 +27,7 @@ public class VatsugMain2 : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        // TIMER.
-        GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);
-        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
-        timerText.transform.localScale *= 100;
-        mCurrentScore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
         
-
-        // Highscore.
-        GameObject Highscore = Factory.CreateWorldText("Highscore:" + mStageInfo.highscore, Color.white);
-        Highscore.transform.position += Vector3.forward * 100 + Vector3.up * 30;
-        Highscore.transform.localScale *= 20;
 
         timer = 30.0f;
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
@@ -47,6 +37,18 @@ public class VatsugMain2 : MonoBehaviour
                 mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
+        // TIMER.
+        GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);
+        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
+        timerText.transform.localScale *= 100;
+        mCurrentScore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+
+
+        // Highscore.
+        GameObject Highscore = Factory.CreateWorldText("Highscore:" + mStageInfo.highscore, Color.white);
+        Highscore.transform.position += Vector3.forward * 100 + Vector3.up * 30;
+        Highscore.transform.localScale *= 20;
+
         enemies = new List<GameObject>();
         for (int i = 0; i < nrOfVatsugs; ++i)
         {
