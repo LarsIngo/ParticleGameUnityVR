@@ -85,10 +85,10 @@ public class Attractor_lvl_3_Main : MonoBehaviour {
 
     float enemyTimer = 0;
     float endTimer = 0;
-	// Update is called once per frame
-	void Update () {
+    bool lost = false;
+    // Update is called once per frame
+    void Update () {
 
-        bool lost = false;
         for (int i = 0; i < mEnemyList.Count; ++i)
             if (mEnemyList[i] && mEnemyList[i].transform.position.z < -2)
             {
