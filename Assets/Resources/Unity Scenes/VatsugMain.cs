@@ -18,11 +18,12 @@ public class VatsugMain : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        SpawnSystem sp = new SpawnSystem();
         GameObject enemy = new GameObject("TheOneAndOnlyVatsug");
         Factory.CreateVatsug(enemy.transform);
         enemy.AddComponent<Vatsug>();
 
-        //this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
+        //this.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
 
         GameObject boat = Factory.CreateBoat();
 
@@ -32,10 +33,10 @@ public class VatsugMain : MonoBehaviour
 
 
         //Equip a wand.
-        //GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
+        GameObject rightWand = Factory.CreateAttractorWand(20, false);
         GameObject leftWand = Factory.CreateAttractorWand(20, false);
-        //this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 5.0f);
-        //this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 5.0f);
+        sp.AddGameObjectWithDelay(rightWand, 2.0f);
+        sp.AddGameObjectWithDelay(leftWand, 2.0f);
 
         //rightWand.transform.parent = rightHand.transform;
         //leftWand.transform.parent = leftHand.transform;

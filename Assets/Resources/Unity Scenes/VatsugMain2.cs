@@ -18,6 +18,7 @@ public class VatsugMain2 : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        SpawnSystem sp = new SpawnSystem();
         GameObject enemy = new GameObject("TheOneAndOnlyVatsug2");
         Factory.CreateVatsug2(enemy.transform);
         enemy.AddComponent<Vatsug2>();
@@ -35,11 +36,10 @@ public class VatsugMain2 : MonoBehaviour
         Factory.CreateIsland();
 
         //Equip a wand.
-        //        GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
+        GameObject rightWand = Factory.CreateAttractorWand(20, false);
         GameObject leftWand = Factory.CreateAttractorWand(20, false);
-        //    this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 5.0f);
-        //this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 5.0f);
-
+        sp.AddGameObjectWithDelay(rightWand, 2.0f);
+        sp.AddGameObjectWithDelay(leftWand, 2.0f);
 
 
         // SKYBOX.
