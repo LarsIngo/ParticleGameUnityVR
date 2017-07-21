@@ -113,15 +113,16 @@ public class VatsugMain2 : MonoBehaviour
         timer -= Time.deltaTime;
         if (timer <= 0.0f)
         {
+            
             int counter = 0;
             for (int i = 0; i < nrOfVatsugs; ++i)
             {
-                if (!enemies[i])
+                if (enemies[i].GetComponentInChildren<SphereCollider>() != null)
                 {
                     ++counter;
                 }
             }
-            if (mStageInfo.Score > counter)
+            if (mStageInfo.Score < counter)
                 mStageInfo.SetScore(counter);
         }
         if (controllerSpawnDelay <= 0 && !once)

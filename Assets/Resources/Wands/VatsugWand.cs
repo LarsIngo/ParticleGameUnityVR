@@ -6,12 +6,13 @@ public class VatsugWand : MonoBehaviour
 {
 
     public GameObject mEndAttractor;
+    public GameObject mParticleEmitter;
 
     public float mPowerEndAttractor;
     public float mTimerEndAttractor = 0.1f;
     private float mTimerCurrentEndAttractor = 0.1f;
 
-    public GameObject mParticleEmitter;
+    
 
     public bool rightHand;
     public float mPowerAttractors;
@@ -42,7 +43,7 @@ public class VatsugWand : MonoBehaviour
             {
                 
 
-                mParticleEmitter.transform.localPosition = new Vector3(Mathf.Cos(Time.time * pendulumSpeed), 0.0f, 0.0f) * mReboundDistance;
+                //mParticleEmitter.transform.localPosition = new Vector3(Mathf.Cos(Time.time * pendulumSpeed), 0.0f, 0.0f) * mReboundDistance;
 
 
                 mParticleEmitter.GetComponent<GPUParticleSystem>().Active = true;

@@ -122,12 +122,12 @@ public class VatsugMain : MonoBehaviour
                     ++counter;
                 }
             }
-            if (mStageInfo.Score > counter)
+            if (mStageInfo.Score < counter)
                 mStageInfo.SetScore(counter);
         }
         if (controllerSpawnDelay <= 0 && !once)
         {
-            Factory.CreateAttractorWand(20, true);
+            Factory.CreateVatsugWand(100, 50, 0, 0, true);
             Factory.CreateAttractorWand(20, false);
             once = true;
         }
