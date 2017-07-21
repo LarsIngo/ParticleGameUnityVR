@@ -86,6 +86,7 @@ public class MenuSceneMain : MonoBehaviour {
         }
         skybox.material = skyboxMat;
 
+        Time.timeScale = 1.0f;
     }
 	
 	// Update is called once per frame
