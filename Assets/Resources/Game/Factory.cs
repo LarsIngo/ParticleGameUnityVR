@@ -55,6 +55,7 @@ public static class Factory
 
         AudioSource ceramicSound = michael.AddComponent<AudioSource>();
         ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");
+        ceramicSound.time = 0.2f;
         ceramicSound.Play();
 
         AudioSource artillerySound = michael.AddComponent<AudioSource>();
