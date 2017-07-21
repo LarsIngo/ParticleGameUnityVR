@@ -30,12 +30,12 @@ public class Vatsug2 : MonoBehaviour
         gameObject.transform.LookAt(newPos);
         prevPos = newPos;
 
-        if (!gameObject.GetComponentInChildren<Transform>())
+        /*if (!gameObject.GetComponentInChildren<Transform>())
         {
             Destroy(gameObject);
-        }
+        }*/
         sounddelay -= Time.deltaTime;
-        if (sounddelay <= 0.0f)
+        if (sounddelay <= 0.0f && sound)
         {
             sounddelay = Random.Range(4.0f, 9.0f);
             sound.Play();

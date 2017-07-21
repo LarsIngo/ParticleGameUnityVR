@@ -31,7 +31,7 @@ public class VatsugMain : MonoBehaviour
 
         GameObject water = Factory.CreateWater();
 
-        controllerSpawnDelay = 2.0f;
+        controllerSpawnDelay = 1.0f;
         once = false;
         //Equip a wand.
         /*GameObject rightWand = Factory.CreateAttractorWand(20, false);
