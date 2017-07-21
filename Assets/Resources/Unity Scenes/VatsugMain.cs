@@ -128,7 +128,7 @@ public class VatsugMain : MonoBehaviour
         if (controllerSpawnDelay <= 0 && !once)
         {
             Factory.CreateVatsugWand(100, 50, 0, 0, true);
-            Factory.CreateAttractorWand(20, false);
+            //Factory.CreateAttractorWand(20, false);
             once = true;
         }
         else
