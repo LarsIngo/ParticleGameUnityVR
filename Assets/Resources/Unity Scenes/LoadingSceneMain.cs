@@ -38,8 +38,8 @@ public class LoadingSceneMain : MonoBehaviour {
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
-        stageInfo = new StageInfo(2, 0, "Vatsug2");
-        stageInfo.mName = "Vatsug 2";
+        stageInfo = new StageInfo(2, 1, "Vatsug2");
+        stageInfo.mName = "Vatsug2";
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
