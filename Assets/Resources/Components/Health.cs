@@ -13,6 +13,8 @@ public class Health : MonoBehaviour
     float mHealthStart = 1000;
     float mHealthCurrent = 1000;
 
+    public bool slowmotionEffect = true;
+
     /// <summary>
     /// Start health of entity.
     /// Default: 1000

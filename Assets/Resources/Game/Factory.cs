@@ -595,7 +595,9 @@ public static class Factory
         StraitenOutFishObject.transform.parent = parent;
         StraitenOutFishObject.transform.localPosition = new Vector3(0, 0, -0.25f);
 
-        StraitenOutFishObject.AddComponent<Health>().HealthStart = 1000;
+        Health hp = StraitenOutFishObject.AddComponent<Health>();
+        hp.HealthStart = 1000;
+        hp.slowmotionEffect = false;
 
         AudioSource sound = StraitenOutFishObject.AddComponent<AudioSource>();
         sound.volume = 0.1f;
@@ -623,7 +625,9 @@ public static class Factory
         StraitenOutBirdObject.transform.parent = parent;
         StraitenOutBirdObject.transform.localPosition = new Vector3(0, 0, -0.1f);
 
-        StraitenOutBirdObject.AddComponent<Health>().HealthStart = 1000;
+        Health hp = StraitenOutBirdObject.AddComponent<Health>();
+        hp.HealthStart = 1000;
+        hp.slowmotionEffect = false;
 
         AudioSource sound = StraitenOutBirdObject.AddComponent<AudioSource>();
         sound.volume = 0.1f;
