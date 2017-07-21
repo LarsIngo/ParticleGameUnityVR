@@ -19,10 +19,13 @@ public class VatsugMain : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        GameObject enemy = new GameObject("TheOneAndOnlyVatsug");
-        Factory.CreateVatsug(enemy.transform);
-        enemy.AddComponent<Vatsug>();
-
+        int nrOfVatsugs = 20;
+        for (int i = 0; i < nrOfVatsugs; ++i)
+        {
+            GameObject enemy = new GameObject("TheOneAndOnlyVatsug");
+            Factory.CreateVatsug(enemy.transform);
+            enemy.AddComponent<Vatsug>();
+        }
         //this.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
 
         GameObject boat = Factory.CreateBoat();

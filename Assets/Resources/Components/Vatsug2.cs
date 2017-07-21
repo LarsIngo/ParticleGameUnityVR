@@ -9,7 +9,6 @@ public class Vatsug2 : MonoBehaviour
     private float sounddelay;
     private AudioSource sound;
 
-    private bool swap;
     private Vector3 mul;
     private Vector3 offs;
     private float timeOffset;
@@ -23,7 +22,7 @@ public class Vatsug2 : MonoBehaviour
         sound = gameObject.GetComponentInChildren<AudioSource>();
         Debug.Assert(sound);
         sounddelay = Random.Range(1.0f, 15.0f);
-        swap = true;
+       
 
         mul = new Vector3(Random.Range(2.0f, 4.0f), Random.Range(0.1f, 1.0f), Random.Range(2.0f, 4.0f));
         offs = new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(2.0f, 3.0f), Random.Range(-1.0f, 1.0f));

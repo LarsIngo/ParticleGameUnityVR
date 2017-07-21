@@ -9,7 +9,14 @@ public class Vatsug : MonoBehaviour {
 
     const int nrOfClips = 4;
     private AudioClip[] clips;
-    
+
+
+    private bool swap;
+    private Vector3 mul;
+    private Vector3 offs;
+    private int algoritm;
+    private float timeoffset;
+
     // Use this for initialization
     void Start () {
         gameObject.transform.position = new Vector3(100, 100, 100);
@@ -18,30 +25,58 @@ public class Vatsug : MonoBehaviour {
         Debug.Assert(sound);
 
         clips = new AudioClip[nrOfClips];
-
+        
         
         for (int i = 1; i < nrOfClips + 1; ++i)
             clips[i - 1] = Resources.Load<AudioClip>("Samples/Vatsug/splish" + i);
+        mul = new Vector3(1 / Random.Range(8.0f, 14.0f), Random.Range(3.0f, 5.0f), Random.Range(3.0f, 5.0f));
+        offs = new Vector3(0, Random.Range(-1.0f, 2.0f), 0);
+
+        algoritm = Random.Range(0, 4);
+
+        timeoffset = Random.Range(0.0f, Mathf.PI * 2 - 0.01f);
+
+        if (Random.Range(0, 2) == 1)
+        {
+            swap = true;
+        }
     }
 	
 	// Update is called once per frame
 	void Update () {
 
-  /*      if (t % Mathf.PI * 2 < 0.1f)
+        float t = Time.time + timeoffset;
+        if (swap)
         {
-            swap = true;
+            t *= -1;
         }
-        if (t % Mathf.PI * 2 > (Mathf.PI * 2) - 0.1f && swap)
+        
+
+        Vector3 newPos = new Vector3(0, 0, 0);
+        if (algoritm == 0)
+            newPos = new Vector3(Mathf.Tan(t / 8.0f), 
+                Mathf.Cos(t) * mul.y, Mathf.Sin(t / 2) * mul.z) + offs;
+        else if (algoritm == 1)
         {
-            mul = new Vector3(mul.x + Random.Range(-1.0f, 1.0f), mul.y + Random.Range(-0.3f, 0.3f), mul.z + Random.Range(-1.0f, 1.0f));
-            swap = false;
+            newPos = new Vector3(Mathf.Sin(t / 2) * mul.z,
+                Mathf.Cos(t) * mul.y, Mathf.Tan(t / 8.0f)) + offs;
+            
         }
-*/
+        else if (algoritm == 2)
+        {
+            newPos = new Vector3(Mathf.Tan(t / 8.0f),
+                Mathf.Cos(t) * mul.y, -Mathf.Sin(t / 2) * mul.z) + offs;
+        }
+        else if (algoritm == 3)
+        {
+            newPos = new Vector3(-Mathf.Sin(t / 2) * mul.z,
+                Mathf.Cos(t) * mul.y, Mathf.Tan(t / 8.0f)) + offs;
+        }
+        
 
-
-        Vector3 newPos = new Vector3(Mathf.Tan((Time.time + 3.0f) / 8.0f), 
-            Mathf.Cos(Time.time + 3.0f) * 3.0f + 1.0f, Mathf.Sin((3.0f + Time.time) / 2) * 3.0f);
-
+        /*Vector3 newPos = new Vector3((Mathf.Tan(t) * mul.x),
+            Mathf.Cos(t) * mul.y, Mathf.Sin(t / 2) * mul.z) + offs;
+            */
         gameObject.transform.position = prevPos;
         gameObject.transform.LookAt(newPos);
         prevPos = newPos;

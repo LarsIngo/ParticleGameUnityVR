@@ -106,7 +106,7 @@
 		fixed4 frag(gsOutput i) : SV_Target
 		{
 			fixed4 texcol = tex2D(_MainTex, i.uv);
-			return float4(gAmbientRed, gAmbientGreen, gAmbientBlue, 1.0f);
+			return texcol;// float4(gAmbientRed, gAmbientGreen, gAmbientBlue, 1.0f);
 		}
 			
 			ENDCG
