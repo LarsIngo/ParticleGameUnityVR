@@ -72,6 +72,8 @@ public class GPUParticleSphereCollider : MonoBehaviour
         if (sGPUParticleSphereColliderList == null) StartUp();
         InitAttractor();
         sGPUParticleSphereColliderList.Add(this);
+
+        GPUParticleSphereCollider.SKIPFRAME = true;
     }
 
     // MONOBEHAVIOUR.
@@ -86,6 +88,8 @@ public class GPUParticleSphereCollider : MonoBehaviour
         DeInitAttractor();
         sGPUParticleSphereColliderList.Remove(this);
         if (sGPUParticleSphereColliderList.Count == 0) Shutdown();
+
+        GPUParticleSphereCollider.SKIPFRAME = true;
     }
 
     // MONOBEHAVIOUR.
