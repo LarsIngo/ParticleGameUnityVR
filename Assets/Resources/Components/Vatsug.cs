@@ -12,6 +12,7 @@ public class Vatsug : MonoBehaviour {
     
     // Use this for initialization
     void Start () {
+        gameObject.transform.position = new Vector3(100, 100, 100);
         prevPos = new Vector3(0, 0, 0);
         sound = gameObject.GetComponentInChildren<AudioSource>();
         Debug.Assert(sound);
