@@ -13,6 +13,8 @@ public class GPUParticleSphereCollider : MonoBehaviour
     private static List<GPUParticleSphereCollider> sGPUParticleSphereColliderList = null;
     public static List<GPUParticleSphereCollider> GetGPUParticleSphereColliderList() { return sGPUParticleSphereColliderList; }
 
+    public static bool SKIPFRAME = false;
+
     // STARTUP.
     public static void StartUp()
     {
