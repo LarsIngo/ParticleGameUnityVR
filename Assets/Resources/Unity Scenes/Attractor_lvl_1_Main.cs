@@ -67,8 +67,9 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
                 Factory.CreateCelebration();
 
                 // Update score.
-                if (mStageInfo.Score > mTimer)
-                    mStageInfo.SetScore(mTimer);
+                float score = 300 - mTimer * 30;
+                if (mStageInfo.Score < score)
+                    mStageInfo.SetScore(score);
             }
         }
 

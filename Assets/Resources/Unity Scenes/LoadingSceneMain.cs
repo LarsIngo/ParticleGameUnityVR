@@ -10,9 +10,9 @@ public class LoadingSceneMain : MonoBehaviour {
         StageInfo stageInfo = new StageInfo(0, 0, "Attractor_lvl_1");
         stageInfo.mName = "My first wand!";
         stageInfo.mThumbnail = "Textures/Attractor_lvl_1";
-        stageInfo.mBronze = 30;
-        stageInfo.mSilver = 15;
-        stageInfo.mGold = 10;
+        stageInfo.mBronze = 0;
+        stageInfo.mSilver = 100;
+        stageInfo.mGold = 200;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
@@ -21,9 +21,9 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo.mThumbnail = "Textures/Attractor_lvl_2";
         stageInfo.mStarRequirement = 2;
 
-        stageInfo.mBronze = 30;
-        stageInfo.mSilver = 15;
-        stageInfo.mGold = 10;
+        stageInfo.mBronze = 0;
+        stageInfo.mSilver = 100;
+        stageInfo.mGold = 200;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
@@ -45,6 +45,17 @@ public class LoadingSceneMain : MonoBehaviour {
 
 
         UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+
+        stageInfo = new StageInfo(0, 2, "Attractor_lvl_3");
+        stageInfo.mName = "A real challenge!";
+        stageInfo.mThumbnail = "Textures/Attractor_lvl_2";
+        stageInfo.mStarRequirement = 5;
+
+        stageInfo.mBronze = 1;
+        stageInfo.mSilver = 5;
+        stageInfo.mGold = 10;
+
+        Hub.Instance.mStageInfoList.Add(stageInfo);
 
     }
 	

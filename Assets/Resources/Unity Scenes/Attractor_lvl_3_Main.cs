@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Attractor_lvl_2_Main : MonoBehaviour {
+public class Attractor_lvl_3_Main : MonoBehaviour {
 
     /// +++ MEMBERS +++ ///
 
@@ -23,7 +23,7 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
         for(int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
 
-            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_2")
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_3")
                 mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
@@ -43,33 +43,44 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
         mTimerDisplay = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
         mTimer = 0;
 
-        // ENEMIES.
-        SpawnEnemies();
-
     }
-	
+
+    float enemyTimer = 0;
 	// Update is called once per frame
 	void Update () {
 
-        // Check if level completed.
-        bool levelDone = true;
-        for (int i = 0; i < mEnemyList.Count && levelDone; ++i)
-            if (mEnemyList[i])
-                levelDone = false;
+        if (mTimer < 30)
+        {
 
-        if (!levelDone)
+            if(enemyTimer > 2)
+            {
+
+                SpawnEnemy();
+                enemyTimer = 0;
+
+            }
+
+            enemyTimer += Time.deltaTime;
             mTimer += Time.deltaTime;
+
+        }
         else
         {
+
             if (mFirstEnterDone)
             {
+
+                float score = 0;
+                for (int i = 0; i < mEnemyList.Count; ++i)
+                    if (!mEnemyList[i])
+                        score++;
+
                 mFirstEnterDone = false;
 
                 // Celebration! :D :D :D
                 Factory.CreateCelebration();
 
                 // Update score.
-                float score = 300 - mTimer * 30;
                 if (mStageInfo.Score < score)
                     mStageInfo.SetScore(score);
 
@@ -90,22 +101,22 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
 
     }
 
-    void SpawnEnemies()
+    void SpawnEnemy()
     {
         // ENEMIES.
         GameObject enemyBlueprint = Factory.CreateBasicEnemy();
-        enemyBlueprint.GetComponent<Health>().HealthStart = 2000;
+        enemyBlueprint.GetComponent<Health>().HealthStart = 200;
 
-        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * 3;
-        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
+        enemyBlueprint.transform.position = Vector3.forward * 20 + Vector3.right * 2 + Vector3.up * 2;
+        GameObject walker = new GameObject();
+        Walk walk = walker.AddComponent<Walk>();
+        enemyBlueprint.transform.parent = walker.transform;
 
-        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * 0;
-        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
+        walker.transform.Rotate(0, 0, Random.Range(0, 360));
+        walk.direction = -Vector3.forward;
+        walk.speed = 6;
 
-        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * -3;
-        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
-
-        Object.DestroyImmediate(enemyBlueprint);
+        mEnemyList.Add(enemyBlueprint);
 
     }
 
