@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MenuLevel : Level
-{
+public class MenuSceneMain : MonoBehaviour {
+
     /// +++ MEMBERS +++ ///
 
     /// <summary>
@@ -18,26 +18,23 @@ public class MenuLevel : Level
 
     /// --- MEMBERS --- ///
 
+    // Use this for initialization
+    void Start () {
 
-    /// +++ FUNCTIONS +++ ///
+        //Equip a wand.
+        GameObject menuWand = Factory.CreateMenuWand(true);
 
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="name">Name of level, must be unique.</param>
-    public MenuLevel(string name) : base(name)
-    {
+        mScreenList = new List<GameObject>();
 
+        GameObject timerText = Factory.CreateWorldText(Hub.Instance.stars.ToString(), Color.black);
+        timerText.transform.position += Vector3.forward * 150 + Vector3.up * 150;
+        timerText.transform.localScale *= 100;
 
+        GameObject starImage = Factory.CreateWorldImage("Textures/Star", true);
+        starImage.transform.position += Vector3.forward * 155 + Vector3.up * 150;
+        starImage.transform.localScale *= 100;
 
-    }
-
-
-    /// <summary>
-    /// Override awake function.
-    /// </summary>
-    public override void Awake()
-    {
+        mStarText = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
 
         mStarText.text = Hub.Instance.stars.ToString();
 
@@ -90,12 +87,18 @@ public class MenuLevel : Level
         skybox.material = skyboxMat;
 
     }
+	
+	// Update is called once per frame
+	void Update () {
 
-    /// <summary>
-    /// Override update function.
-    /// </summary>
-    public override void Update()
-    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[0].mSceneName);
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[1].mSceneName);
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[2].mSceneName);
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[3].mSceneName);
 
         if (VrInput.RightGripPressed())
         {
@@ -104,25 +107,11 @@ public class MenuLevel : Level
             {
 
                 mScreenList[i].transform.position -= VrInput.deltaRight.x * Vector3.right * 5 + VrInput.deltaRight.y * Vector3.up * 5;
-    
+
             }
 
         }
 
     }
 
-    /// <summary>
-    /// Override sleep function.
-    /// </summary>
-    public override void Sleep()
-    {
-
-        for (int i = 0; i < mScreenList.Count; i++)
-            Object.Destroy(mScreenList[i]);
-
-        mScreenList.Clear();
-
-    }
-
-    /// --- FUNCTIONS --- ///
 }

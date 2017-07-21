@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class VrInput : MonoBehaviour {
 
-    public GameObject left;
-    public GameObject right;
-
     static public GameObject leftHand;
     static public GameObject rightHand;
 
@@ -17,11 +14,11 @@ public class VrInput : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        leftController = left.GetComponent<SteamVR_TrackedObject>();
-        rightController = right.GetComponent<SteamVR_TrackedObject>();
+        leftHand = GetComponent<SteamVR_ControllerManager>().left;
+        rightHand = GetComponent<SteamVR_ControllerManager>().right;
 
-        leftHand = left;
-        rightHand = right;
+        leftController = leftHand.GetComponent<SteamVR_TrackedObject>();
+        rightController = rightHand.GetComponent<SteamVR_TrackedObject>();
 
     }
 
@@ -105,11 +102,11 @@ public class VrInput : MonoBehaviour {
     void Update()
     {
 
-        deltaRight = oldRight - right.transform.position;
-        deltaLeft = oldLeft - right.transform.position;
+        deltaRight = oldRight - rightHand.transform.position;
+        deltaLeft = oldLeft - leftHand.transform.position;
 
-        oldRight = right.transform.position;
-        oldLeft = left.transform.position;
+        oldRight = rightHand.transform.position;
+        oldLeft = leftHand.transform.position;
 
     }
 

@@ -35,7 +35,6 @@ public abstract class Level
 
         mName = name;
 
-        Hub.Instance.AddLevel(this);
 
     }
 

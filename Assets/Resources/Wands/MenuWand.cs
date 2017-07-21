@@ -73,7 +73,7 @@ public class MenuWand : MonoBehaviour {
             if (trigger == 1.0f)
             {
 
-                Hub.Instance.SetState(target.GetComponent<StageScreen>().stageInfo.mStageState);
+                UnityEngine.SceneManagement.SceneManager.LoadScene(target.GetComponent<StageScreen>().stageInfo.mSceneName);
 
             }
 
@@ -84,7 +84,7 @@ public class MenuWand : MonoBehaviour {
             if (Input.GetKey(KeyCode.Space))
             {
 
-                Hub.Instance.SetState(target.GetComponent<StageScreen>().stageInfo.mStageState);
+                UnityEngine.SceneManagement.SceneManager.LoadScene(target.GetComponent<StageScreen>().stageInfo.mSceneName);
 
             }
 

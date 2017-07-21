@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
-
+/*
 public class Main : MonoBehaviour
 {
 
@@ -34,8 +34,8 @@ public class Main : MonoBehaviour
 
     private void Start ()
     {
-        Hub.Instance.StartUp();
 
+<<<<<<< HEAD
         mDeafultLevel = new DefaultLevel("LEVEL:DEFAULT");
         mMenuLevel = new MenuLevel("LEVEL:MENU");
         mAttractor_lvl_1 = new Attractor_lvl_1("LEVEL:ATTRACTOR_LVL_1");
@@ -44,13 +44,15 @@ public class Main : MonoBehaviour
         mVatsugLevel2 = new VatsugLevel2("LEVEL:VATSUG2");
         mSkullLevel = new SkullLevel("LEVEL:SKULL");
         mParticleTestLevel = new ParticleTestScene("LEVEL:PARTICLETEST");
+=======
+>>>>>>> master
 
-        Hub.Instance.SetState(Hub.STATE.MENU);
         
     }
 
     private void Update()
     {
+<<<<<<< HEAD
         if (Input.GetKeyDown(KeyCode.F1))
             Hub.Instance.SetState(Hub.STATE.MENU);
         if (Input.GetKeyDown(KeyCode.F2))
@@ -131,6 +133,11 @@ public class Main : MonoBehaviour
 
         if (VrInput.Menu())
             Hub.Instance.SetState(Hub.STATE.MENU);
+=======
+
+
+
+>>>>>>> master
 
     }
 
@@ -140,3 +147,4 @@ public class Main : MonoBehaviour
     }
 
 }
+*/

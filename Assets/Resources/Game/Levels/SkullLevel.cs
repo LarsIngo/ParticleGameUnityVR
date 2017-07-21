@@ -18,10 +18,7 @@ public class SkullLevel : Level
     public SkullLevel(string name) : base(name)
     {
 
-        StageInfo stageInfo = new StageInfo(4, 0, Hub.STATE.SKULL);
-        stageInfo.mName = "Skull Level";
 
-        Hub.Instance.mStageInfoList.Add(stageInfo);
 
     }
 
@@ -33,8 +30,8 @@ public class SkullLevel : Level
     {
 
         //Equip a wand.
-        GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
-        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
+        GameObject rightWand = Factory.CreateAttractorWand(20, true);
+        GameObject leftWand = Factory.CreateAttractorWand(20, false);
 
         // SKYBOX.
         Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));

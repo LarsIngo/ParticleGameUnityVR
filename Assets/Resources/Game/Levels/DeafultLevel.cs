@@ -30,10 +30,7 @@ public class DefaultLevel : Level
     public DefaultLevel(string name) : base(name)
     {
 
-        StageInfo stageInfo = new StageInfo(0,0, Hub.STATE.DEFAULT);
-        stageInfo.mName = "Default Level";
 
-        Hub.Instance.mStageInfoList.Add(stageInfo);
 
     }
 
@@ -45,8 +42,8 @@ public class DefaultLevel : Level
     {
 
         //Equip a wand.
-        GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
-        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
+        GameObject rightWand = Factory.CreateAttractorWand(20, true);
+        GameObject leftWand = Factory.CreateAttractorWand(20, false);
 
         //Spawn enemies.
         SpawnEnemies();
@@ -116,9 +113,9 @@ public class DefaultLevel : Level
         Object.Destroy(enemy3);
 
         //Spawn enemies.
-        enemy1 = Factory.CreateBasicEnemy(this);
-        enemy2 = Factory.CreateBasicEnemy(this);
-        enemy3 = Factory.CreateBasicEnemy(this);
+        enemy1 = Factory.CreateBasicEnemy();
+        enemy2 = Factory.CreateBasicEnemy();
+        enemy3 = Factory.CreateBasicEnemy();
 
         enemy1.transform.position += Vector3.forward * 3 + Vector3.right * 3;
         enemy2.transform.position += Vector3.forward * 3 + Vector3.right * 0;
