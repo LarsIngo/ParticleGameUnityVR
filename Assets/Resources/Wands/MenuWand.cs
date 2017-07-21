@@ -78,14 +78,12 @@ public class MenuWand : MonoBehaviour {
             }
 
         }
-        else
+        else if(target != null)
         {
 
             if (Input.GetKey(KeyCode.Space))
             {
-
                 UnityEngine.SceneManagement.SceneManager.LoadScene(target.GetComponent<StageScreen>().stageInfo.mSceneName);
-
             }
 
         }
