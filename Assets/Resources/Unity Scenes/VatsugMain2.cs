@@ -7,8 +7,8 @@ public class VatsugMain2 : MonoBehaviour
 {
 
     /// +++ MEMBERS +++ ///
-
- 
+    
+    UnityEngine.UI.Text mCurrentScore;
     UnityEngine.UI.Text highscore;
     
     float controllerSpawnDelay;
@@ -17,7 +17,8 @@ public class VatsugMain2 : MonoBehaviour
 
     private float timer;
     private const int nrOfVatsugs = 20;
-    GameObject[] enemies;
+    private int counter = 0;
+    List<GameObject> enemies;
 
     private StageInfo mStageInfo;
 
@@ -26,6 +27,18 @@ public class VatsugMain2 : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        // TIMER.
+        GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);
+        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
+        timerText.transform.localScale *= 100;
+        mCurrentScore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+        
+
+        // Highscore.
+        GameObject Highscore = Factory.CreateWorldText("Highscore:" + mStageInfo.highscore, Color.white);
+        Highscore.transform.position += Vector3.forward * 100 + Vector3.up * 30;
+        Highscore.transform.localScale *= 20;
+
         timer = 30.0f;
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
@@ -34,10 +47,10 @@ public class VatsugMain2 : MonoBehaviour
                 mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
-        enemies = new GameObject[nrOfVatsugs];
+        enemies = new List<GameObject>();
         for (int i = 0; i < nrOfVatsugs; ++i)
         {
-            enemies[i] = new GameObject("TheOneAndOnlyVatsug2" + i);
+            enemies.Add(new GameObject("TheOneAndOnlyVatsug2" + i));
             Factory.CreateVatsug2(enemies[i].transform);
             enemies[i].AddComponent<Vatsug2>();
         }
@@ -104,19 +117,32 @@ public class VatsugMain2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+        foreach (GameObject go in enemies)
+        {
+            if (go.transform.childCount == 0)
+            {
+                ++counter;
+                Destroy(go);
+                enemies.Remove(go);
+                mCurrentScore.text = "Birds sacrificed: " + counter;
+            }
+            
+        }
         timer -= Time.deltaTime;
         if (timer <= 0.0f)
         {
-            
-            int counter = 0;
-            for (int i = 0; i < nrOfVatsugs; ++i)
+            foreach (GameObject go in enemies)
             {
-                if (enemies[i].transform.childCount == 0)
+                if (go.transform.childCount == 0)
                 {
                     ++counter;
                 }
-                Destroy(enemies[i]);
+                Destroy(go);
+                enemies.Remove(go);
             }
+
+
             if (mStageInfo.Score < counter)
                 mStageInfo.SetScore(counter);
 

@@ -45,6 +45,7 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo.mBronze = 5;
         stageInfo.mSilver = 10;
         stageInfo.mGold = 15;
+        stageInfo.mStarRequirement = 3;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
