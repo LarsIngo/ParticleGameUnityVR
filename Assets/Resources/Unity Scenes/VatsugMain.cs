@@ -54,7 +54,7 @@ public class VatsugMain : MonoBehaviour
         for (int i = 0; i < nrOfVatsugs; ++i)
         {
             enemies.Add(new GameObject("TheOneAndOnlyVatsug" + i));
-            Factory.CreateVatsug2(enemies[i].transform);
+            Factory.CreateVatsug(enemies[i].transform);
             enemies[i].AddComponent<Vatsug>();
         }
         //this.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
