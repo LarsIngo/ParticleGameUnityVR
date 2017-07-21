@@ -21,9 +21,9 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo.mThumbnail = "Textures/Attractor_lvl_2";
         stageInfo.mStarRequirement = 2;
 
-        stageInfo.mBronze = 0;
-        stageInfo.mSilver = 100;
-        stageInfo.mGold = 200;
+        stageInfo.mBronze = 30;
+        stageInfo.mSilver = 60;
+        stageInfo.mGold = 75;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 

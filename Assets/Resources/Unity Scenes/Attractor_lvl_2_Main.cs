@@ -101,14 +101,14 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
                 Factory.CreateCelebration();
 
                 // Update score.
-                float score = 300 - mTimer * 10;
+                float score = 100 - mTimer;
                 if (mStageInfo.Score < score)
                     mStageInfo.SetScore(score);
 
             }
 
             endTimer += Time.deltaTime;
-            if (endTimer > 3)
+            if (endTimer > 6)
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
 
         }

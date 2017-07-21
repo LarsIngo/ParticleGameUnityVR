@@ -105,7 +105,7 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
             }
 
             endTimer += Time.deltaTime;
-            if (endTimer > 3)
+            if (endTimer > 6)
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
 
         }
