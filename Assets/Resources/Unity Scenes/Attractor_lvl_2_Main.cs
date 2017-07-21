@@ -91,20 +91,9 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
     void SpawnEnemies()
     {
         // ENEMIES.
-        GameObject enemyBlueprint = Factory.CreateBasicEnemy();
-        enemyBlueprint.GetComponent<Health>().HealthStart = 2000;
-
-        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * 3;
-        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
-
-        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * 0;
-        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
-
-        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * -3;
-        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
-
-        Object.DestroyImmediate(enemyBlueprint);
-
+        mEnemyList.Add(Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 3, 2000));
+        mEnemyList.Add(Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 0, 2000));
+        mEnemyList.Add(Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * -3, 2000));
     }
 
 }

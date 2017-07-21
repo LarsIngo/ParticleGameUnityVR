@@ -1,88 +1,88 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿//using System.Collections;
+//using System.Collections.Generic;
+//using UnityEngine;
 
-public class Attractor_lvl_1 : Level
-{
-    /// +++ MEMBERS +++ ///
+//public class Attractor_lvl_1 : Level
+//{
+//    /// +++ MEMBERS +++ ///
 
-    StageInfo stageInfo;
+//    StageInfo stageInfo;
 
-    GameObject enemy1;
-    GameObject enemy2;
-    GameObject enemy3;
+//    GameObject enemy1;
+//    GameObject enemy2;
+//    GameObject enemy3;
 
-    UnityEngine.UI.Text highscore;
+//    UnityEngine.UI.Text highscore;
 
-    float timer = 0;
+//    float timer = 0;
 
-    /// --- MEMBERS --- ///
-
-
-    /// +++ FUNCTIONS +++ ///
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="name">Name of level, must be unique.</param>
-    public Attractor_lvl_1(string name) : base(name)
-    {
+//    /// --- MEMBERS --- ///
 
 
+//    /// +++ FUNCTIONS +++ ///
 
-    }
+//    /// <summary>
+//    /// Constructor.
+//    /// </summary>
+//    /// <param name="name">Name of level, must be unique.</param>
+//    public Attractor_lvl_1(string name) : base(name)
+//    {
 
 
-    /// <summary>
-    /// Override awake function.
-    /// </summary>
-    public override void Awake()
-    {
 
-        //Equip a wand.
-        //GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
+//    }
 
-        //GameObject timerText = Factory.CreateWorldText(this, "Highscore", Color.white);
 
-        //timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
-        //timerText.transform.localScale *= 100;
+//    /// <summary>
+//    /// Override awake function.
+//    /// </summary>
+//    public override void Awake()
+//    {
 
-        //highscore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+//        //Equip a wand.
+//        //GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
 
-        ////Spawn enemies.
-        //SpawnEnemies();
-        //timer = 0;
-    }
+//        //GameObject timerText = Factory.CreateWorldText(this, "Highscore", Color.white);
 
-    /// <summary>
-    /// Override update function.
-    /// </summary>
-    public override void Update()
-    {
+//        //timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
+//        //timerText.transform.localScale *= 100;
 
-        //if ((enemy1 || enemy2 || enemy3))
-        //    timer += Time.deltaTime;
-        //else
-        //{
+//        //highscore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
 
-        //    if (stageInfo.Score > timer)
-        //        stageInfo.SetScore(timer);
+//        ////Spawn enemies.
+//        //SpawnEnemies();
+//        //timer = 0;
+//    }
 
-        //}
-        //highscore.text = timer.ToString("0.00");
+//    /// <summary>
+//    /// Override update function.
+//    /// </summary>
+//    public override void Update()
+//    {
 
-    }
+//        //if ((enemy1 || enemy2 || enemy3))
+//        //    timer += Time.deltaTime;
+//        //else
+//        //{
 
-    /// <summary>
-    /// Override sleep function.
-    /// </summary>
-    public override void Sleep()
-    {
+//        //    if (stageInfo.Score > timer)
+//        //        stageInfo.SetScore(timer);
+
+//        //}
+//        //highscore.text = timer.ToString("0.00");
+
+//    }
+
+//    /// <summary>
+//    /// Override sleep function.
+//    /// </summary>
+//    public override void Sleep()
+//    {
         
 
-    }
+//    }
 
 
 
-    /// --- FUNCTIONS --- ///
-}
+//    /// --- FUNCTIONS --- ///
+//}

@@ -1,152 +1,152 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿//using System.Collections.Generic;
+//using UnityEngine;
 
-/// <summary>
-/// Abstract class contaning a collection of game objects.
-/// </summary>
-public abstract class Level
-{
-    /// +++ MEMBERS +++ ///
+///// <summary>
+///// Abstract class contaning a collection of game objects.
+///// </summary>
+//public abstract class Level
+//{
+//    /// +++ MEMBERS +++ ///
 
-    /// <summary>
-    /// Level game object.
-    /// </summary>
-    private GameObject mLevelGO = null;
+//    /// <summary>
+//    /// Level game object.
+//    /// </summary>
+//    private GameObject mLevelGO = null;
 
-    /// <summary>
-    /// Name of level.
-    /// </summary>
-    private string mName = null;
+//    /// <summary>
+//    /// Name of level.
+//    /// </summary>
+//    private string mName = null;
 
-    public GameObject mSpawnSystem;
+//    public GameObject mSpawnSystem;
 
-    /// --- MEMBERS --- ///
-
-
-    /// +++ FUNCTIONS +++ ///
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="name">Name of level, must be unique.</param>
-    public Level(string name)
-    {
-        Debug.Assert(!GameObject.Find(name));
-
-        mName = name;
+//    /// --- MEMBERS --- ///
 
 
-    }
+//    /// +++ FUNCTIONS +++ ///
 
-    public void AddChildGO(GameObject child)
-    {
-        if (mLevelGO == null)
-        {
+//    /// <summary>
+//    /// Constructor.
+//    /// </summary>
+//    /// <param name="name">Name of level, must be unique.</param>
+//    public Level(string name)
+//    {
+//        Debug.Assert(!GameObject.Find(name));
 
-            mLevelGO = new GameObject("LEVEL:" + child.name);
-
-        }
-
-        Debug.Assert(!GameObject.Find(child.name));
+//        mName = name;
 
 
-        child.transform.SetParent(mLevelGO.transform);
+//    }
 
-        return;
-    }
+//    public void AddChildGO(GameObject child)
+//    {
+//        if (mLevelGO == null)
+//        {
 
-    /// <summary>
-    /// Create new game object to level.
-    /// </summary>
-    /// <param name="value">Name of game object, must be unique.</param>
-    /// <returns>Returns new game object.</returns>
-    public GameObject CreateGameObject(string name)
-    {
+//            mLevelGO = new GameObject("LEVEL:" + child.name);
 
-        if(mLevelGO == null)
-        {
+//        }
 
-            mLevelGO = new GameObject("LEVEL:" + name);
+//        Debug.Assert(!GameObject.Find(child.name));
 
-        }
 
-        Debug.Assert(!GameObject.Find(name));
+//        child.transform.SetParent(mLevelGO.transform);
 
-        GameObject go = new GameObject(name);
+//        return;
+//    }
 
-        go.transform.SetParent(mLevelGO.transform);
+//    /// <summary>
+//    /// Create new game object to level.
+//    /// </summary>
+//    /// <param name="value">Name of game object, must be unique.</param>
+//    /// <returns>Returns new game object.</returns>
+//    public GameObject CreateGameObject(string name)
+//    {
 
-        return go;
-    }
+//        if(mLevelGO == null)
+//        {
 
-    /// <summary>
-    /// Kill level.
-    /// </summary>
-    public void Kill()
-    {
-        Object.DestroyImmediate(mLevelGO);
-        mLevelGO = null;
-    }
+//            mLevelGO = new GameObject("LEVEL:" + name);
 
-    /// <summary>
-    /// Create level.
-    /// </summary>
-    public void Create()
-    {
+//        }
 
-        mSpawnSystem = this.CreateGameObject("spawnSystem" + mName);
-        mSpawnSystem.AddComponent<SpawnSystem>();
+//        Debug.Assert(!GameObject.Find(name));
 
-    }
+//        GameObject go = new GameObject(name);
 
-    /// <summary>
-    /// Set active state of level.
-    /// </summary>
-    /// <param name="value">Whether level should be active.</param>
-    public void SetActive(bool value)
-    {
-        mLevelGO.SetActive(value);
-    }
+//        go.transform.SetParent(mLevelGO.transform);
 
-    /// <summary>
-    /// Get active state of level.
-    /// </summary>
-    public bool Active
-    {
-        get { return mLevelGO.activeSelf; }
-    }
+//        return go;
+//    }
 
-    /// <summary>
-    /// Get name of level.
-    /// </summary>
-    public string Name
-    {
-        get { return mName; }
-    }
+//    /// <summary>
+//    /// Kill level.
+//    /// </summary>
+//    public void Kill()
+//    {
+//        Object.DestroyImmediate(mLevelGO);
+//        mLevelGO = null;
+//    }
 
-    /// <summary>
-    /// Virtual awake function.
-    /// </summary>
-    public virtual void Awake()
-    {
+//    /// <summary>
+//    /// Create level.
+//    /// </summary>
+//    public void Create()
+//    {
 
-    }
+//        mSpawnSystem = this.CreateGameObject("spawnSystem" + mName);
+//        mSpawnSystem.AddComponent<SpawnSystem>();
 
-    /// <summary>
-    /// Virtual update function.
-    /// </summary>
-    public virtual void Update()
-    {
+//    }
 
-    }
+//    /// <summary>
+//    /// Set active state of level.
+//    /// </summary>
+//    /// <param name="value">Whether level should be active.</param>
+//    public void SetActive(bool value)
+//    {
+//        mLevelGO.SetActive(value);
+//    }
 
-    /// <summary>
-    /// Virtual sleep function.
-    /// </summary>
-    public virtual void Sleep()
-    {
+//    /// <summary>
+//    /// Get active state of level.
+//    /// </summary>
+//    public bool Active
+//    {
+//        get { return mLevelGO.activeSelf; }
+//    }
 
-    }
+//    /// <summary>
+//    /// Get name of level.
+//    /// </summary>
+//    public string Name
+//    {
+//        get { return mName; }
+//    }
 
-    /// --- FUNCTIONS --- ///
-}
+//    /// <summary>
+//    /// Virtual awake function.
+//    /// </summary>
+//    public virtual void Awake()
+//    {
+
+//    }
+
+//    /// <summary>
+//    /// Virtual update function.
+//    /// </summary>
+//    public virtual void Update()
+//    {
+
+//    }
+
+//    /// <summary>
+//    /// Virtual sleep function.
+//    /// </summary>
+//    public virtual void Sleep()
+//    {
+
+//    }
+
+//    /// --- FUNCTIONS --- ///
+//}
