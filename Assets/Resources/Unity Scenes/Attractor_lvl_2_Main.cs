@@ -15,6 +15,8 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
 
     bool mFirstEnterDone;
 
+    GameObject enemies;
+
     /// --- MEMBERS --- ///
 
     // Use this for initialization
@@ -42,6 +44,11 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
         timerText.transform.localScale *= 100;
         mTimerDisplay = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
         mTimer = 0;
+
+        // Highscore.
+        GameObject Highscore = Factory.CreateWorldText("Highscore:" + mStageInfo.highscore, Color.white);
+        Highscore.transform.position += Vector3.forward * 100 + Vector3.up * 30;
+        Highscore.transform.localScale *= 20;
 
         // ENEMIES.
         SpawnEnemies();
@@ -89,6 +96,8 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
             if (mEnemyList[i])
                 levelDone = false;
 
+        enemies.transform.Rotate(0, 0, 20 * Time.deltaTime);
+
         if (!levelDone)
             mTimer += Time.deltaTime;
         else
@@ -114,7 +123,7 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
         }
 
         // Update time to display.
-        mTimerDisplay.text = mTimer.ToString("0.00");
+        mTimerDisplay.text = Mathf.Max(100 - mTimer, 0).ToString("0.00");
 
 
         // Check input to leave scene.
@@ -129,10 +138,23 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
 
     void SpawnEnemies()
     {
-        // ENEMIES.
-        mEnemyList.Add(Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 3, 2000));
-        mEnemyList.Add(Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 0, 2000));
-        mEnemyList.Add(Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * -3, 2000));
+
+        enemies = new GameObject();
+
+        GameObject enemy = Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 3, 1000);
+        mEnemyList.Add(enemy);
+
+        enemy.transform.parent = enemies.transform;
+
+        enemy = Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 0, 1000);
+        mEnemyList.Add(enemy);
+
+        enemy.transform.parent = enemies.transform;
+        enemy = Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * -3, 1000);
+        mEnemyList.Add(enemy);
+
+        enemy.transform.parent = enemies.transform;
+
     }
 
 }

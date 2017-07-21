@@ -43,6 +43,13 @@ public class Attractor_lvl_3_Main : MonoBehaviour {
         mTimerDisplay = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
         mTimer = 0;
 
+        // Highscore.
+        GameObject Highscore = Factory.CreateWorldText("Highscore:" + mStageInfo.highscore, Color.white);
+        Highscore.transform.position += Vector3.forward * 100 + Vector3.up * 30;
+        Highscore.transform.localScale *= 20;
+
+
+
         // SKYBOX.
         Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
         Debug.Assert(skyboxMat);
@@ -78,13 +85,23 @@ public class Attractor_lvl_3_Main : MonoBehaviour {
 
     float enemyTimer = 0;
     float endTimer = 0;
-	// Update is called once per frame
-	void Update () {
+    bool lost = false;
+    // Update is called once per frame
+    void Update () {
 
-        if (mTimer < 30)
+        for (int i = 0; i < mEnemyList.Count; ++i)
+            if (mEnemyList[i] && mEnemyList[i].transform.position.z < -2)
+            {
+
+                lost = true;
+                break;
+
+            }
+
+        if (!lost)
         {
 
-            if(enemyTimer > 2)
+            if(enemyTimer > Mathf.Max((3 - mTimer / 20), 0.5f))
             {
 
                 SpawnEnemy();
@@ -109,12 +126,15 @@ public class Attractor_lvl_3_Main : MonoBehaviour {
 
                 mFirstEnterDone = false;
 
-                // Celebration! :D :D :D
-                Factory.CreateCelebration();
-
                 // Update score.
                 if (mStageInfo.Score < score)
+                {
+
+                    // Celebration! :D :D :D
+                    Factory.CreateCelebration();
                     mStageInfo.SetScore(score);
+
+                }
 
             }
 
@@ -124,8 +144,13 @@ public class Attractor_lvl_3_Main : MonoBehaviour {
 
         }
 
+        int killCount = 0;
+        for (int i = 0; i < mEnemyList.Count; ++i)
+            if (!mEnemyList[i])
+                killCount++;
+
         // Update time to display.
-        mTimerDisplay.text = mTimer.ToString("0.00");
+        mTimerDisplay.text = killCount + "";
 
 
         // Check input to leave scene.
@@ -149,7 +174,7 @@ public class Attractor_lvl_3_Main : MonoBehaviour {
 
         walker.transform.Rotate(0, 0, Random.Range(0, 360));
         walk.direction = -Vector3.forward;
-        walk.speed = 6;
+        walk.speed = 6 + mTimer / 10;
 
         mEnemyList.Add(enemyBlueprint);
 
