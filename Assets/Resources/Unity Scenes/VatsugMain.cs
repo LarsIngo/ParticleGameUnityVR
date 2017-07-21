@@ -80,8 +80,6 @@ public class VatsugMain : MonoBehaviour
 
     }
 
-
-
     private GameObject CreateGameObject(string v)
     {
         throw new NotImplementedException();

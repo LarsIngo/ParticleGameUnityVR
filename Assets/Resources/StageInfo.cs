@@ -22,29 +22,29 @@ public class StageInfo  {
     public void SetScore(float newScore)
     {
 
-        if (mScore < newScore)
+        if (mScore > newScore)
             return;
 
         int starsEarned = 0;
 
-        if (mScore < mBronze)
+        if (mScore >= mBronze)
             starsEarned--;
-        if (mScore < mSilver)
+        if (mScore >= mSilver)
             starsEarned--;
-        if (mScore < mGold)
+        if (mScore >= mGold)
             starsEarned--;
 
-        if (newScore < mGold)
+        if (newScore >= mGold)
         {
             mScore = newScore;
             Hub.Instance.stars += 3 + starsEarned;
         }
-        else if (newScore < mSilver)
+        else if (newScore >= mSilver)
         {
             mScore = newScore;
             Hub.Instance.stars += 2 + starsEarned;
         }
-        else if (newScore < mBronze)
+        else if (newScore >= mBronze)
         {
             mScore = newScore;
             Hub.Instance.stars += 1 + starsEarned;
@@ -70,7 +70,7 @@ public class StageInfo  {
         mName = "Stage:" + count;
         mThumbnail = "Textures/Default";
 
-        mScore = 9999;
+        mScore = -1;
 
         mBronze = 50;
         mSilver = 30;
