@@ -43,6 +43,8 @@ public class Health : MonoBehaviour
             MeshFilter meshFilter = GetComponent<MeshFilter>();
             Debug.Assert(meshFilter);
             Factory.CreateMichaelBayEffect(meshFilter != null ? meshFilter.mesh : null, transform, renderer != null ? renderer.material.color : Color.red);
+
+            GPUParticleSphereCollider.SKIPFRAME = true;
         }
     }
 }

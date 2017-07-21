@@ -891,7 +891,16 @@ public class GPUParticleSystem : MonoBehaviour
         for (int i = 0; i < sphereColliderList.Count; ++i)
         {
             GPUParticleSphereCollider collider = sphereColliderList[i];
-            collider.SetCollisionsThisFrame(collisionData[i]);
+
+            if (GPUParticleSphereCollider.SKIPFRAME)
+            {
+                GPUParticleSphereCollider.SKIPFRAME = false;
+                collider.SetCollisionsThisFrame(0);
+            }
+            else
+            {
+                collider.SetCollisionsThisFrame(collisionData[i]);
+            }
         }
     }
 
