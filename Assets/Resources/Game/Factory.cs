@@ -64,6 +64,28 @@ public static class Factory
 
     }
 
+    public static void CreateCelebration()
+    {
+        GameObject gameObject = new GameObject("Celebration " + Time.time);
+
+        // LFEITIME.
+        gameObject.AddComponent<LifeTimer>().LifeTime = 10.0f;
+
+        // AUDIO.
+        AudioSource cheeringSound = gameObject.AddComponent<AudioSource>();
+        cheeringSound.clip = Resources.Load<AudioClip>("Samples/Cheering/cheering");
+        cheeringSound.Play();
+
+        AudioSource encouragementSound = gameObject.AddComponent<AudioSource>();
+        encouragementSound.clip = Resources.Load<AudioClip>("Samples/Cheering/encouragement");
+        encouragementSound.Play();
+
+        AudioSource fireworkSound = gameObject.AddComponent<AudioSource>();
+        fireworkSound.clip = Resources.Load<AudioClip>("Samples/Firework/firework1");
+        fireworkSound.Play();
+
+    }
+
     public static GameObject CreateStageScreen(Level level, StageInfo stageInfo)
     {
 

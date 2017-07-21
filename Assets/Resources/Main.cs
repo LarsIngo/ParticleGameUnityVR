@@ -102,16 +102,21 @@ public class Main : MonoBehaviour
             {
                 Hub.Instance.ActiveLevel.Sleep();
 
+                // Kill all living particles.
+                GPUParticleSystem.KillAllParticles();
+
                 Hub.Instance.ActiveLevel.Kill();
 
             }
 
-            mCurrentLevel.Create();
             Hub.Instance.SetActiveLevel(mCurrentLevel);
+
+            mCurrentLevel.Create();
+
             mCurrentLevel.Awake();
 
             // Kill all living particles.
-            //GPUParticleSystem.KillAllParticles();
+            GPUParticleSystem.KillAllParticles();
 
         }
 

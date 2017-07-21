@@ -39,7 +39,6 @@ public class Health : MonoBehaviour
 
         if (mHealthCurrent <= 0)
         {
-            Debug.Log("DESTORY");
             Destroy(gameObject);
             MeshFilter meshFilter = GetComponent<MeshFilter>();
             Debug.Assert(meshFilter);

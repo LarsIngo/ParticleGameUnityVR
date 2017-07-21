@@ -6,15 +6,14 @@ public class Attractor_lvl_1 : Level
 {
     /// +++ MEMBERS +++ ///
 
-    StageInfo stageInfo;
+    StageInfo mStageInfo;
 
-    GameObject enemy1;
-    GameObject enemy2;
-    GameObject enemy3;
+    float mTimer = 0;
+    UnityEngine.UI.Text mTimerDisplay;
 
-    UnityEngine.UI.Text highscore;
+    List<GameObject> mEnemyList = new List<GameObject>();
 
-    float timer = 0;
+    bool mFirstEnterDone;
 
     /// --- MEMBERS --- ///
 
@@ -28,14 +27,14 @@ public class Attractor_lvl_1 : Level
     public Attractor_lvl_1(string name) : base(name)
     {
 
-        stageInfo = new StageInfo(1,0, Hub.STATE.ATTRACTOR_LVL_1);
-        stageInfo.mName = "My first wand!";
-        stageInfo.mThumbnail = "Textures/Attractor_lvl_1";
-        stageInfo.mBronze = 30;
-        stageInfo.mSilver = 15;
-        stageInfo.mGold = 10;
+        mStageInfo = new StageInfo(1,0, Hub.STATE.ATTRACTOR_LVL_1);
+        mStageInfo.mName = "My first wand!";
+        mStageInfo.mThumbnail = "Textures/Attractor_lvl_1";
+        mStageInfo.mBronze = 30;
+        mStageInfo.mSilver = 15;
+        mStageInfo.mGold = 10;
 
-        Hub.Instance.mStageInfoList.Add(stageInfo);
+        Hub.Instance.mStageInfoList.Add(mStageInfo);
 
     }
 
@@ -46,19 +45,21 @@ public class Attractor_lvl_1 : Level
     public override void Awake()
     {
 
-        //Equip a wand.
+        // RESET.
+        mFirstEnterDone = true;
+
+        // WAND.
         GameObject rightWand = Factory.CreateAttractorWand(this, 20, true);
 
-        //GameObject timerText = Factory.CreateWorldText(this, "Highscore", Color.white);
+        // TIMER.
+        GameObject timerText = Factory.CreateWorldText(this, "Highscore", Color.white);
+        timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
+        timerText.transform.localScale *= 100;
+        mTimerDisplay = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+        mTimer = 0;
 
-        //timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
-        //timerText.transform.localScale *= 100;
-
-        //highscore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
-
-        ////Spawn enemies.
-        //SpawnEnemies();
-        //timer = 0;
+        // ENEMIES.
+        SpawnEnemies();
     }
 
     /// <summary>
@@ -66,17 +67,31 @@ public class Attractor_lvl_1 : Level
     /// </summary>
     public override void Update()
     {
+        // Chech if level completed.
+        bool levelDone = true;
+        for (int i = 0; i < mEnemyList.Count && levelDone; ++i)
+            if (mEnemyList[i])
+                levelDone = false;
 
-        //if ((enemy1 || enemy2 || enemy3))
-        //    timer += Time.deltaTime;
-        //else
-        //{
+        if (!levelDone)
+            mTimer += Time.deltaTime;
+        else
+        {
+            if (mFirstEnterDone)
+            {
+                mFirstEnterDone = false;
 
-        //    if (stageInfo.Score > timer)
-        //        stageInfo.SetScore(timer);
+                // Celebration! :D :D :D
+                Factory.CreateCelebration();
 
-        //}
-        //highscore.text = timer.ToString("0.00");
+                // Update score.
+                if (mStageInfo.Score > mTimer)
+                    mStageInfo.SetScore(mTimer);
+            }
+        }
+
+        // Update time to display.
+        mTimerDisplay.text = mTimer.ToString("0.00");
 
     }
 
@@ -91,23 +106,20 @@ public class Attractor_lvl_1 : Level
 
     void SpawnEnemies()
     {
-        Object.DestroyImmediate(enemy1);
-        Object.DestroyImmediate(enemy2);
-        Object.DestroyImmediate(enemy3);
+        // ENEMIES.
+        GameObject enemyBlueprint = Factory.CreateBasicEnemy(this);
+        enemyBlueprint.GetComponent<Health>().HealthStart = 250;
 
-        //Spawn enemies.
-        enemy1 = Factory.CreateBasicEnemy(this);
-        enemy2 = Factory.CreateBasicEnemy(this);
-        enemy3 = Factory.CreateBasicEnemy(this);
+        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * 3;
+        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
 
-        enemy1.GetComponent<Health>().HealthStart = 250;
-        enemy2.GetComponent<Health>().HealthStart = 250;
-        enemy3.GetComponent<Health>().HealthStart = 250;
+        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * 0;
+        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
 
-        enemy1.transform.position += Vector3.forward * 3 + Vector3.right * 3;
-        enemy2.transform.position += Vector3.forward * 3 + Vector3.right * 0;
-        enemy3.transform.position += Vector3.forward * 3 + Vector3.right * -3;
+        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * -3;
+        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
 
+        Object.DestroyImmediate(enemyBlueprint);
     }
 
     /// --- FUNCTIONS --- ///
