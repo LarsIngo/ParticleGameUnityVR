@@ -105,8 +105,6 @@ public class GPUParticleSystem : MonoBehaviour
     static void StartUp()
     {
 
-        Debug.Log("STARTUP");
-
         sGPUParticleSystemDictionary = new Dictionary<GPUParticleSystem, GPUParticleSystem>();
 
         sComputeShader = Resources.Load<ComputeShader>("GPUParticleSystem/Shaders/GPUParticleComputeShader");
@@ -139,7 +137,6 @@ public class GPUParticleSystem : MonoBehaviour
     // SHUTDOWN.
     static void Shutdown()
     {
-        Debug.Log("SHUTDOWN");
 
         sMergedParticleCount = 0;
         sTotalParticleCount = 0;
