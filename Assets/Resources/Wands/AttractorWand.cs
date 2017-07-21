@@ -23,10 +23,10 @@ public class AttractorWand : MonoBehaviour {
             else trigger = VrInput.LeftTrigger();
 
             if (rightHand)
-                vectorField.Vector = VrInput.deltaRight * 50;
-            else vectorField.Vector = VrInput.deltaLeft * 50;
+                vectorField.Vector = -VrInput.deltaRight * 50;
+            else vectorField.Vector = -VrInput.deltaLeft * 50;
 
-            attractor.Power = 0; // power * trigger;
+            attractor.Power = power * trigger;
 
             if (trigger == 1.0f)
                 system.Active = true;
