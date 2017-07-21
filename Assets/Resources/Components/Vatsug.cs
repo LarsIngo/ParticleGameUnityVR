@@ -26,7 +26,19 @@ public class Vatsug : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
+
+  /*      if (t % Mathf.PI * 2 < 0.1f)
+        {
+            swap = true;
+        }
+        if (t % Mathf.PI * 2 > (Mathf.PI * 2) - 0.1f && swap)
+        {
+            mul = new Vector3(mul.x + Random.Range(-1.0f, 1.0f), mul.y + Random.Range(-0.3f, 0.3f), mul.z + Random.Range(-1.0f, 1.0f));
+            swap = false;
+        }
+*/
+
+
         Vector3 newPos = new Vector3(Mathf.Tan((Time.time + 3.0f) / 8.0f), 
             Mathf.Cos(Time.time + 3.0f) * 3.0f + 1.0f, Mathf.Sin((3.0f + Time.time) / 2) * 3.0f);
 

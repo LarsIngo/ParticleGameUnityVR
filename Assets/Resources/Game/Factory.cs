@@ -652,7 +652,7 @@ public static class Factory
         StraitenOutBirdObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/Fagel/source/Bird_Asset", typeof(Mesh));
 
         GPUParticleSphereCollider particleColider = StraitenOutBirdObject.AddComponent<GPUParticleSphereCollider>();
-        particleColider.Radius = 0.04f;
+        particleColider.Radius = 0.045f;
         StraitenOutBirdObject.transform.localScale = new Vector3(4, 4, 4);
         StraitenOutBirdObject.transform.parent = parent;
         StraitenOutBirdObject.transform.localPosition = new Vector3(0, 0, -0.1f);
