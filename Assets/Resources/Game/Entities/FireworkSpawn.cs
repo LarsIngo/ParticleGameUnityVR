@@ -27,7 +27,7 @@ public class FireworkSpawn : MonoBehaviour
         {
             float min = -10;
             float max = 10;
-            Factory.CreateFireworkHead(new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max)));
+            Factory.CreateFireworkHead(new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(3, max)));
         }
     }
 
