@@ -151,16 +151,10 @@ public static class Factory
         gameObject.AddComponent<LifeTimer>().LifeTime = 5;
     }
 
-    public static void CreateFireworkTail(Vector3 position, Vector3 direction)
+    public static void CreateFireworkTail(Vector3 position)
     {
         GameObject gameObject = new GameObject("Firework " + Time.time);
         gameObject.transform.position = position;
-        //gameObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-
-        // RIGID BODY.
-        Rigidbody rigidBody = gameObject.AddComponent<Rigidbody>();
-        rigidBody.useGravity = false;
-        rigidBody.velocity = direction;
 
         // PARTICLESYSTEM.
         GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
