@@ -26,15 +26,15 @@ public class MenuSceneMain : MonoBehaviour {
 
         mScreenList = new List<GameObject>();
 
-        GameObject timerText = Factory.CreateWorldText(Hub.Instance.stars.ToString(), Color.black);
-        timerText.transform.position += Vector3.forward * 150 + Vector3.up * 150;
-        timerText.transform.localScale *= 100;
+        GameObject starText = Factory.CreateWorldText(Hub.Instance.stars.ToString(), Color.black);
+        starText.transform.position += Vector3.forward * 150 + Vector3.up * 150;
+        starText.transform.localScale *= 100;
 
         GameObject starImage = Factory.CreateWorldImage("Textures/Star", true);
         starImage.transform.position += Vector3.forward * 155 + Vector3.up * 150;
         starImage.transform.localScale *= 100;
 
-        mStarText = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+        mStarText = starText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
 
         mStarText.text = Hub.Instance.stars.ToString();
 
@@ -86,6 +86,7 @@ public class MenuSceneMain : MonoBehaviour {
         }
         skybox.material = skyboxMat;
 
+        Time.timeScale = 1.0f;
     }
 	
 	// Update is called once per frame
@@ -99,6 +100,8 @@ public class MenuSceneMain : MonoBehaviour {
             UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[2].mSceneName);
         if (Input.GetKeyDown(KeyCode.Alpha4))
             UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[3].mSceneName);
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[4].mSceneName);
 
         if (VrInput.RightGripPressed())
         {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Attractor_lvl_2_Main : MonoBehaviour {
+public class Attractor_lvl_3_Main : MonoBehaviour {
 
     /// +++ MEMBERS +++ ///
 
@@ -23,7 +23,7 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
         for(int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
 
-            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_2")
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_3")
                 mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
@@ -42,9 +42,6 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
         timerText.transform.localScale *= 100;
         mTimerDisplay = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
         mTimer = 0;
-
-        // ENEMIES.
-        SpawnEnemies();
 
         // SKYBOX.
         Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
@@ -79,29 +76,43 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
 
     }
 
+    float enemyTimer = 0;
     float endTimer = 0;
-    // Update is called once per frame
-    void Update () {
+	// Update is called once per frame
+	void Update () {
 
-        // Check if level completed.
-        bool levelDone = true;
-        for (int i = 0; i < mEnemyList.Count && levelDone; ++i)
-            if (mEnemyList[i])
-                levelDone = false;
+        if (mTimer < 30)
+        {
 
-        if (!levelDone)
+            if(enemyTimer > 2)
+            {
+
+                SpawnEnemy();
+                enemyTimer = 0;
+
+            }
+
+            enemyTimer += Time.deltaTime;
             mTimer += Time.deltaTime;
+
+        }
         else
         {
+
             if (mFirstEnterDone)
             {
+
+                float score = 0;
+                for (int i = 0; i < mEnemyList.Count; ++i)
+                    if (!mEnemyList[i])
+                        score++;
+
                 mFirstEnterDone = false;
 
                 // Celebration! :D :D :D
                 Factory.CreateCelebration();
 
                 // Update score.
-                float score = 100 - mTimer;
                 if (mStageInfo.Score < score)
                     mStageInfo.SetScore(score);
 
@@ -127,12 +138,21 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
 
     }
 
-    void SpawnEnemies()
+    void SpawnEnemy()
     {
         // ENEMIES.
-        mEnemyList.Add(Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 3, 2000));
-        mEnemyList.Add(Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 0, 2000));
-        mEnemyList.Add(Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * -3, 2000));
+        GameObject enemyBlueprint = Factory.CreateBasicEnemy(Vector3.forward * 20 + Vector3.right * 2 + Vector3.up * 2, 200);
+
+        GameObject walker = new GameObject();
+        Walk walk = walker.AddComponent<Walk>();
+        enemyBlueprint.transform.parent = walker.transform;
+
+        walker.transform.Rotate(0, 0, Random.Range(0, 360));
+        walk.direction = -Vector3.forward;
+        walk.speed = 6;
+
+        mEnemyList.Add(enemyBlueprint);
+
     }
 
 }
