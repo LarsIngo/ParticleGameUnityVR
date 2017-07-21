@@ -29,7 +29,7 @@ public class VatsugMain : MonoBehaviour
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
 
-            if (Hub.Instance.mStageInfoList[i].mSceneName == "Vatsug2")
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Vatsug")
                 mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
