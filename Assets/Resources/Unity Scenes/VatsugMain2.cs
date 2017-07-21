@@ -55,12 +55,6 @@ public class VatsugMain2 : MonoBehaviour
 
         controllerSpawnDelay = 1.0f;
         once = false;
-        //Equip a wand.
-        /*GameObject rightWand = Factory.CreateAttractorWand(20, true);
-        GameObject leftWand = Factory.CreateAttractorWand(20, false);
-        sp.AddGameObjectWithDelay(rightWand, 2.0f);
-        sp.AddGameObjectWithDelay(leftWand, 2.0f);
-        */
 
         // SKYBOX.
         Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
@@ -121,13 +115,18 @@ public class VatsugMain2 : MonoBehaviour
                 {
                     ++counter;
                 }
+                Destroy(enemies[i]);
             }
             if (mStageInfo.Score < counter)
                 mStageInfo.SetScore(counter);
+
+            Factory.CreateCelebration();
+            timer = 999999999.0f;
         }
         if (controllerSpawnDelay <= 0 && !once)
         {
-            Factory.CreateVatsugWand(100, 50, 0, 0, true);
+            Factory.CreateAttractorWand(20, true);
+            Factory.CreateAttractorWand(20, false);
             once = true;
         }
         else

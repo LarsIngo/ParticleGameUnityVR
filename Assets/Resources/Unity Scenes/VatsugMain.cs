@@ -38,9 +38,9 @@ public class VatsugMain : MonoBehaviour
         enemies = new GameObject[nrOfVatsugs];
         for (int i = 0; i < nrOfVatsugs; ++i)
         {
-            GameObject enemy = new GameObject("TheOneAndOnlyVatsug");
-            Factory.CreateVatsug(enemy.transform);
-            enemy.AddComponent<Vatsug>();
+            enemies[i] = new GameObject("TheOneAndOnlyVatsug");
+            Factory.CreateVatsug(enemies[i].transform);
+            enemies[i].AddComponent<Vatsug>();
         }
         //this.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
 
@@ -127,12 +127,14 @@ public class VatsugMain : MonoBehaviour
                 mStageInfo.SetScore(counter);
 
             Factory.CreateCelebration();
+            timer = 999999999.0f;
 
         }
         if (controllerSpawnDelay <= 0 && !once)
         {
-            Factory.CreateVatsugWand(100, 50, 0, 0, true);
-            //Factory.CreateAttractorWand(20, false);
+            //Factory.CreateVatsugWand(100, 50, 0, 0, true);
+            Factory.CreateAttractorWand(20, true);
+            Factory.CreateAttractorWand(20, false);
             once = true;
         }
         else

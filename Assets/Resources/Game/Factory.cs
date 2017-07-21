@@ -644,6 +644,7 @@ public static class Factory
         AudioSource sound = StraitenOutFishObject.AddComponent<AudioSource>();
         sound.volume = 0.1f;
         sound.maxDistance = 10.0f;
+        sound.spatialBlend = 1.0f;
 
         
 
@@ -671,8 +672,9 @@ public static class Factory
         AudioSource sound = StraitenOutBirdObject.AddComponent<AudioSource>();
         sound.volume = 0.1f;
         sound.maxDistance = 15.0f;
-
+        sound.spatialBlend = 1.0f;
         sound.clip = Resources.Load<AudioClip>("Samples/Vatsug/gull");
+
 
         return;
     }
