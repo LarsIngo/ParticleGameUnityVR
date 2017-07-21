@@ -117,7 +117,7 @@ public class VatsugMain2 : MonoBehaviour
             int counter = 0;
             for (int i = 0; i < nrOfVatsugs; ++i)
             {
-                if (enemies[i].GetComponentInChildren<SphereCollider>() != null)
+                if (enemies[i].transform.childCount == 0)
                 {
                     ++counter;
                 }

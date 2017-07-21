@@ -582,7 +582,10 @@ public static class Factory
         wand.rightHand = rightHand;
         wand.pendulumSpeed = pendulumSpeed;
 
-        WandGO.AddComponent<MirrorHandMovement>();
+        GameObject hand = new GameObject(rightHand ? "Right" : "Left" + "hand");
+
+        WandGO.transform.parent = hand.transform;
+        hand.AddComponent<MirrorHandMovement>();
 
         return WandGO;
     }

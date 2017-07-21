@@ -117,13 +117,17 @@ public class VatsugMain : MonoBehaviour
             int counter = 0;
             for (int i = 0; i < nrOfVatsugs; ++i)
             {
-                if (!enemies[i])
+                if (enemies[i].transform.childCount == 0)
                 {
                     ++counter;
                 }
+                Destroy(enemies[i]);
             }
             if (mStageInfo.Score < counter)
                 mStageInfo.SetScore(counter);
+
+            Factory.CreateCelebration();
+
         }
         if (controllerSpawnDelay <= 0 && !once)
         {
