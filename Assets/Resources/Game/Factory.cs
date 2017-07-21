@@ -66,7 +66,7 @@ public static class Factory
 
     public static void CreateCelebration()
     {
-        float lifetime = 6.8f;
+        float lifetime = 15.0f;//6.8f;
 
         // Celebration
         GameObject celebration = new GameObject("Celebration " + Time.time);

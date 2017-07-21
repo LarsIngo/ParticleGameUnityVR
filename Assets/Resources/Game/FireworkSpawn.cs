@@ -25,8 +25,11 @@ public class FireworkSpawn : MonoBehaviour
 
         for (int i = 0; i < count; ++i)
         {
-            Factory.CreateFireworkHead(new Vector3(Random.Range(-3, 3), Random.Range(-8, 5), Random.Range(5, 8)));
-            Factory.CreateFireworkTail(new Vector3(Random.Range(-3,3), Random.Range(-8, 5), Random.Range(5, 8)));
+            int sign = (((int)(Random.Range(0,100))) % 2) * 2 - 1;
+            float min = 3;
+            float max = 5;
+            Factory.CreateFireworkHead(new Vector3(sign * Random.Range(min, max), sign * Random.Range(min, max), sign * Random.Range(min, max)));
+            Factory.CreateFireworkTail(new Vector3(sign * Random.Range(min, max), sign * Random.Range(min, max), sign * Random.Range(min, max)));
         }
     }
 
