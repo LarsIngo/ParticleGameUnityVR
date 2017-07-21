@@ -16,12 +16,6 @@ public class Hub
     /// Current active level.
     /// Default: null
     /// </summary>
-    private Level mActiveLevel = null;
-
-    /// <summary>
-    /// Current active level.
-    /// Default: null
-    /// </summary>
     public List<StageInfo> mStageInfoList;
 
     /// <summary>

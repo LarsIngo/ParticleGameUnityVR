@@ -34,10 +34,6 @@ public class Vatsug : MonoBehaviour {
         gameObject.transform.LookAt(newPos);
         prevPos = newPos;
 
-        /*if (!gameObject.GetComponentInChildren<Transform>())
-        {
-            Destroy(gameObject);
-        }*/
         if (Mathf.Abs(gameObject.transform.position.y) <= 0.1f && sound)
         {
             sound.Stop();

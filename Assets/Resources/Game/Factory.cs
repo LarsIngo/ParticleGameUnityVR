@@ -55,6 +55,7 @@ public static class Factory
 
         AudioSource ceramicSound = michael.AddComponent<AudioSource>();
         ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");
+        ceramicSound.time = 0.2f;
         ceramicSound.Play();
 
         AudioSource artillerySound = michael.AddComponent<AudioSource>();
@@ -200,6 +201,17 @@ public static class Factory
 
         // LFEITIME.
         gameObject.AddComponent<LifeTimer>().LifeTime = 5.0f;
+    }
+
+    public static void CreateFeedbackText(string text, Color color, Vector3 origin, Vector3 velocity)
+    {
+        GameObject gameObject = CreateWorldText(text, color);
+
+        gameObject.transform.position = origin;
+
+        gameObject.AddComponent<LifeTimer>().LifeTime = 0.5f;
+
+        gameObject.AddComponent<Rigidbody>().velocity = velocity;
     }
 
     public static GameObject CreateStageScreen(StageInfo stageInfo)
@@ -470,108 +482,109 @@ public static class Factory
 
     }
 
-    public static GameObject CreateVatsugWand(Level level, float powerEndAttractor, float powerNormalAttractors, float pendulumSpeed, float reboundDistance, bool rightHand)
-    {
-        //The wand is the parent object to all the parts.
-        GameObject WandGO = level.CreateGameObject("VatsugWand" + count++);
+    //public static GameObject CreateVatsugWand(Level level, float powerEndAttractor, float powerNormalAttractors, float pendulumSpeed, float reboundDistance, bool rightHand)
+    //{
+    //    //The wand is the parent object to all the parts.
+    //    GameObject WandGO = level.CreateGameObject("VatsugWand" + count++);
 
-        //The rod
-        //We set its transform.
-        GameObject RodGO = level.CreateGameObject("Rod" + count++);
-        RodGO.transform.parent = WandGO.transform;
-        RodGO.transform.localScale += Vector3.up * 8;
-        RodGO.transform.localScale *= 0.2f;
-        RodGO.transform.position += Vector3.forward * 0.2f;
-        TempVisuals(RodGO, PrimitiveType.Cylinder, Color.black);
+    //    //The rod
+    //    //We set its transform.
+    //    GameObject RodGO = level.CreateGameObject("Rod" + count++);
+    //    RodGO.transform.parent = WandGO.transform;
+    //    RodGO.transform.localScale += Vector3.up * 8;
+    //    RodGO.transform.localScale *= 0.2f;
+    //    RodGO.transform.position += Vector3.forward * 0.2f;
+    //    TempVisuals(RodGO, PrimitiveType.Cylinder, Color.black);
 
-        //The tip
-        //We set its transform
-        GameObject TipGO = level.CreateGameObject("Tip" + count++);
-        TipGO.transform.parent = WandGO.transform;
-        TipGO.transform.position += Vector3.up * 2;
-        TipGO.transform.localScale *= 0.5f;
-        TipGO.transform.position += Vector3.forward * 0.2f;
-        TempVisuals(TipGO, PrimitiveType.Sphere, Color.red);
+    //    //The tip
+    //    //We set its transform
+    //    GameObject TipGO = level.CreateGameObject("Tip" + count++);
+    //    TipGO.transform.parent = WandGO.transform;
+    //    TipGO.transform.position += Vector3.up * 2;
+    //    TipGO.transform.localScale *= 0.5f;
+    //    TipGO.transform.position += Vector3.forward * 0.2f;
+    //    TempVisuals(TipGO, PrimitiveType.Sphere, Color.red);
 
-        WandGO.transform.localScale *= 0.1f;
+    //    WandGO.transform.localScale *= 0.1f;
 
-        //++++++++++ WAND ++++++++++
+    //    //++++++++++ WAND ++++++++++
         
-        GameObject endAttractor;
+    //    GameObject endAttractor;
 
-        GameObject emitter = level.CreateGameObject("VatsugEmitter" + count++);
+    //    GameObject emitter = level.CreateGameObject("VatsugEmitter" + count++);
 
 
-        //We add the emitter to the tip.
-        GPUParticleSystem particleEmitter = emitter.AddComponent<GPUParticleSystem>();
-        emitter.AddComponent<GPUParticleAttractor>().Power = 0.0f;
-        TempVisuals(emitter, PrimitiveType.Sphere, Color.blue);
-        emitter.GetComponent<Renderer>().enabled = false;
-        emitter.transform.parent = TipGO.transform;
-        emitter.transform.localScale = Vector3.one * 0.7f;
-        emitter.transform.localPosition = new Vector3(1, 0, 0) * reboundDistance;
-        
-
-        GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
-        descriptor.EmittFrequency = 500.0f;
-        descriptor.Lifetime = 5.0f;
-        descriptor.InheritVelocity = false;
-
-        GPUParticleDescriptor.LifetimePoints colorPoints = new GPUParticleDescriptor.LifetimePoints();
-        colorPoints.Add(new Vector4(1, 0, 0, 0));
-        colorPoints.Add(new Vector4(1, 1, 0, 0.3f));
-        colorPoints.Add(new Vector4(0, 1, 0, 1.0f));
-        descriptor.ColorOverLifetime = colorPoints;
-
-        GPUParticleDescriptor.LifetimePoints haloPoints = new GPUParticleDescriptor.LifetimePoints();
-        haloPoints.Add(new Vector4(0, 0, 1, 0));
-        haloPoints.Add(new Vector4(1, 0, 1, 1.0f));
-        descriptor.HaloOverLifetime = haloPoints;
-
-        GPUParticleDescriptor.LifetimePoints scalePoints = new GPUParticleDescriptor.LifetimePoints();
-        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 0));
-        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 1));
-        descriptor.ScaleOverLifetime = scalePoints;
-
-        GPUParticleDescriptor.LifetimePoints opacityPoints = new GPUParticleDescriptor.LifetimePoints();
-        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0));
-        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0.8f));
-        opacityPoints.Add(new Vector4(0.0f, 0, 0, 1.0f));
-        descriptor.OpacityOverLifetime = opacityPoints;
-
-        descriptor.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
-
-        particleEmitter.ParticleDescriptor = descriptor;
-
-        particleEmitter.Active = false;
-        
-        endAttractor = new GameObject();
-        endAttractor.AddComponent<GPUParticleAttractor>().Power = 0.0f;
-        endAttractor.transform.parent = TipGO.transform;
-        endAttractor.transform.localPosition = Vector3.up * 17.0f;
+    //    //We add the emitter to the tip.
+    //    GPUParticleSystem particleEmitter = emitter.AddComponent<GPUParticleSystem>();
+    //    emitter.AddComponent<GPUParticleAttractor>().Power = 0.0f;
+    //    TempVisuals(emitter, PrimitiveType.Sphere, Color.blue);
+    //    emitter.GetComponent<Renderer>().enabled = false;
+    //    emitter.transform.parent = TipGO.transform;
+    //    emitter.transform.localScale = Vector3.one * 0.7f;
+    //    emitter.transform.localPosition = new Vector3(1, 0, 0) * reboundDistance;
         
 
-        WandGO.transform.Rotate(90, 0, 0);
-        WandGO.transform.position += Vector3.forward * 0.2f;
+    //    GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
+    //    descriptor.EmittFrequency = 500.0f;
+    //    descriptor.Lifetime = 5.0f;
+    //    descriptor.InheritVelocity = false;
+
+    //    GPUParticleDescriptor.LifetimePoints colorPoints = new GPUParticleDescriptor.LifetimePoints();
+    //    colorPoints.Add(new Vector4(1, 0, 0, 0));
+    //    colorPoints.Add(new Vector4(1, 1, 0, 0.3f));
+    //    colorPoints.Add(new Vector4(0, 1, 0, 1.0f));
+    //    descriptor.ColorOverLifetime = colorPoints;
+
+    //    GPUParticleDescriptor.LifetimePoints haloPoints = new GPUParticleDescriptor.LifetimePoints();
+    //    haloPoints.Add(new Vector4(0, 0, 1, 0));
+    //    haloPoints.Add(new Vector4(1, 0, 1, 1.0f));
+    //    descriptor.HaloOverLifetime = haloPoints;
+
+    //    GPUParticleDescriptor.LifetimePoints scalePoints = new GPUParticleDescriptor.LifetimePoints();
+    //    scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 0));
+    //    scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 1));
+    //    descriptor.ScaleOverLifetime = scalePoints;
+
+    //    GPUParticleDescriptor.LifetimePoints opacityPoints = new GPUParticleDescriptor.LifetimePoints();
+    //    opacityPoints.Add(new Vector4(1.0f, 0, 0, 0));
+    //    opacityPoints.Add(new Vector4(1.0f, 0, 0, 0.8f));
+    //    opacityPoints.Add(new Vector4(0.0f, 0, 0, 1.0f));
+    //    descriptor.OpacityOverLifetime = opacityPoints;
+
+    //    descriptor.EmittMesh = TipGO.GetComponent<MeshFilter>().mesh;
+
+    //    particleEmitter.ParticleDescriptor = descriptor;
+
+    //    particleEmitter.Active = false;
+        
+    //    endAttractor = new GameObject();
+    //    endAttractor.AddComponent<GPUParticleAttractor>().Power = 0.0f;
+    //    endAttractor.transform.parent = TipGO.transform;
+    //    endAttractor.transform.localPosition = Vector3.up * 17.0f;
+        
+
+    //    WandGO.transform.Rotate(90, 0, 0);
+    //    WandGO.transform.position += Vector3.forward * 0.2f;
 
 
-        VatsugWand wand = TipGO.AddComponent<VatsugWand>();
-        wand.mEndAttractor = endAttractor;
-        wand.mPowerEndAttractor = powerEndAttractor;
-        wand.mPowerAttractors = powerNormalAttractors;
-        wand.mReboundDistance = reboundDistance;
-        wand.mParticleEmitter = emitter;// particleEmitter;
-        wand.rightHand = rightHand;
-        wand.pendulumSpeed = pendulumSpeed;
+    //    VatsugWand wand = TipGO.AddComponent<VatsugWand>();
+    //    wand.mEndAttractor = endAttractor;
+    //    wand.mPowerEndAttractor = powerEndAttractor;
+    //    wand.mPowerAttractors = powerNormalAttractors;
+    //    wand.mReboundDistance = reboundDistance;
+    //    wand.mParticleEmitter = emitter;// particleEmitter;
+    //    wand.rightHand = rightHand;
+    //    wand.pendulumSpeed = pendulumSpeed;
 
-        WandGO.AddComponent<MirrorHandMovement>();
+    //    WandGO.AddComponent<MirrorHandMovement>();
 
-        return WandGO;
-    }
+    //    return WandGO;
+    //}
 
-    public static GameObject CreateBasicEnemy()
+    public static GameObject CreateBasicEnemy(Vector3 position, int health)
     {
         GameObject gameObject = new GameObject("Basic Enemy " + count++);
+        gameObject.transform.position = position;
 
         // MESH.
         gameObject.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
@@ -584,7 +597,10 @@ public static class Factory
         gameObject.AddComponent<GPUParticleSphereCollider>().Radius = 0.5f;
 
         // HEALTH.
-        gameObject.AddComponent<Health>();
+        gameObject.AddComponent<Health>().HealthStart = health;
+
+        // FEEDBACK.
+        gameObject.AddComponent<FeedBack>();
 
         return gameObject;
     }
