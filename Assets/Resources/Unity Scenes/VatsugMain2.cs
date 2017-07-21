@@ -16,6 +16,7 @@ public class VatsugMain2 : MonoBehaviour
 
 
     private float timer;
+    private float endTimer = 0.0f;
     private const int nrOfVatsugs = 20;
     private int counter = 0;
     List<GameObject> enemies;
@@ -119,37 +120,49 @@ public class VatsugMain2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        foreach (GameObject go in enemies)
-        {
-            if (go.transform.childCount == 0)
-            {
-                ++counter;
-                Destroy(go);
-                enemies.Remove(go);
-                mCurrentScore.text = "Birds sacrificed: " + counter;
-            }
-            
-        }
         timer -= Time.deltaTime;
+
         if (timer <= 0.0f)
         {
             foreach (GameObject go in enemies)
             {
-                if (go.transform.childCount == 0)
+                if (go)
                 {
-                    ++counter;
+                    if (go.transform.childCount == 0)
+                    {
+                        ++counter;
+                    }
+                    Destroy(go);
                 }
-                Destroy(go);
-                enemies.Remove(go);
             }
+            enemies.Clear();
 
 
             if (mStageInfo.Score < counter)
                 mStageInfo.SetScore(counter);
 
-            Factory.CreateCelebration();
-            timer = 999999999.0f;
+            if (endTimer == 0.0f)
+                Factory.CreateCelebration();
+
+            endTimer += Time.deltaTime;
+            if (endTimer > 6)
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+        }
+        else
+        {
+            foreach (GameObject go in enemies)
+            {
+                if (go)
+                {
+                    if (go.transform.childCount == 0)
+                    {
+                        ++counter;
+                        Destroy(go);
+
+                        mCurrentScore.text = "Birds sacrificed: " + counter;
+                    }
+                }
+            }
         }
         if (controllerSpawnDelay <= 0 && !once)
         {
