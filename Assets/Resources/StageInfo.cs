@@ -17,6 +17,7 @@ public class StageInfo  {
     public string mName;
     public string mThumbnail;
 
+    public float highscore;
     private float mScore;
     public float Score { get { return mScore; } }
     public void SetScore(float newScore)
@@ -50,7 +51,8 @@ public class StageInfo  {
             Hub.Instance.stars += 1 + starsEarned;
         }
 
-        PlayerPrefs.SetFloat(mSceneName + "Highscore", mScore);
+        if(mScore > highscore)
+            PlayerPrefs.SetFloat(mSceneName + "Highscore", highscore);
 
     }
 
@@ -72,7 +74,8 @@ public class StageInfo  {
         mName = "Stage:" + count;
         mThumbnail = "Textures/Default";
 
-        mScore = PlayerPrefs.GetFloat(mSceneName + "Highscore", -1);
+        mScore = -1;
+        highscore = PlayerPrefs.GetFloat(mSceneName + "Highscore", 0);
 
         mBronze = 50;
         mSilver = 30;

@@ -42,7 +42,7 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
         mTimer = 0;
 
         // Highscore.
-        GameObject Highscore = Factory.CreateWorldText("Highscore:" + mStageInfo.Score, Color.white);
+        GameObject Highscore = Factory.CreateWorldText("Highscore:" + mStageInfo.highscore, Color.white);
         Highscore.transform.position += Vector3.forward * 100 + Vector3.up * 30;
         Highscore.transform.localScale *= 20;
 
