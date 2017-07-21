@@ -652,7 +652,7 @@ public static class Factory
 
         GPUParticleSphereCollider particleColider = StraitenOutBirdObject.AddComponent<GPUParticleSphereCollider>();
         particleColider.Radius = 0.04f;
-        StraitenOutBirdObject.transform.localScale = new Vector3(3, 3, 3);
+        StraitenOutBirdObject.transform.localScale = new Vector3(4, 4, 4);
         StraitenOutBirdObject.transform.parent = parent;
         StraitenOutBirdObject.transform.localPosition = new Vector3(0, 0, -0.1f);
 
