@@ -19,7 +19,7 @@ public static class Factory
 
     /// +++ FUNCTIONS +++ ///
 
-    public static void CreateMichaelBayEffect(Mesh mesh, Transform t, Color meshColor)
+    public static void CreateMichaelBayEffect(Mesh mesh, Transform t, Color meshColor, bool timestretch = true)
     {
         GameObject michael = new GameObject("michael" + count++);
         //GameObject blackHole = new GameObject("blackhole" + count++);
@@ -39,11 +39,14 @@ public static class Factory
             exp.ShrinkTime = 0.25f;
         }
 
-        TimerStretch timeStrech = michael.AddComponent<TimerStretch>();
-        timeStrech.TimePrePhase = 0.5f;
-        timeStrech.TimeMainPhase = 0.2f;
-        timeStrech.TimePostPhase = 0.5f;
-        timeStrech.TargetTimeScale = 0.1f;
+        if (timestretch)
+        {
+            TimerStretch timeStrech = michael.AddComponent<TimerStretch>();
+            timeStrech.TimePrePhase = 0.5f;
+            timeStrech.TimeMainPhase = 0.2f;
+            timeStrech.TimePostPhase = 0.5f;
+            timeStrech.TargetTimeScale = 0.1f;
+        }
 
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
         michaelLifetimer.LifeTime = 4.0f;
@@ -372,8 +375,9 @@ public static class Factory
         //We add the emitter to the tip.
         GPUParticleSystem system = TipGO.AddComponent<GPUParticleSystem>();
 
+        Health.HEALTH_FACTOR = 2.0f;
         GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
-        descriptor.EmittFrequency = 500.0f;
+        descriptor.EmittFrequency = 1000.0f;
         descriptor.Lifetime = 5.0f;
         descriptor.InheritVelocity = false;
 
@@ -399,12 +403,13 @@ public static class Factory
         descriptor.HaloOverLifetime = haloPoints;
 
         GPUParticleDescriptor.LifetimePoints scalePoints = new GPUParticleDescriptor.LifetimePoints();
-        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 0));
-        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 1));
+        scalePoints.Add(new Vector4(0.005f, 0.005f, 0, 0));
+        scalePoints.Add(new Vector4(0.005f, 0.005f, 0, 1));
         descriptor.ScaleOverLifetime = scalePoints;
 
         GPUParticleDescriptor.LifetimePoints opacityPoints = new GPUParticleDescriptor.LifetimePoints();
-        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0));
+        opacityPoints.Add(new Vector4(0.0f, 0, 0, 0));
+        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0.1f));
         opacityPoints.Add(new Vector4(1.0f, 0, 0, 0.8f));
         opacityPoints.Add(new Vector4(0.0f, 0, 0, 1.0f));
         descriptor.OpacityOverLifetime = opacityPoints;
