@@ -29,19 +29,22 @@ public class LoadingSceneMain : MonoBehaviour {
 
 
         stageInfo = new StageInfo(2, 0, "Vatsug");
-        stageInfo.mName = "Vatsug";
+        stageInfo.mName = "Boat ride";
         stageInfo.mThumbnail = "Textures/vatsugicon";
 
 
-        stageInfo.mBronze = 30;
-        stageInfo.mSilver = 20;
-        stageInfo.mGold = 10;
+        stageInfo.mBronze = 5;
+        stageInfo.mSilver = 10;
+        stageInfo.mGold = 15;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
         stageInfo = new StageInfo(2, 1, "Vatsug2");
-        stageInfo.mName = "Vatsug2";
+        stageInfo.mName = "Stranded";
         stageInfo.mThumbnail = "Textures/vatsugicon2";
+        stageInfo.mBronze = 5;
+        stageInfo.mSilver = 10;
+        stageInfo.mGold = 15;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 

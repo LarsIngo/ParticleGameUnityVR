@@ -50,6 +50,7 @@ public class Hub
         AudioSource audioSource = backgroundMusic.AddComponent<AudioSource>();
         audioSource.clip = Resources.Load<AudioClip>("Music/MachinimaSound.com_-_The_Arcade");
         audioSource.loop = true;
+        audioSource.volume = 0.5f;
         audioSource.Play();
 
     }

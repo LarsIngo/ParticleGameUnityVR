@@ -10,19 +10,38 @@ public class VatsugMain : MonoBehaviour
     
     
     UnityEngine.UI.Text highscore;
-    float controllerSpawnDelay;
-    bool once;
+    private float controllerSpawnDelay;
+    private bool once;
+    private const int nrOfVatsugs = 20;
+    private GameObject[] enemies;
+    private float timer;
+
+
+    private StageInfo mStageInfo;
 
 
     /// --- MEMBERS --- ///
 
+
     // Use this for initialization
     void Start()
     {
-        GameObject enemy = new GameObject("TheOneAndOnlyVatsug");
-        Factory.CreateVatsug(enemy.transform);
-        enemy.AddComponent<Vatsug>();
+        for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
+        {
 
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Vatsug")
+                mStageInfo = Hub.Instance.mStageInfoList[i];
+
+        }
+
+
+        enemies = new GameObject[nrOfVatsugs];
+        for (int i = 0; i < nrOfVatsugs; ++i)
+        {
+            enemies[i] = new GameObject("TheOneAndOnlyVatsug");
+            Factory.CreateVatsug(enemies[i].transform);
+            enemies[i].AddComponent<Vatsug>();
+        }
         //this.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
 
         GameObject boat = Factory.CreateBoat();
@@ -33,6 +52,10 @@ public class VatsugMain : MonoBehaviour
 
         controllerSpawnDelay = 1.0f;
         once = false;
+
+
+        //30 sec on the clock
+        timer = 30.0f;
         //Equip a wand.
         /*GameObject rightWand = Factory.CreateAttractorWand(20, false);
         GameObject leftWand = Factory.CreateAttractorWand(20, false);
@@ -88,8 +111,28 @@ public class VatsugMain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        timer -= Time.deltaTime;
+        if (timer <= 0.0f)
+        {
+            int counter = 0;
+            for (int i = 0; i < nrOfVatsugs; ++i)
+            {
+                if (enemies[i].transform.childCount == 0)
+                {
+                    ++counter;
+                }
+                Destroy(enemies[i]);
+            }
+            if (mStageInfo.Score < counter)
+                mStageInfo.SetScore(counter);
+
+            Factory.CreateCelebration();
+            timer = 999999999.0f;
+
+        }
         if (controllerSpawnDelay <= 0 && !once)
         {
+            //Factory.CreateVatsugWand(100, 50, 0, 0, true);
             Factory.CreateAttractorWand(20, true);
             Factory.CreateAttractorWand(20, false);
             once = true;

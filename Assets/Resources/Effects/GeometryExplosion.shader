@@ -56,20 +56,20 @@
 			int rID = (int)(input[0].id) % 16;
 
 			matrix m = 0;
-			//Scaleing with z rotaation
+			//Scaling with z rotaation
 
 			float fac = 1.0f / max(gOffset * rID, 1.3f) + exp(gOffset / 3) - 0.7f;
 			
-
 			float rot = gOffset / rID;
 			
+			float s = sin(rot);
+			float c = cos(rot);
 			
-			m._11 = fac * cos(rot);	m._12 = -sin(rot);
-			m._22 = fac * cos(rot); m._21 = sin(rot);
-			m._33 = fac;
-			m._44 = 1.0f;
-
-			if (gOffset > 2.0f)
+			if (gOffset > 3.0f)
+			{
+				m = 0;
+			}
+			else if (gOffset > 2.0f)
 			{
 				float test = gOffset * gOffset * gOffset;
 				fac = 10.0f / (test);
@@ -78,8 +78,13 @@
 				m._33 = fac;
 				//m = 0;
 			}
-			if (gOffset > 3.0f)
-				m = 0;
+			else
+			{
+				m._11 = fac * c;	m._12 = -s;
+				m._21 = s; m._22 = fac * c;
+				m._33 = fac;
+				m._44 = 1.0f;
+			}
 
 
 			float3 p[3];
@@ -106,7 +111,7 @@
 		fixed4 frag(gsOutput i) : SV_Target
 		{
 			fixed4 texcol = tex2D(_MainTex, i.uv);
-			return texcol;//float4(gAmbientRed, gAmbientGreen, gAmbientBlue, 1.0f);
+			return texcol;// float4(gAmbientRed, gAmbientGreen, gAmbientBlue, 1.0f);
 		}
 			
 			ENDCG
