@@ -493,8 +493,10 @@ public static class Factory
     {
         GameObject StraitenOutBirdObject = level.CreateGameObject("StraitenOutBirdObject" + count++);
 
+        //---------------------------------------------------------------------------//
+        /*Low Poly Bird (Animated) by Charlie Tinley is licensed under CC Attribution*/
+        //---------------------------------------------------------------------------//
         StraitenOutBirdObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/Fagel/source/Materials/BirdUVTexture", typeof(Material));
-        
         StraitenOutBirdObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/Fagel/source/Bird_Asset", typeof(Mesh));
 
         GPUParticleSphereCollider particleColider = StraitenOutBirdObject.AddComponent<GPUParticleSphereCollider>();
@@ -588,8 +590,6 @@ public static class Factory
 
         level.AddChildGO(go);
 
-        /*Low Poly Bird (Animated) by Charlie Tinley is licensed under CC Attribution
-         */
 
 
         //PalmTree_dual_leafs_1sided
