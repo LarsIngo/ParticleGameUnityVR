@@ -39,6 +39,23 @@ public abstract class Level
 
     }
 
+    public void AddChildGO(GameObject child)
+    {
+        if (mLevelGO == null)
+        {
+
+            mLevelGO = new GameObject("LEVEL:" + child.name);
+
+        }
+
+        Debug.Assert(!GameObject.Find(child.name));
+
+
+        child.transform.SetParent(mLevelGO.transform);
+
+        return;
+    }
+
     /// <summary>
     /// Create new game object to level.
     /// </summary>

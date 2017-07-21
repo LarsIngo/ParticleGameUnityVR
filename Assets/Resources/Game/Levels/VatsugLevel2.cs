@@ -32,7 +32,7 @@ public class VatsugLevel2 : Level
     public override void Awake()
     {
         GameObject enemy = this.CreateGameObject("TheOneAndOnlyVatsug2");
-        Factory.CreateVatsug(this, enemy.transform);
+        Factory.CreateVatsug2(this, enemy.transform);
         enemy.AddComponent<Vatsug2>();
 
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
