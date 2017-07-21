@@ -10,15 +10,15 @@ public class VatsugMain : MonoBehaviour
     
     
     UnityEngine.UI.Text highscore;
-    SpawnSystem sp;
-    float timer = 0;
+    float controllerSpawnDelay;
+    bool once;
+
 
     /// --- MEMBERS --- ///
 
     // Use this for initialization
     void Start()
     {
-        sp = new SpawnSystem();
         GameObject enemy = new GameObject("TheOneAndOnlyVatsug");
         Factory.CreateVatsug(enemy.transform);
         enemy.AddComponent<Vatsug>();
@@ -31,13 +31,14 @@ public class VatsugMain : MonoBehaviour
 
         GameObject water = Factory.CreateWater();
 
-
+        controllerSpawnDelay = 2.0f;
+        once = false;
         //Equip a wand.
-        GameObject rightWand = Factory.CreateAttractorWand(20, false);
+        /*GameObject rightWand = Factory.CreateAttractorWand(20, false);
         GameObject leftWand = Factory.CreateAttractorWand(20, false);
         sp.AddGameObjectWithDelay(rightWand, 2.0f);
         sp.AddGameObjectWithDelay(leftWand, 2.0f);
-
+        */
         //rightWand.transform.parent = rightHand.transform;
         //leftWand.transform.parent = leftHand.transform;
 
@@ -89,6 +90,16 @@ public class VatsugMain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (controllerSpawnDelay <= 0 && !once)
+        {
+            Factory.CreateAttractorWand(20, true);
+            Factory.CreateAttractorWand(20, false);
+            once = true;
+        }
+        else
+        {
+            controllerSpawnDelay -= Time.deltaTime;
+        }
         if (VrInput.Menu() || Input.GetKeyDown(KeyCode.Escape))
         {
             AudioSource audioSource = Hub.backgroundMusic.GetComponent<AudioSource>();
