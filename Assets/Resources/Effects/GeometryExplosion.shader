@@ -58,9 +58,8 @@
 			matrix m = 0;
 			//Scaleing with z rotaation
 
-			float fac = 1.0f / max(gOffset * rID, 0.6f) + exp(gOffset / 3) - 0.7f;
+			float fac = 1.0f / max(gOffset * rID, 1.3f) + exp(gOffset / 3) - 0.7f;
 			
-
 
 			float rot = gOffset / rID;
 			
