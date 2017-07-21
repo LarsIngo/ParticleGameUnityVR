@@ -65,12 +65,12 @@ public class MenuWand : MonoBehaviour {
         if (VrInput.controllersFound && target != null)
         {
 
-            float trigger = 0;
+            bool trigger = false;
             if (rightHand)
-                trigger = VrInput.RightTrigger();
-            else trigger = VrInput.LeftTrigger();
+                trigger = VrInput.RightTriggerPressed();
+            else trigger = VrInput.LeftTriggerPressed();
 
-            if (trigger == 1.0f)
+            if (trigger)
             {
 
                 UnityEngine.SceneManagement.SceneManager.LoadScene(target.GetComponent<StageScreen>().stageInfo.mSceneName);

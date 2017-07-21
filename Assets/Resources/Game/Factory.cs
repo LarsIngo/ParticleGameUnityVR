@@ -19,7 +19,7 @@ public static class Factory
 
     /// +++ FUNCTIONS +++ ///
 
-    public static void CreateMichaelBayEffect(Mesh mesh, Transform t, Color meshColor)
+    public static void CreateMichaelBayEffect(Mesh mesh, Transform t, Color meshColor, bool timestretch = true)
     {
         GameObject michael = new GameObject("michael" + count++);
         //GameObject blackHole = new GameObject("blackhole" + count++);
@@ -39,11 +39,14 @@ public static class Factory
             exp.ShrinkTime = 0.25f;
         }
 
-        TimerStretch timeStrech = michael.AddComponent<TimerStretch>();
-        timeStrech.TimePrePhase = 0.5f;
-        timeStrech.TimeMainPhase = 0.2f;
-        timeStrech.TimePostPhase = 0.5f;
-        timeStrech.TargetTimeScale = 0.1f;
+        if (timestretch)
+        {
+            TimerStretch timeStrech = michael.AddComponent<TimerStretch>();
+            timeStrech.TimePrePhase = 0.5f;
+            timeStrech.TimeMainPhase = 0.2f;
+            timeStrech.TimePostPhase = 0.5f;
+            timeStrech.TargetTimeScale = 0.1f;
+        }
 
         LifeTimer michaelLifetimer = michael.AddComponent<LifeTimer>();
         michaelLifetimer.LifeTime = 4.0f;
@@ -56,11 +59,13 @@ public static class Factory
         AudioSource ceramicSound = michael.AddComponent<AudioSource>();
         ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");
         ceramicSound.time = 0.2f;
+        ceramicSound.spatialBlend = 1.0f;
         ceramicSound.Play();
 
         AudioSource artillerySound = michael.AddComponent<AudioSource>();
         artillerySound.clip = Resources.Load<AudioClip>("Samples/Explosion/Artillery");
         artillerySound.time = 0.25f;
+        artillerySound.spatialBlend = 1.0f;
         artillerySound.Play();
 
     }
@@ -150,57 +155,6 @@ public static class Factory
 
         // LIFETIME.
         gameObject.AddComponent<LifeTimer>().LifeTime = 5;
-    }
-
-    public static void CreateFireworkTail(Vector3 position)
-    {
-        GameObject gameObject = new GameObject("Firework " + Time.time);
-        gameObject.transform.position = position;
-
-        // PARTICLESYSTEM.
-        GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
-
-        GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
-        descriptor.EmittFrequency = 250.0f;
-        descriptor.Lifetime = 1.0f;
-        descriptor.InheritVelocity = false;
-
-        GPUParticleDescriptor.LifetimePoints colorPoints = new GPUParticleDescriptor.LifetimePoints();
-        colorPoints.Add(new Vector4(0, 1, 0, 0));
-        colorPoints.Add(new Vector4(1, 1, 0, 0.1f));
-        colorPoints.Add(new Vector4(0, 1, 0, 0.2f));
-        colorPoints.Add(new Vector4(1, 0, 0, 0.3f));
-        colorPoints.Add(new Vector4(0, 1, 0, 0.4f));
-        colorPoints.Add(new Vector4(0, 0, 1, 0.5f));
-        colorPoints.Add(new Vector4(1, 0, 1, 0.6f));
-        colorPoints.Add(new Vector4(0, 1, 1, 0.7f));
-        colorPoints.Add(new Vector4(0, 1, 0, 0.8f));
-        colorPoints.Add(new Vector4(1, 1, 1, 0.9f));
-        colorPoints.Add(new Vector4(1, 1, 0, 1));
-        descriptor.ColorOverLifetime = colorPoints;
-
-        GPUParticleDescriptor.LifetimePoints haloPoints = new GPUParticleDescriptor.LifetimePoints();
-        haloPoints.Add(new Vector4(1, 0, 0, 0));
-        haloPoints.Add(new Vector4(0, 1, 0, 0.333f));
-        haloPoints.Add(new Vector4(0, 0, 1, 0.666f));
-        haloPoints.Add(new Vector4(0.5f, 0, 0.5f, 1));
-        descriptor.HaloOverLifetime = haloPoints;
-
-        GPUParticleDescriptor.LifetimePoints scalePoints = new GPUParticleDescriptor.LifetimePoints();
-        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 0));
-        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 1));
-        descriptor.ScaleOverLifetime = scalePoints;
-
-        GPUParticleDescriptor.LifetimePoints opacityPoints = new GPUParticleDescriptor.LifetimePoints();
-        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0));
-        opacityPoints.Add(new Vector4(8.0f, 0, 0, 0.5f));
-        opacityPoints.Add(new Vector4(0.0f, 0, 0, 1.0f));
-        descriptor.OpacityOverLifetime = opacityPoints;
-
-        system.ParticleDescriptor = descriptor;
-
-        // LFEITIME.
-        gameObject.AddComponent<LifeTimer>().LifeTime = 5.0f;
     }
 
     public static void CreateFeedbackText(string text, Color color, Vector3 origin, Vector3 velocity)
@@ -372,8 +326,9 @@ public static class Factory
         //We add the emitter to the tip.
         GPUParticleSystem system = TipGO.AddComponent<GPUParticleSystem>();
 
+        Health.HEALTH_FACTOR = 2.0f;
         GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
-        descriptor.EmittFrequency = 500.0f;
+        descriptor.EmittFrequency = 1000.0f;
         descriptor.Lifetime = 5.0f;
         descriptor.InheritVelocity = false;
 
@@ -399,12 +354,13 @@ public static class Factory
         descriptor.HaloOverLifetime = haloPoints;
 
         GPUParticleDescriptor.LifetimePoints scalePoints = new GPUParticleDescriptor.LifetimePoints();
-        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 0));
-        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 1));
+        scalePoints.Add(new Vector4(0.005f, 0.005f, 0, 0));
+        scalePoints.Add(new Vector4(0.005f, 0.005f, 0, 1));
         descriptor.ScaleOverLifetime = scalePoints;
 
         GPUParticleDescriptor.LifetimePoints opacityPoints = new GPUParticleDescriptor.LifetimePoints();
-        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0));
+        opacityPoints.Add(new Vector4(0.0f, 0, 0, 0));
+        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0.1f));
         opacityPoints.Add(new Vector4(1.0f, 0, 0, 0.8f));
         opacityPoints.Add(new Vector4(0.0f, 0, 0, 1.0f));
         descriptor.OpacityOverLifetime = opacityPoints;

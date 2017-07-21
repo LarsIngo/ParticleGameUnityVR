@@ -5,19 +5,24 @@ using UnityEngine;
 public class Health : MonoBehaviour
 {
 
-    int mHealthStart = 1000;
-    int mHealthCurrent = 1000;
+    /// <summary>
+    /// Factor to scales health to number of paritlces.
+    /// </summary>
+    public static float HEALTH_FACTOR = 1.0f;
+
+    float mHealthStart = 1000;
+    float mHealthCurrent = 1000;
 
     /// <summary>
     /// Start health of entity.
     /// Default: 1000
     /// </summary>
-    public int HealthStart { get { return mHealthStart; } set { mHealthStart = value; mHealthCurrent = value; } }
+    public float HealthStart { get { return mHealthStart / HEALTH_FACTOR; } set { mHealthStart = value * HEALTH_FACTOR; mHealthCurrent = value * HEALTH_FACTOR; } }
 
     /// <summary>
     /// Current health of entity.
     /// </summary>
-    public int HealthCurrent { get { return mHealthCurrent; } }
+    public float HealthCurrent { get { return mHealthCurrent / HEALTH_FACTOR; } }
 
     void Start ()
     {
