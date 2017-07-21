@@ -94,6 +94,8 @@ public class GPUParticleSystem : MonoBehaviour
     static int sTotalParticleCount = 0;
     static SwapBuffer sSortElementSwapBuffer = null;
 
+    static ComputeBuffer sRandomIndexBuffer = null;
+
     // Material.
     static Material sRenderMaterial = null;
 
@@ -129,6 +131,8 @@ public class GPUParticleSystem : MonoBehaviour
         sMergedTransperancyBuffer = new SwapBuffer(1, 1, sizeof(float) * 4);
 
         sSortElementSwapBuffer = new SwapBuffer(2, 1, System.Runtime.InteropServices.Marshal.SizeOf(typeof(SortElement)));
+
+        sRandomIndexBuffer = new ComputeBuffer(64, sizeof(int));
 
         // MATERIAL.
         sRenderMaterial = new Material(Resources.Load<Shader>("GPUParticleSystem/Shaders/GPUParticleRenderShader"));
@@ -171,6 +175,8 @@ public class GPUParticleSystem : MonoBehaviour
         sMergedTransperancyBuffer.Release();
 
         sSortElementSwapBuffer.Release();
+
+        sRandomIndexBuffer.Release();
 
         sRenderMaterial = null;
     }
@@ -396,8 +402,16 @@ public class GPUParticleSystem : MonoBehaviour
 
         Vector3 emitterVelocity = transform.position - mLastPosition;
 
-        for (int i = 0; i < emittCount; ++i)
+        int particlesToEmitt = emittCount;
+        int batchCount = (int)Mathf.Ceil(emittCount / 64.0f);
+        for (int batchID = 0; batchID < batchCount; ++batchID)
         {
+            int emittCountThisBatch = particlesToEmitt > 64 ? 64 : particlesToEmitt;
+            //Debug.Log(emittCountThisBatch);
+            particlesToEmitt -= 64;
+
+            sComputeShader.SetInt("gEmittCountThisBatch", emittCountThisBatch);
+
             // BIND PARTICLE BUFFERS.
             sComputeShader.SetBuffer(sKernelEmitt, "gPositionBuffer", mPositionBuffer.GetOutputBuffer());
             sComputeShader.SetBuffer(sKernelEmitt, "gVelocityBuffer", mVelocityBuffer.GetOutputBuffer());
@@ -405,14 +419,12 @@ public class GPUParticleSystem : MonoBehaviour
 
             // Inherit velocity from emitter if true.
             Vector3 velocity = (emitterVelocity / Time.deltaTime) * (mDescriptor.InheritVelocity ? 1 : 0) + mDescriptor.InitialVelocity;
-            
-            Vector3 newInitPos = mLastPosition;
-            float delta = i / emittCount;
-            newInitPos += emitterVelocity * delta;
+           
 
             // EMITT INFO.
-            sComputeShader.SetInt("gEmittIndex", mEmittIndex);
-            sComputeShader.SetFloats("gPosition", new float[] { newInitPos.x, newInitPos.y, newInitPos.z });
+            sComputeShader.SetInt("gEmittStartIndex", mEmittIndex);
+            sComputeShader.SetInt("gEmittMaxCount", mMaxParticleCount);
+            sComputeShader.SetFloats("gPosition", new float[] { transform.position.x, transform.position.y, transform.position.z });
             sComputeShader.SetFloats("gVelocity", new float[] { velocity.x, velocity.y, velocity.z });
             sComputeShader.SetFloats("gLifetime", new float[] { mDescriptor.Lifetime });
 
@@ -435,7 +447,12 @@ public class GPUParticleSystem : MonoBehaviour
                 sComputeShader.SetBuffer(sKernelEmitt, "gEmittMeshIndexBuffer", emittMeshInfo.mIndexBuffer);
                 sComputeShader.SetInt("gEmittMeshVertexCount", emittMeshInfo.mVertexCount);
                 sComputeShader.SetInt("gEmittMeshIndexCount", emittMeshInfo.mIndexCount);
-                sComputeShader.SetInt("gEmittMeshRandomIndex", Random.Range(0, emittMeshInfo.mIndexCount - 1));
+
+                int[] randomIndexArray = new int[64];
+                for (int j = 0; j < randomIndexArray.GetLength(0); ++j)
+                    randomIndexArray[j] = Random.Range(0, emittMeshInfo.mIndexCount - 1);
+                sRandomIndexBuffer.SetData(randomIndexArray);
+                sComputeShader.SetBuffer(sKernelEmitt, "gEmittMeshRandomIndexBuffer", sRandomIndexBuffer);
                 sComputeShader.SetFloats("gEmittMeshScale", new float[] { transform.localScale.x, transform.localScale.y, transform.localScale.z });
             }
             
@@ -443,7 +460,7 @@ public class GPUParticleSystem : MonoBehaviour
             sComputeShader.Dispatch(sKernelEmitt, 1, 1, 1);
 
             // Increment emitt index.
-            mEmittIndex = (mEmittIndex + 1) % mMaxParticleCount;
+            mEmittIndex = (mEmittIndex + emittCountThisBatch) % mMaxParticleCount;
         }
     }
 

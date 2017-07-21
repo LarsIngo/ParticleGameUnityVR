@@ -326,9 +326,9 @@ public static class Factory
         //We add the emitter to the tip.
         GPUParticleSystem system = TipGO.AddComponent<GPUParticleSystem>();
 
-        Health.HEALTH_FACTOR = 2.0f;
+        Health.HEALTH_FACTOR = 1.0f;
         GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
-        descriptor.EmittFrequency = 1000.0f;
+        descriptor.EmittFrequency = 500.0f;
         descriptor.Lifetime = 5.0f;
         descriptor.InheritVelocity = false;
 

@@ -268,7 +268,8 @@ RWStructuredBuffer<float4> gPositionBuffer;
 RWStructuredBuffer<float4> gVelocityBuffer;
 RWStructuredBuffer<float4> gLifetimeBuffer;
 
-uniform int gEmittIndex;
+uniform int gEmittStartIndex; // Index to emitt first particle on.
+uniform int gEmittMaxCount; // Max index
 uniform float3 gPosition;
 uniform float3 gVelocity;
 uniform float gLifetime;
@@ -277,17 +278,22 @@ uniform StructuredBuffer<float3> gEmittMeshVertexBuffer;
 uniform StructuredBuffer<int> gEmittMeshIndexBuffer;
 uniform int gEmittMeshVertexCount;
 uniform int gEmittMeshIndexCount;
-uniform int gEmittMeshRandomIndex;
+uniform StructuredBuffer<int> gEmittMeshRandomIndexBuffer; // 64 random indices.
 uniform float3 gEmittMeshScale;
+uniform int gEmittCountThisBatch; // [0,64]
 
-[numthreads(1, 1, 1)]
+[numthreads(64, 1, 1)]
 void EMITT(uint3 id : SV_DispatchThreadID)
 {
-    int index = gEmittIndex;
+    int tID = id.x;
+
+    if (tID >= gEmittCountThisBatch) return;
+
+    int index = (gEmittStartIndex + tID) % gEmittMaxCount;
 
     float3 emittPosition = float3(0,0,0);
     if (gEmittMeshIndexCount > 0)
-        emittPosition = gEmittMeshVertexBuffer[gEmittMeshIndexBuffer[gEmittMeshRandomIndex]];
+        emittPosition = gEmittMeshVertexBuffer[gEmittMeshIndexBuffer[gEmittMeshRandomIndexBuffer[tID]]];
     else
         emittPosition = gPosition;
 
