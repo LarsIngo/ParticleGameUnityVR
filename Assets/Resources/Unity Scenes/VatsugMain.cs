@@ -153,7 +153,13 @@ public class VatsugMain : MonoBehaviour
 
             endTimer += Time.deltaTime;
             if (endTimer > 6)
+            {
+                AudioSource audioSource = Hub.backgroundMusic.GetComponent<AudioSource>();
+                audioSource.clip = Resources.Load<AudioClip>("Music/MachinimaSound.com_-_The_Arcade");
+                audioSource.Play();
+
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+            }
         }
         else
         {
