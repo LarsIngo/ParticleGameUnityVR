@@ -96,7 +96,7 @@ public static class Factory
         // FireworkSpawn
         GameObject fireworkSpawn = new GameObject("FireworkSpawn " + Time.time);
 
-        fireworkSpawn.AddComponent<FireworkSpawn>().mFrequency = 2.f;
+        fireworkSpawn.AddComponent<FireworkSpawn>().mFrequency = 2.0f;
 
         fireworkSpawn.AddComponent<LifeTimer>().LifeTime = lifetime / 2.0f;
     }
