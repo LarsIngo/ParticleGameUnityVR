@@ -59,11 +59,13 @@ public static class Factory
         AudioSource ceramicSound = michael.AddComponent<AudioSource>();
         ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");
         ceramicSound.time = 0.2f;
+        ceramicSound.spatialBlend = 1.0f;
         ceramicSound.Play();
 
         AudioSource artillerySound = michael.AddComponent<AudioSource>();
         artillerySound.clip = Resources.Load<AudioClip>("Samples/Explosion/Artillery");
         artillerySound.time = 0.25f;
+        artillerySound.spatialBlend = 1.0f;
         artillerySound.Play();
 
     }
