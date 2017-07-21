@@ -10,7 +10,7 @@ public class VatsugMain2 : MonoBehaviour
 
  
     UnityEngine.UI.Text highscore;
-
+    SpawnSystem sp;
     float timer = 0;
 
     /// --- MEMBERS --- ///
@@ -18,7 +18,7 @@ public class VatsugMain2 : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        SpawnSystem sp = new SpawnSystem();
+        sp = new SpawnSystem();
         GameObject enemy = new GameObject("TheOneAndOnlyVatsug2");
         Factory.CreateVatsug2(enemy.transform);
         enemy.AddComponent<Vatsug2>();
