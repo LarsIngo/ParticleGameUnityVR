@@ -5,6 +5,7 @@ using UnityEngine;
 public class AttractorWand : MonoBehaviour {
 
     public GPUParticleAttractor attractor;
+    public GPUParticleVectorField vectorField;
     public GPUParticleSystem system;
 
     public bool rightHand;
@@ -21,8 +22,11 @@ public class AttractorWand : MonoBehaviour {
                 trigger = VrInput.RightTrigger();
             else trigger = VrInput.LeftTrigger();
 
-            
-            attractor.Power = power * trigger;
+            if (rightHand)
+                vectorField.Vector = VrInput.deltaRight * 50;
+            else vectorField.Vector = VrInput.deltaLeft * 50;
+
+            attractor.Power = 0; // power * trigger;
 
             if (trigger == 1.0f)
                 system.Active = true;
@@ -36,16 +40,20 @@ public class AttractorWand : MonoBehaviour {
             {
 
                 attractor.Power = 20;
-                system.Active = false;
 
             }
             else
             {
 
                 attractor.Power = 0;
-                system.Active = true;
 
             }
+
+            system.Active = true;
+
+            if (rightHand)
+                vectorField.Vector = -VrInput.deltaRight * 50;
+            else vectorField.Vector = -VrInput.deltaLeft * 50;
 
         }
 
