@@ -157,57 +157,6 @@ public static class Factory
         gameObject.AddComponent<LifeTimer>().LifeTime = 5;
     }
 
-    public static void CreateFireworkTail(Vector3 position)
-    {
-        GameObject gameObject = new GameObject("Firework " + Time.time);
-        gameObject.transform.position = position;
-
-        // PARTICLESYSTEM.
-        GPUParticleSystem system = gameObject.AddComponent<GPUParticleSystem>();
-
-        GPUParticleDescriptor descriptor = new GPUParticleDescriptor();
-        descriptor.EmittFrequency = 250.0f;
-        descriptor.Lifetime = 1.0f;
-        descriptor.InheritVelocity = false;
-
-        GPUParticleDescriptor.LifetimePoints colorPoints = new GPUParticleDescriptor.LifetimePoints();
-        colorPoints.Add(new Vector4(0, 1, 0, 0));
-        colorPoints.Add(new Vector4(1, 1, 0, 0.1f));
-        colorPoints.Add(new Vector4(0, 1, 0, 0.2f));
-        colorPoints.Add(new Vector4(1, 0, 0, 0.3f));
-        colorPoints.Add(new Vector4(0, 1, 0, 0.4f));
-        colorPoints.Add(new Vector4(0, 0, 1, 0.5f));
-        colorPoints.Add(new Vector4(1, 0, 1, 0.6f));
-        colorPoints.Add(new Vector4(0, 1, 1, 0.7f));
-        colorPoints.Add(new Vector4(0, 1, 0, 0.8f));
-        colorPoints.Add(new Vector4(1, 1, 1, 0.9f));
-        colorPoints.Add(new Vector4(1, 1, 0, 1));
-        descriptor.ColorOverLifetime = colorPoints;
-
-        GPUParticleDescriptor.LifetimePoints haloPoints = new GPUParticleDescriptor.LifetimePoints();
-        haloPoints.Add(new Vector4(1, 0, 0, 0));
-        haloPoints.Add(new Vector4(0, 1, 0, 0.333f));
-        haloPoints.Add(new Vector4(0, 0, 1, 0.666f));
-        haloPoints.Add(new Vector4(0.5f, 0, 0.5f, 1));
-        descriptor.HaloOverLifetime = haloPoints;
-
-        GPUParticleDescriptor.LifetimePoints scalePoints = new GPUParticleDescriptor.LifetimePoints();
-        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 0));
-        scalePoints.Add(new Vector4(0.01f, 0.01f, 0, 1));
-        descriptor.ScaleOverLifetime = scalePoints;
-
-        GPUParticleDescriptor.LifetimePoints opacityPoints = new GPUParticleDescriptor.LifetimePoints();
-        opacityPoints.Add(new Vector4(1.0f, 0, 0, 0));
-        opacityPoints.Add(new Vector4(8.0f, 0, 0, 0.5f));
-        opacityPoints.Add(new Vector4(0.0f, 0, 0, 1.0f));
-        descriptor.OpacityOverLifetime = opacityPoints;
-
-        system.ParticleDescriptor = descriptor;
-
-        // LFEITIME.
-        gameObject.AddComponent<LifeTimer>().LifeTime = 5.0f;
-    }
-
     public static void CreateFeedbackText(string text, Color color, Vector3 origin, Vector3 velocity)
     {
         GameObject gameObject = CreateWorldText(text, color);
