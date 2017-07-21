@@ -33,18 +33,18 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo.mThumbnail = "Textures/vatsugicon";
 
 
-        stageInfo.mBronze = 5;
-        stageInfo.mSilver = 10;
-        stageInfo.mGold = 15;
+        stageInfo.mBronze = 3;
+        stageInfo.mSilver = 6;
+        stageInfo.mGold = 9;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
         stageInfo = new StageInfo(2, 1, "Vatsug2");
         stageInfo.mName = "Stranded";
         stageInfo.mThumbnail = "Textures/vatsugicon2";
-        stageInfo.mBronze = 5;
-        stageInfo.mSilver = 10;
-        stageInfo.mGold = 15;
+        stageInfo.mBronze = 3;
+        stageInfo.mSilver = 6;
+        stageInfo.mGold = 9;
         stageInfo.mStarRequirement = 3;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);

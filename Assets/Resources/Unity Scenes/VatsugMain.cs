@@ -12,7 +12,7 @@ public class VatsugMain : MonoBehaviour
     UnityEngine.UI.Text highscore;
     private float controllerSpawnDelay;
     private bool once;
-    private const int nrOfVatsugs = 20;
+    private const int nrOfVatsugs = 10;
     private List<GameObject> enemies;
         
     private float timer;
@@ -40,7 +40,7 @@ public class VatsugMain : MonoBehaviour
         }
 
         // TIMER.
-        GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);
+        GameObject timerText = Factory.CreateWorldText("Fishes Sacrificed", Color.white);
         timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
         timerText.transform.localScale *= 100;
         mCurrentScore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
@@ -166,7 +166,7 @@ public class VatsugMain : MonoBehaviour
                         ++counter;
                         Destroy(go);
 
-                        mCurrentScore.text = "Fishes sacrificed: " + counter;
+                        mCurrentScore.text = "Fishes Sacrificed: " + counter;
                     }
                 }
             }

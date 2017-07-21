@@ -17,7 +17,7 @@ public class VatsugMain2 : MonoBehaviour
 
     private float timer;
     private float endTimer = 0.0f;
-    private const int nrOfVatsugs = 20;
+    private const int nrOfVatsugs = 10;
     private int counter = 0;
     List<GameObject> enemies;
 
@@ -39,7 +39,7 @@ public class VatsugMain2 : MonoBehaviour
 
         }
         // TIMER.
-        GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);
+        GameObject timerText = Factory.CreateWorldText("Birds Sacrificed", Color.white);
         timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
         timerText.transform.localScale *= 100;
         mCurrentScore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
@@ -159,7 +159,7 @@ public class VatsugMain2 : MonoBehaviour
                         ++counter;
                         Destroy(go);
 
-                        mCurrentScore.text = "Birds sacrificed: " + counter;
+                        mCurrentScore.text = "Birds Sacrificed " + counter;
                     }
                 }
             }
