@@ -10,9 +10,9 @@ public class LoadingSceneMain : MonoBehaviour {
         StageInfo stageInfo = new StageInfo(0, 0, "Attractor_lvl_1");
         stageInfo.mName = "My first wand!";
         stageInfo.mThumbnail = "Textures/Attractor_lvl_1";
-        stageInfo.mBronze = 0;
-        stageInfo.mSilver = 100;
-        stageInfo.mGold = 200;
+        stageInfo.mBronze = 30;
+        stageInfo.mSilver = 60;
+        stageInfo.mGold = 75;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 

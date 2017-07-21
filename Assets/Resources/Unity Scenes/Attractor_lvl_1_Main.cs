@@ -41,6 +41,11 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
         mTimerDisplay = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
         mTimer = 0;
 
+        // Highscore.
+        GameObject Highscore = Factory.CreateWorldText("Highscore:" + mStageInfo.Score, Color.white);
+        Highscore.transform.position += Vector3.forward * 100 + Vector3.up * 30;
+        Highscore.transform.localScale *= 20;
+
         // ENEMIES.
         SpawnEnemies();
 
@@ -99,7 +104,7 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
                 Factory.CreateCelebration();
 
                 // Update score.
-                float score = 300 - mTimer * 10;
+                float score = 100 - mTimer;
                 if (mStageInfo.Score < score)
                     mStageInfo.SetScore(score);
             }
@@ -111,7 +116,7 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
         }
 
         // Update time to display.
-        mTimerDisplay.text = mTimer.ToString("0.00");
+        mTimerDisplay.text = Mathf.Max(100 - mTimer, 0).ToString("0.00");
 
 
         // Check input to leave scene.

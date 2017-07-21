@@ -50,6 +50,8 @@ public class StageInfo  {
             Hub.Instance.stars += 1 + starsEarned;
         }
 
+        PlayerPrefs.SetFloat(mSceneName + "Highscore", mScore);
+
     }
 
     public float mBronze;
@@ -70,7 +72,7 @@ public class StageInfo  {
         mName = "Stage:" + count;
         mThumbnail = "Textures/Default";
 
-        mScore = -1;
+        mScore = PlayerPrefs.GetFloat(mSceneName + "Highscore", -1);
 
         mBronze = 50;
         mSilver = 30;
