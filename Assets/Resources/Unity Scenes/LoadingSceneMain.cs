@@ -30,6 +30,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         stageInfo = new StageInfo(2, 0, "Vatsug");
         stageInfo.mName = "Vatsug";
+        stageInfo.mThumbnail = "Textures/vatsugicon";
 
 
         stageInfo.mBronze = 30;
@@ -40,6 +41,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         stageInfo = new StageInfo(2, 1, "Vatsug2");
         stageInfo.mName = "Vatsug2";
+        stageInfo.mThumbnail = "Textures/vatsugicon2";
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 

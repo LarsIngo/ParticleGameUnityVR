@@ -10,8 +10,9 @@ public class VatsugMain2 : MonoBehaviour
 
  
     UnityEngine.UI.Text highscore;
-
-    float timer = 0;
+    
+    float controllerSpawnDelay;
+    bool once;
 
     /// --- MEMBERS --- ///
 
@@ -34,13 +35,14 @@ public class VatsugMain2 : MonoBehaviour
 
         Factory.CreateIsland();
 
+        controllerSpawnDelay = 1.0f;
+        once = false;
         //Equip a wand.
-        //        GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
+        /*GameObject rightWand = Factory.CreateAttractorWand(20, true);
         GameObject leftWand = Factory.CreateAttractorWand(20, false);
-        //    this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 5.0f);
-        //this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 5.0f);
-
-
+        sp.AddGameObjectWithDelay(rightWand, 2.0f);
+        sp.AddGameObjectWithDelay(leftWand, 2.0f);
+        */
 
         // SKYBOX.
         Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
@@ -90,6 +92,17 @@ public class VatsugMain2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+        if (controllerSpawnDelay <= 0 && !once)
+        {
+            Factory.CreateAttractorWand(20, true);
+            Factory.CreateAttractorWand(20, false);
+            once = true;
+        }
+        else
+        {
+            controllerSpawnDelay -= Time.deltaTime;
+        }
         if (VrInput.Menu() || Input.GetKeyDown(KeyCode.Escape))
         {
             AudioSource audioSource = Hub.backgroundMusic.GetComponent<AudioSource>();
