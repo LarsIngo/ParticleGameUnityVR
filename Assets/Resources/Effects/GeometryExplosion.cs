@@ -44,6 +44,8 @@ public class GeometryExplosion : MonoBehaviour
 
     public Mesh Mesh { set { gameObject.GetComponent<MeshFilter>().mesh = value; } }
 
+    
+
     public Color ExplosionColor { set
         {
             mRenderMaterial.SetFloat("gAmbientRed", value.r);

@@ -25,6 +25,7 @@ public static class Factory
         //GameObject blackHole = new GameObject("blackhole" + count++);
         michael.transform.position = t.position;
         michael.transform.rotation = t.rotation;
+        michael.transform.localScale = t.localScale;
         //blackHole.transform.position = t.position;
         //blackHole.transform.rotation = t.rotation;
 
@@ -477,10 +478,69 @@ public static class Factory
 
         StraitenOutFishObject.AddComponent<Health>().HealthStart = 1000;
 
+        AudioSource sound = StraitenOutFishObject.AddComponent<AudioSource>();
+        sound.volume = 0.1f;
+        sound.maxDistance = 10.0f;
+
         
-        
+
         return;
     }
+
+    public static GameObject CreateBoat(Level level)
+    {
+        GameObject boat = level.CreateGameObject("dasBoot" + count++);
+
+        boat.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/Boat/Meshes/Materials/Boat_MAT", typeof(Material));
+        boat.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/Boat/Meshes/Boat_Mesh", typeof(Mesh));
+        boat.transform.Rotate(new Vector3(-90, 90, 0));
+        
+        return boat;
+    }
+
+    public static GameObject CreateMoon(Level level)
+    {
+        GameObject moon = level.CreateGameObject("moon" + count++);
+        Material mat = (Material)Resources.Load("Moon/Moon_mat");
+        
+        moon.AddComponent<MeshRenderer>().material = mat;
+        moon.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
+
+        Light moonLight = moon.AddComponent<Light>();
+        moonLight.type = LightType.Directional;
+        moonLight.shadows = LightShadows.Soft;
+        moonLight.color = new Color(0.25f, 0.25f, 0.25f, 1.0f);
+
+        moon.transform.localScale = new Vector3(5, 5, 5);
+        moon.transform.position = new Vector3(-20, 20, 20);
+
+
+        moonLight.transform.LookAt(new Vector3(0, 0, 0));
+
+        return moon;
+    }
+
+    public static GameObject CreateWater(Level level)
+    {
+        GameObject waterGO = level.CreateGameObject("water" + count++);
+        //waterGO.transform.localScale = new Vector3(5, 1, 5);
+
+        Material mat = (Material)Resources.Load("Water/Materials/WaterBasicNighttime");
+
+        //Material mat = (Material)Resources.Load("WaterOther/Materials/WaterProDaytime");
+        //mat.shader = Shader.Find("FX/Water");
+
+        waterGO.AddComponent<MeshRenderer>().material = mat;
+        waterGO.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("WaterOther/Models/WaterPlane", typeof(Mesh));// CreateMesh(PrimitiveType.Plane);
+        waterGO.transform.localScale = new Vector3(32, 1, 32);
+
+        UnityStandardAssets.Water.WaterBasic vann = waterGO.AddComponent<UnityStandardAssets.Water.WaterBasic>();
+        
+
+        return waterGO;
+    }
+
+    
 
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
     {
