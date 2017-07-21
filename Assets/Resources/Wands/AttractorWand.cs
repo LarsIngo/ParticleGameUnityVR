@@ -5,10 +5,12 @@ using UnityEngine;
 public class AttractorWand : MonoBehaviour {
 
     public GPUParticleAttractor attractor;
+    public GPUParticleVectorField vectorField;
     public GPUParticleSystem system;
 
     public bool rightHand;
     public float power;
+    public float range = 10;
 
     // Update is called once per frame
     void Update () {
@@ -21,8 +23,18 @@ public class AttractorWand : MonoBehaviour {
                 trigger = VrInput.RightTrigger();
             else trigger = VrInput.LeftTrigger();
 
-            
+            if (rightHand)
+            {
+                vectorField.Vector = -VrInput.deltaRight * 500;
+                vectorField.Max = 0.3f + VrInput.deltaRight.magnitude * range;
+            }
+            else
+            {
+                vectorField.Vector = -VrInput.deltaLeft * 500;
+                vectorField.Max = 0.3f + VrInput.deltaLeft.magnitude * range;
+            }
             attractor.Power = power * trigger;
+
 
             if (trigger == 1.0f)
                 system.Active = true;

@@ -297,6 +297,10 @@ public static class Factory
         GPUParticleAttractor attractor = TipGO.AddComponent<GPUParticleAttractor>();
         attractor.Power = 1;
 
+        //We add vector field to the tip.
+        GPUParticleVectorField vectorField = TipGO.AddComponent<GPUParticleVectorField>();
+        vectorField.Max = 0.3f;
+
         WandGO.transform.Rotate(90, 0, 0);
 
         AttractorWand wand = WandGO.AddComponent<AttractorWand>();
@@ -305,6 +309,7 @@ public static class Factory
 
         wand.system = system;
         wand.attractor = attractor;
+        wand.vectorField = vectorField;
 
         WandGO.AddComponent<MirrorHandMovement>().rightHand = rightHand;
 
