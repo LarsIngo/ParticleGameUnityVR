@@ -52,7 +52,12 @@ public class StageInfo  {
         }
 
         if(mScore > highscore)
-            PlayerPrefs.SetFloat(mSceneName + "Highscore", highscore);
+        {
+
+            PlayerPrefs.SetFloat(mSceneName + "Highscore", mScore);
+            highscore = mScore;
+
+        }
 
     }
 
