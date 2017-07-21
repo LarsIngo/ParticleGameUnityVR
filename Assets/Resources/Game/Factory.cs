@@ -600,11 +600,11 @@ public static class Factory
     }
     
 
-    public static void CreateVatsug(Level level, Transform parent)
+    public static void CreateVatsug(Transform parent)
     {
 
 
-        GameObject StraitenOutFishObject = level.CreateGameObject("StraitenOutFishObject" + count++);
+        GameObject StraitenOutFishObject = new GameObject("StraitenOutFishObject" + count++);
         StraitenOutFishObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/nnj3de_crucarp/Materials/cruscarp", typeof(Material));
         StraitenOutFishObject.transform.Rotate(new Vector3(-90, 0, 0));
         StraitenOutFishObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/nnj3de_crucarp/cruscarp", typeof(Mesh));
@@ -625,9 +625,37 @@ public static class Factory
         return;
     }
 
-    public static GameObject CreateBoat(Level level)
+    public static void CreateVatsug2(Transform parent)
     {
-        GameObject boat = level.CreateGameObject("dasBoot" + count++);
+        GameObject StraitenOutBirdObject = new GameObject("StraitenOutBirdObject" + count++);
+
+        //---------------------------------------------------------------------------//
+        /*Low Poly Bird (Animated) by Charlie Tinley is licensed under CC Attribution*/
+        //---------------------------------------------------------------------------//
+        StraitenOutBirdObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/Fagel/source/Materials/BirdUVTexture", typeof(Material));
+        StraitenOutBirdObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/Fagel/source/Bird_Asset", typeof(Mesh));
+
+        GPUParticleSphereCollider particleColider = StraitenOutBirdObject.AddComponent<GPUParticleSphereCollider>();
+        particleColider.Radius = 0.04f;
+        StraitenOutBirdObject.transform.localScale = new Vector3(3, 3, 3);
+        StraitenOutBirdObject.transform.parent = parent;
+        StraitenOutBirdObject.transform.localPosition = new Vector3(0, 0, -0.1f);
+
+        StraitenOutBirdObject.AddComponent<Health>().HealthStart = 1000;
+
+        AudioSource sound = StraitenOutBirdObject.AddComponent<AudioSource>();
+        sound.volume = 0.1f;
+        sound.maxDistance = 15.0f;
+
+        sound.clip = Resources.Load<AudioClip>("Samples/Vatsug/gull");
+
+        return;
+    }
+    
+
+    public static GameObject CreateBoat()
+    {
+        GameObject boat = new GameObject("dasBoot" + count++);
 
         boat.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/Boat/Meshes/Materials/Boat_MAT", typeof(Material));
         boat.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/Boat/Meshes/Boat_Mesh", typeof(Mesh));
@@ -636,10 +664,10 @@ public static class Factory
         return boat;
     }
 
-    public static GameObject CreateMoon(Level level)
+    public static GameObject CreateMoon()
     {
-        GameObject moon = level.CreateGameObject("moon" + count++);
-        Material mat = (Material)Resources.Load("Moon/Moon_mat");
+        GameObject moon = new GameObject("moon" + count++);
+        Material mat = (Material)Resources.Load("VatsugLevel/Moon/Moon_mat");
         
         moon.AddComponent<MeshRenderer>().material = mat;
         moon.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
@@ -658,9 +686,9 @@ public static class Factory
         return moon;
     }
 
-    public static GameObject CreateWater(Level level)
+    public static GameObject CreateWater()
     {
-        GameObject waterGO = level.CreateGameObject("water" + count++);
+        GameObject waterGO = new GameObject("water" + count++);
         //waterGO.transform.localScale = new Vector3(5, 1, 5);
 
         Material mat = (Material)Resources.Load("Water/Materials/WaterBasicNighttime");
@@ -676,6 +704,34 @@ public static class Factory
         
 
         return waterGO;
+    }
+
+    public static void CreateIsland()
+    {
+        GameObject island = new GameObject("Island" + count++);
+
+        island.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/Moon/sand_mat");
+        island.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
+        island.transform.localScale = new Vector3(5, 0.5f, 5);
+        island.transform.position = new Vector3(0, -0.1f, 0);
+
+        string name = "Palmtree" + count++;
+        Debug.Assert(!GameObject.Find(name));
+
+        GameObject go = GameObject.Instantiate(Resources.Load("VatsugLevel/Palm/Prefabs/PalmTree_dual_ 2sided")) as GameObject;
+        go.name = name;
+        go.transform.position = new Vector3(0.3f, 0.2f, 1.8f);
+        go.transform.eulerAngles = new Vector3(10, 20, 10);
+        go.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+
+        //level.AddChildGO(go);
+
+
+
+        //PalmTree_dual_leafs_1sided
+
+
+        return;
     }
 
     

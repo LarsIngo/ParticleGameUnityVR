@@ -8,7 +8,6 @@ public class Hub
 {
     /// +++ MEMBERS +++ ///
 
-    /// <summary>
     /// Singleton instance.
     /// </summary>
     private static Hub mInstance;
@@ -52,7 +51,7 @@ public class Hub
         // Create stage list.
         mStageInfoList = new List<StageInfo>();
 
-        GameObject backgroundMusic = new GameObject("BACKGROUNDMUSIC");
+        backgroundMusic = new GameObject("BACKGROUNDMUSIC");
         Object.DontDestroyOnLoad(backgroundMusic);
         AudioSource audioSource = backgroundMusic.AddComponent<AudioSource>();
         audioSource.clip = Resources.Load<AudioClip>("Music/MachinimaSound.com_-_The_Arcade");

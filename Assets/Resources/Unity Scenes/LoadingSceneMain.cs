@@ -27,6 +27,23 @@ public class LoadingSceneMain : MonoBehaviour {
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
+
+        stageInfo = new StageInfo(2, 0, "Vatsug");
+        stageInfo.mName = "Vatsug";
+
+
+        stageInfo.mBronze = 30;
+        stageInfo.mSilver = 20;
+        stageInfo.mGold = 10;
+
+        Hub.Instance.mStageInfoList.Add(stageInfo);
+
+        stageInfo = new StageInfo(2, 1, "Vatsug2");
+        stageInfo.mName = "Vatsug2";
+
+        Hub.Instance.mStageInfoList.Add(stageInfo);
+
+
         UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
 
     }
