@@ -19,9 +19,7 @@ public class VatsugLevel : Level
     public VatsugLevel(string name) : base(name)
     {
 
-        StageInfo stageInfo = new StageInfo(2,0, Hub.STATE.VATSUG);
-        stageInfo.mName = "Vatsug Level";
-        Hub.Instance.mStageInfoList.Add(stageInfo);
+
 
     }
 
@@ -46,14 +44,13 @@ public class VatsugLevel : Level
 
         //Equip a wand.
         GameObject rightWand = Factory.CreateVatsugWand(this, 90.0f, 35.0f, 5.0f, 15.0f, true);
-        GameObject leftWand = Factory.CreateAttractorWand(this, 20, false);
+        GameObject leftWand = Factory.CreateAttractorWand(20, false);
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(rightWand, 5.0f);
         this.mSpawnSystem.GetComponent<SpawnSystem>().AddGameObjectWithDelay(leftWand, 5.0f);
         
         //rightWand.transform.parent = rightHand.transform;
         //leftWand.transform.parent = leftHand.transform;
-        
-   
+           
         // SKYBOX.
         Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
         Debug.Assert(skyboxMat);

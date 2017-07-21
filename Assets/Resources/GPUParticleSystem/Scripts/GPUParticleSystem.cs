@@ -141,6 +141,9 @@ public class GPUParticleSystem : MonoBehaviour
     {
         Debug.Log("SHUTDOWN");
 
+        sMergedParticleCount = 0;
+        sTotalParticleCount = 0;
+
         sGPUParticleSystemDictionary.Clear();
         sGPUParticleSystemDictionary = null;
 
