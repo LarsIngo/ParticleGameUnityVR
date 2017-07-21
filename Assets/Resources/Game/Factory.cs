@@ -252,25 +252,25 @@ public static class Factory
 
             GameObject stars = new GameObject("STARS" + count++);
 
-            if (stageInfo.Score < stageInfo.mGold)
+            if (stageInfo.Score >= stageInfo.mGold)
             {
 
-                GameObject gold = CreateWorldImage("Textures/Star");
+                GameObject gold = CreateWorldImage("Textures/Star", true);
                 gold.transform.position += Vector3.right * 1.1f;
                 gold.transform.parent = stars.transform;
 
             }
-            if (stageInfo.Score < stageInfo.mSilver)
+            if (stageInfo.Score >= stageInfo.mSilver)
             {
 
-                GameObject silver = CreateWorldImage("Textures/Star");
+                GameObject silver = CreateWorldImage("Textures/Star", true);
                 silver.transform.parent = stars.transform;
 
             }
-            if (stageInfo.Score < stageInfo.mBronze)
+            if (stageInfo.Score >= stageInfo.mBronze)
             {
 
-                GameObject bronze = CreateWorldImage("Textures/Star");
+                GameObject bronze = CreateWorldImage("Textures/Star", true);
                 bronze.transform.position -= Vector3.right * 1.1f;
                 bronze.transform.parent = stars.transform;
 
