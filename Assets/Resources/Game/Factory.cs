@@ -209,6 +209,8 @@ public static class Factory
 
         gameObject.transform.position = origin;
 
+        gameObject.transform.LookAt((origin - Vector3.zero) * 2);
+
         gameObject.AddComponent<LifeTimer>().LifeTime = 0.5f;
 
         gameObject.AddComponent<Rigidbody>().velocity = velocity;
