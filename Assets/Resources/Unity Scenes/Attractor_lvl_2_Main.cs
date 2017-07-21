@@ -6,15 +6,14 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
 
     /// +++ MEMBERS +++ ///
 
-    StageInfo stageInfo;
+    StageInfo mStageInfo;
 
-    GameObject enemy1;
-    GameObject enemy2;
-    GameObject enemy3;
+    float mTimer = 0;
+    UnityEngine.UI.Text mTimerDisplay;
 
-    UnityEngine.UI.Text highscore;
+    List<GameObject> mEnemyList = new List<GameObject>();
 
-    float timer = 0;
+    bool mFirstEnterDone;
 
     /// --- MEMBERS --- ///
 
@@ -25,42 +24,61 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
         {
 
             if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_2")
-                stageInfo = Hub.Instance.mStageInfoList[i];
+                mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
+
+
+        // RESET.
+        mFirstEnterDone = true;
 
         //Equip a wand.
         GameObject rightWand = Factory.CreateAttractorWand(20, true);
         GameObject leftWand = Factory.CreateAttractorWand(20, false);
 
+        // TIMER.
         GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);
-
         timerText.transform.position += Vector3.forward * 100 + Vector3.up * 50;
         timerText.transform.localScale *= 100;
+        mTimerDisplay = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+        mTimer = 0;
 
-        highscore = timerText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
-
-        //Spawn enemies.
+        // ENEMIES.
         SpawnEnemies();
-        timer = 0;
 
     }
 	
 	// Update is called once per frame
 	void Update () {
 
-        if ((enemy1 || enemy2 || enemy3))
-            timer += Time.deltaTime;
+        // Check if level completed.
+        bool levelDone = true;
+        for (int i = 0; i < mEnemyList.Count && levelDone; ++i)
+            if (mEnemyList[i])
+                levelDone = false;
+
+        if (!levelDone)
+            mTimer += Time.deltaTime;
         else
         {
+            if (mFirstEnterDone)
+            {
+                mFirstEnterDone = false;
 
-            if (stageInfo.Score > timer)
-                stageInfo.SetScore(timer);
+                // Celebration! :D :D :D
+                Factory.CreateCelebration();
 
+                // Update score.
+                if (mStageInfo.Score > mTimer)
+                    mStageInfo.SetScore(mTimer);
+            }
         }
 
-        highscore.text = timer.ToString("0.00");
+        // Update time to display.
+        mTimerDisplay.text = mTimer.ToString("0.00");
 
+
+        // Check input to leave scene.
         if (VrInput.Menu() || Input.GetKeyDown(KeyCode.Escape))
         {
 
@@ -72,22 +90,20 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
 
     void SpawnEnemies()
     {
-        Object.DestroyImmediate(enemy1);
-        Object.DestroyImmediate(enemy2);
-        Object.DestroyImmediate(enemy3);
+        // ENEMIES.
+        GameObject enemyBlueprint = Factory.CreateBasicEnemy();
+        enemyBlueprint.GetComponent<Health>().HealthStart = 2000;
 
-        //Spawn enemies.
-        enemy1 = Factory.CreateBasicEnemy();
-        enemy2 = Factory.CreateBasicEnemy();
-        enemy3 = Factory.CreateBasicEnemy();
+        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * 3;
+        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
 
-        enemy1.GetComponent<Health>().HealthStart = 2000;
-        enemy2.GetComponent<Health>().HealthStart = 2000;
-        enemy3.GetComponent<Health>().HealthStart = 2000;
+        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * 0;
+        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
 
-        enemy1.transform.position += Vector3.forward * 3 + Vector3.right * 3;
-        enemy2.transform.position += Vector3.forward * 3 + Vector3.right * 0;
-        enemy3.transform.position += Vector3.forward * 3 + Vector3.right * -3;
+        enemyBlueprint.transform.position = Vector3.forward * 3 + Vector3.right * -3;
+        mEnemyList.Add(Object.Instantiate(enemyBlueprint, enemyBlueprint.transform.parent));
+
+        Object.DestroyImmediate(enemyBlueprint);
 
     }
 
