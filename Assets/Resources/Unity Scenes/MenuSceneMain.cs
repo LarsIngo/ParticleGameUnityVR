@@ -34,8 +34,16 @@ public class MenuSceneMain : MonoBehaviour {
         starImage.transform.position += Vector3.forward * 155 + Vector3.up * 150;
         starImage.transform.localScale *= 100;
 
-        mStarText = starText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+        GameObject menu = Factory.CreateWorldImage("Textures/menu", true);
+        menu.transform.position += Vector3.forward * 1 + Vector3.up * 2 + Vector3.right * -3;
+        menu.transform.Rotate(0, -50, 0);
 
+        GameObject select = Factory.CreateWorldImage("Textures/select", true);
+        select.transform.position += Vector3.forward * 1 + Vector3.up * 0.9f + Vector3.right * -3;
+        select.transform.Rotate(0, -50, 0);
+
+
+        mStarText = starText.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
         mStarText.text = Hub.Instance.stars.ToString();
 
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
