@@ -127,21 +127,23 @@ public class VatsugMain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (GameObject go in enemies)
-        {
-            if (go.transform.childCount == 0)
-            {
-                ++counter;
-                Destroy(go);
-                enemies.Remove(go);
-                mCurrentScore.text = "Fishes sacrificed: " + counter;
-            }
-
-        }
         timer -= Time.deltaTime;
+
         if (timer <= 0.0f)
         {
-            
+            foreach (GameObject go in enemies)
+            {
+                if (go)
+                {
+                    if (go.transform.childCount == 0)
+                    {
+                        ++counter;
+                    }
+                    Destroy(go);
+                }
+            }
+            enemies.Clear();
+
 
             if (mStageInfo.Score < counter)
                 mStageInfo.SetScore(counter);
@@ -152,6 +154,22 @@ public class VatsugMain : MonoBehaviour
             endTimer += Time.deltaTime;
             if (endTimer > 6)
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+        }
+        else
+        {
+            foreach (GameObject go in enemies)
+            {
+                if (go)
+                {
+                    if (go.transform.childCount == 0)
+                    {
+                        ++counter;
+                        Destroy(go);
+
+                        mCurrentScore.text = "Fishes sacrificed: " + counter;
+                    }
+                }
+            }
         }
         if (controllerSpawnDelay <= 0 && !once)
         {
