@@ -11,7 +11,7 @@ public class AttractorWand : MonoBehaviour {
     public bool rightHand;
     public float power;
 
-    public float range = 1;
+    public float range = 10;
 
     // Update is called once per frame
     void Update () {
