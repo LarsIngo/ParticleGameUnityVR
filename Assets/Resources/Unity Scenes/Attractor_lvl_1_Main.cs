@@ -77,6 +77,7 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
 
     }
 
+    float endTimer = 0;
     // Update is called once per frame
     void Update () {
 
@@ -102,6 +103,11 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
                 if (mStageInfo.Score < score)
                     mStageInfo.SetScore(score);
             }
+
+            endTimer += Time.deltaTime;
+            if (endTimer > 3)
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+
         }
 
         // Update time to display.

@@ -78,9 +78,10 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
         skybox.material = skyboxMat;
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    float endTimer = 0;
+    // Update is called once per frame
+    void Update () {
 
         // Check if level completed.
         bool levelDone = true;
@@ -105,6 +106,11 @@ public class Attractor_lvl_2_Main : MonoBehaviour {
                     mStageInfo.SetScore(score);
 
             }
+
+            endTimer += Time.deltaTime;
+            if (endTimer > 3)
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+
         }
 
         // Update time to display.

@@ -77,6 +77,7 @@ public class Attractor_lvl_3_Main : MonoBehaviour {
     }
 
     float enemyTimer = 0;
+    float endTimer = 0;
 	// Update is called once per frame
 	void Update () {
 
@@ -116,6 +117,11 @@ public class Attractor_lvl_3_Main : MonoBehaviour {
                     mStageInfo.SetScore(score);
 
             }
+
+            endTimer += Time.deltaTime;
+            if (endTimer > 3)
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+
         }
 
         // Update time to display.
@@ -135,10 +141,8 @@ public class Attractor_lvl_3_Main : MonoBehaviour {
     void SpawnEnemy()
     {
         // ENEMIES.
-        GameObject enemyBlueprint = Factory.CreateBasicEnemy();
-        enemyBlueprint.GetComponent<Health>().HealthStart = 200;
+        GameObject enemyBlueprint = Factory.CreateBasicEnemy(Vector3.forward * 20 + Vector3.right * 2 + Vector3.up * 2, 200);
 
-        enemyBlueprint.transform.position = Vector3.forward * 20 + Vector3.right * 2 + Vector3.up * 2;
         GameObject walker = new GameObject();
         Walk walk = walker.AddComponent<Walk>();
         enemyBlueprint.transform.parent = walker.transform;
