@@ -627,7 +627,7 @@ public static class Factory
         hp.slowmotionEffect = false;
 
         AudioSource sound = StraitenOutSkullObject.AddComponent<AudioSource>();
-        sound.volume = 0.1f;
+        sound.volume = 0.2f;
         sound.maxDistance = 15.0f;
         sound.spatialBlend = 1.0f;
         sound.clip = Resources.Load<AudioClip>("Sounds/Samples/Vatsug/mohahaha");

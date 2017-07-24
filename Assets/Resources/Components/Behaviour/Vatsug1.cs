@@ -35,7 +35,7 @@ public class Vatsug1 : MonoBehaviour
             swap = true;
         }
 
-        soundDelay = Random.Range(6.0f, 26.0f);
+        soundDelay = Random.Range(0.0f, 30.0f);
     }
 
     // Update is called once per frame
@@ -70,7 +70,7 @@ public class Vatsug1 : MonoBehaviour
         if (soundDelay <= 0.0f)
         {
             sound.Play();
-            soundDelay = Random.Range(0.6f, 26.0f);
+            soundDelay = Random.Range(6.0f, 26.0f);
         }
     }
 }

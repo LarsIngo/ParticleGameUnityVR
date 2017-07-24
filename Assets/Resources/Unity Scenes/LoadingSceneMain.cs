@@ -32,6 +32,28 @@ public class LoadingSceneMain : MonoBehaviour {
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
+        stageInfo = new StageInfo(1, 2, "Attractor_lvl_3");
+        stageInfo.mName = "A real challenge!";
+        stageInfo.mThumbnail = "MenuIconTextures/wand3";
+        stageInfo.mStarRequirement = 5;
+
+        stageInfo.mBronze = 1;
+        stageInfo.mSilver = 5;
+        stageInfo.mGold = 10;
+
+        Hub.Instance.mStageInfoList.Add(stageInfo);
+
+        stageInfo = new StageInfo(1, 3, "Attractor_lvl_4");
+        stageInfo.mName = "lvl4";
+        stageInfo.mThumbnail = "MenuIconTextures/wand3";
+        stageInfo.mStarRequirement = 7;
+
+        stageInfo.mBronze = 30;
+        stageInfo.mSilver = 60;
+        stageInfo.mGold = 75;
+
+        Hub.Instance.mStageInfoList.Add(stageInfo);
+
 
         stageInfo = new StageInfo(2, 0, "Vatsug1");
         stageInfo.mName = "Escape";
@@ -69,16 +91,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
 
-        stageInfo = new StageInfo(1, 2, "Attractor_lvl_3");
-        stageInfo.mName = "A real challenge!";
-        stageInfo.mThumbnail = "MenuIconTextures/wand3";
-        stageInfo.mStarRequirement = 5;
-
-        stageInfo.mBronze = 1;
-        stageInfo.mSilver = 5;
-        stageInfo.mGold = 10;
-
-        Hub.Instance.mStageInfoList.Add(stageInfo);
+        
 
     }
 	
