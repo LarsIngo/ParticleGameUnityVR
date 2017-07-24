@@ -618,15 +618,19 @@ public static class Factory
         StraitenOutSkullObject.transform.Rotate(new Vector3(0, 0, 0));
         StraitenOutSkullObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("Models/Skull/skull", typeof(Mesh));
         GPUParticleSphereCollider particleColider = StraitenOutSkullObject.AddComponent<GPUParticleSphereCollider>();
-        particleColider.Radius = 1.2f;
-        StraitenOutSkullObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        particleColider.Radius = 1.1f;
+        StraitenOutSkullObject.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
         StraitenOutSkullObject.transform.parent = parent;
-        StraitenOutSkullObject.transform.localPosition = new Vector3(0, 0, -0.25f);
 
         Health hp = StraitenOutSkullObject.AddComponent<Health>();
         hp.HealthStart = 1000;
         hp.slowmotionEffect = false;
-        
+
+        AudioSource sound = StraitenOutSkullObject.AddComponent<AudioSource>();
+        sound.volume = 0.1f;
+        sound.maxDistance = 15.0f;
+        sound.spatialBlend = 1.0f;
+        sound.clip = Resources.Load<AudioClip>("Sounds/Samples/Vatsug/mohahaha");
 
         return;
     }
@@ -685,6 +689,7 @@ public static class Factory
         moonLight.type = LightType.Directional;
         moonLight.shadows = LightShadows.Soft;
         moonLight.color = new Color(0.25f, 0.25f, 0.25f, 1.0f);
+        moonLight.transform.LookAt(new Vector3(0, 0, 0));
 
         moon.transform.localScale = new Vector3(5, 5, 5);
         moon.transform.position = new Vector3(-20, 20, 20);
@@ -738,7 +743,13 @@ public static class Factory
         return island;
     }
 
-    
+    public static GameObject CreatePineTree()
+    {
+        GameObject pineTree = GameObject.Instantiate(Resources.Load("Models/Mushroomhouse/prefab/Pine_tree_03")) as GameObject;
+
+        return pineTree;
+    }
+
     public static GameObject CreateBridge()
     {
         GameObject bride = GameObject.Instantiate(Resources.Load("Models/OldBridge/Prefabs/OldBridge")) as GameObject;
@@ -750,7 +761,6 @@ public static class Factory
         GameObject mushroomHouse = GameObject.Instantiate(Resources.Load("Models/Mushroomhouse/prefab/mushroom_house")) as GameObject;
 
         mushroomHouse.name = "Mushroom house" + count++;
-        //mushroomHouse.transform.eulerAngles = new Vector3(0, 0, 0);
         mushroomHouse.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         
 

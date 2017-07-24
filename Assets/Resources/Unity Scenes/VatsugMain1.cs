@@ -12,7 +12,7 @@ public class VatsugMain1 : MonoBehaviour
     UnityEngine.UI.Text highscore;
     private float controllerSpawnDelay;
     private bool once;
-    private const int nrOfVatsugs = 5;
+    private const int nrOfVatsugs = 10;
     private List<GameObject> enemies;
 
     private float timer;
@@ -61,20 +61,25 @@ public class VatsugMain1 : MonoBehaviour
         //this.GetComponent<SpawnSystem>().AddGameObjectWithDelay(enemy, 1.0f);
 
 
-        GameObject Island = Factory.CreateIsland();
+        GameObject island = Factory.CreateIsland();
+        island.transform.position = new Vector3(-0.7f, 0.0f, -0.7f);
 
         GameObject mushroomhouse = Factory.CreateMushroomHouse();
         mushroomhouse.transform.position = new Vector3(-1.0f, 2.75f, -2.6f);
         mushroomhouse.transform.eulerAngles = new Vector3(-108.0f, 113.0f, 44.0f);
 
+        GameObject pineTree = Factory.CreatePineTree();
+        pineTree.transform.position = new Vector3(0.0f, 0.0f, -1.0f);
+        pineTree.transform.localScale = new Vector3(5, 5, 5);
+
         GameObject bride = Factory.CreateBridge();
-        bride.transform.position = new Vector3(2.813f, 0.45f, 2.813f);
+        bride.transform.position = new Vector3(2.14f, 0.43f, 2.14f);
         bride.transform.localScale = new Vector3(6, 6, 6);
-        bride.transform.eulerAngles = new Vector3(-45, 45, 0);
+        bride.transform.eulerAngles = new Vector3(-40, 45, 0);
 
 
         GameObject boat = Factory.CreateBoat();
-        boat.transform.position = new Vector3(3.166f, 0.0f, 2.775f);
+        boat.transform.position = new Vector3(2.466f, 0.0f, 2.075f);
         boat.transform.eulerAngles = new Vector3(-90, 0, -45);
        
 

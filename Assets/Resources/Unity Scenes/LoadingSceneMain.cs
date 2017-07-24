@@ -28,9 +28,9 @@ public class LoadingSceneMain : MonoBehaviour {
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
 
-        stageInfo = new StageInfo(2, 2, "Vatsug1");
+        stageInfo = new StageInfo(2, 0, "Vatsug1");
         stageInfo.mName = "Escape";
-        stageInfo.mThumbnail = "MenuIconTextures/vatsugicon";
+        stageInfo.mThumbnail = "MenuIconTextures/vatsugicon1";
 
 
         stageInfo.mBronze = 3;
@@ -39,7 +39,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
-        stageInfo = new StageInfo(2, 0, "Vatsug");
+        stageInfo = new StageInfo(2, 1, "Vatsug");
         stageInfo.mName = "Boat ride";
         stageInfo.mThumbnail = "MenuIconTextures/vatsugicon";
 
@@ -47,16 +47,17 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo.mBronze = 3;
         stageInfo.mSilver = 6;
         stageInfo.mGold = 9;
+        stageInfo.mStarRequirement = 3;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
-        stageInfo = new StageInfo(2, 1, "Vatsug2");
+        stageInfo = new StageInfo(2, 2, "Vatsug2");
         stageInfo.mName = "Stranded";
         stageInfo.mThumbnail = "MenuIconTextures/vatsugicon2";
         stageInfo.mBronze = 3;
         stageInfo.mSilver = 6;
         stageInfo.mGold = 9;
-        stageInfo.mStarRequirement = 3;
+        stageInfo.mStarRequirement = 6;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 

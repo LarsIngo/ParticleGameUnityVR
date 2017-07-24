@@ -6,31 +6,23 @@ public class Vatsug1 : MonoBehaviour
 {
 
     private Vector3 prevPos;
-    /*private AudioSource sound;
-
-    const int nrOfClips = 4;
-    private AudioClip[] clips;*/
-
-
+    private AudioSource sound;
+    private float soundDelay;
     private bool swap;
     private Vector3 mul;
     private Vector3 offs;
     private int algoritm;
     private float timeoffset;
+    
 
     // Use this for initialization
     void Start()
     {
         gameObject.transform.position = new Vector3(100, 100, 100);
         prevPos = new Vector3(0, 0, 0);
-        /*sound = gameObject.GetComponentInChildren<AudioSource>();
+        sound = gameObject.GetComponentInChildren<AudioSource>();
         Debug.Assert(sound);
         
-        clips = new AudioClip[nrOfClips];
-
-
-        for (int i = 1; i < nrOfClips + 1; ++i)
-            clips[i - 1] = Resources.Load<AudioClip>("Sounds/Samples/Vatsug/splish" + i);*/
         mul = new Vector3(1.0f, 0.4f, 1.0f);
         offs = new Vector3(0, Random.Range(1.0f, 3.0f), 0);
 
@@ -42,6 +34,8 @@ public class Vatsug1 : MonoBehaviour
         {
             swap = true;
         }
+
+        soundDelay = Random.Range(6.0f, 26.0f);
     }
 
     // Update is called once per frame
@@ -49,6 +43,7 @@ public class Vatsug1 : MonoBehaviour
     {
 
         float t = Time.time + timeoffset;
+        soundDelay -= Time.deltaTime;
         if (swap)
         {
             t *= -1;
@@ -72,5 +67,10 @@ public class Vatsug1 : MonoBehaviour
         gameObject.transform.LookAt(newPos);
         prevPos = newPos;
 
+        if (soundDelay <= 0.0f)
+        {
+            sound.Play();
+            soundDelay = Random.Range(0.6f, 26.0f);
+        }
     }
 }
