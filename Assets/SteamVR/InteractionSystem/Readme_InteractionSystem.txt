@@ -2,7 +2,7 @@
 
 The Interaction System is a series of scripts, prefabs and other assets that was the basis of all the minigames and other scenes in The Lab.
 
-There is a sample scene included at Samples/Scenes/Interactions_Example.scene that shows example usage of many of the components of the interaction system.
+There is a sample scene included at Sounds/Samples/Scenes/Interactions_Example.scene that shows example usage of many of the components of the interaction system.
 
 Refer to InteractionSystem.pdf for instructions on getting started and more documentation.
 

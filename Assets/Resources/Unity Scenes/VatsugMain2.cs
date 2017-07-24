@@ -105,7 +105,7 @@ public class VatsugMain2 : MonoBehaviour
 
 
         AudioSource audioSource = Hub.backgroundMusic.GetComponent<AudioSource>();
-        audioSource.clip = (AudioClip)Resources.Load("Music/MysGitarrreverb");
+        audioSource.clip = (AudioClip)Resources.Load("Sounds/Music/MysGitarrreverb");
         audioSource.Play();
 
     }
@@ -148,7 +148,7 @@ public class VatsugMain2 : MonoBehaviour
             if (endTimer > 6)
             {
                 AudioSource audioSource = Hub.backgroundMusic.GetComponent<AudioSource>();
-                audioSource.clip = Resources.Load<AudioClip>("Music/MachinimaSound.com_-_The_Arcade");
+                audioSource.clip = Resources.Load<AudioClip>("Sounds/Music/MachinimaSound.com_-_The_Arcade");
                 audioSource.Play();
 
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
@@ -183,7 +183,7 @@ public class VatsugMain2 : MonoBehaviour
         if (VrInput.Menu() || Input.GetKeyDown(KeyCode.Escape))
         {
             AudioSource audioSource = Hub.backgroundMusic.GetComponent<AudioSource>();
-            audioSource.clip = Resources.Load<AudioClip>("Music/MachinimaSound.com_-_The_Arcade");
+            audioSource.clip = Resources.Load<AudioClip>("Sounds/Music/MachinimaSound.com_-_The_Arcade");
             audioSource.Play();
 
             UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");

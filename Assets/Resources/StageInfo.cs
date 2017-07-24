@@ -77,7 +77,7 @@ public class StageInfo  {
         mLocked = false;
 
         mName = "Stage:" + count;
-        mThumbnail = "Textures/Default";
+        mThumbnail = "MenuIconTextures/Default";
 
         mScore = -1;
         highscore = PlayerPrefs.GetFloat(mSceneName + "Highscore", 0);

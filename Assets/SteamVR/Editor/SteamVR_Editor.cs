@@ -21,7 +21,7 @@ public class SteamVR_Editor : Editor
 		var ms = MonoScript.FromScriptableObject(this);
 		var path = AssetDatabase.GetAssetPath(ms);
 		path = Path.GetDirectoryName(path);
-		return path.Substring(0, path.Length - "Editor".Length) + "Textures/";
+		return path.Substring(0, path.Length - "Editor".Length) + "MenuIconTextures/";
 	}
 
 	void OnEnable()

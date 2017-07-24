@@ -57,13 +57,13 @@ public static class Factory
         //blackHoleLifetimer.LifeTime = 0.2f;
 
         AudioSource ceramicSound = michael.AddComponent<AudioSource>();
-        ceramicSound.clip = Resources.Load<AudioClip>("Samples/Explosion/Ceramic");
+        ceramicSound.clip = Resources.Load<AudioClip>("Sounds/Samples/Explosion/Ceramic");
         ceramicSound.time = 0.2f;
         ceramicSound.spatialBlend = 1.0f;
         ceramicSound.Play();
 
         AudioSource artillerySound = michael.AddComponent<AudioSource>();
-        artillerySound.clip = Resources.Load<AudioClip>("Samples/Explosion/Artillery");
+        artillerySound.clip = Resources.Load<AudioClip>("Sounds/Samples/Explosion/Artillery");
         artillerySound.time = 0.25f;
         artillerySound.spatialBlend = 1.0f;
         artillerySound.Play();
@@ -82,15 +82,15 @@ public static class Factory
 
         // AUDIO.
         AudioSource cheeringSound = celebration.AddComponent<AudioSource>();
-        cheeringSound.clip = Resources.Load<AudioClip>("Samples/Cheering/cheering");
+        cheeringSound.clip = Resources.Load<AudioClip>("Sounds/Samples/Cheering/cheering");
         cheeringSound.Play();
 
         AudioSource encouragementSound = celebration.AddComponent<AudioSource>();
-        encouragementSound.clip = Resources.Load<AudioClip>("Samples/Cheering/encouragement");
+        encouragementSound.clip = Resources.Load<AudioClip>("Sounds/Samples/Cheering/encouragement");
         encouragementSound.Play();
 
         AudioSource fireworkSound = celebration.AddComponent<AudioSource>();
-        fireworkSound.clip = Resources.Load<AudioClip>("Samples/Firework/firework1");
+        fireworkSound.clip = Resources.Load<AudioClip>("Sounds/Samples/Firework/firework1");
         fireworkSound.Play();
 
         // FireworkSpawn
@@ -170,7 +170,7 @@ public static class Factory
         gameObject.AddComponent<Rigidbody>().velocity = velocity;
 
         AudioSource audio = gameObject.AddComponent<AudioSource>();
-        audio.clip = Resources.Load<AudioClip>("Samples/Ping/ping");
+        audio.clip = Resources.Load<AudioClip>("Sounds/Samples/Ping/ping");
         audio.Play();
     }
 
@@ -633,7 +633,7 @@ public static class Factory
         sound.volume = 0.1f;
         sound.maxDistance = 15.0f;
         sound.spatialBlend = 1.0f;
-        sound.clip = Resources.Load<AudioClip>("Samples/Vatsug/gull");
+        sound.clip = Resources.Load<AudioClip>("Sounds/Samples/Vatsug/gull");
 
 
         return;

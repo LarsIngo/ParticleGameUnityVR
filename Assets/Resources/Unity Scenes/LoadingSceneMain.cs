@@ -9,7 +9,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         StageInfo stageInfo = new StageInfo(0, 0, "Attractor_lvl_1");
         stageInfo.mName = "My first wand!";
-        stageInfo.mThumbnail = "Textures/wand1";
+        stageInfo.mThumbnail = "MenuIconTextures/wand1";
         stageInfo.mBronze = 30;
         stageInfo.mSilver = 60;
         stageInfo.mGold = 75;
@@ -18,7 +18,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         stageInfo = new StageInfo(0, 1, "Attractor_lvl_2");
         stageInfo.mName = "Double Trouble!";
-        stageInfo.mThumbnail = "Textures/wand2";
+        stageInfo.mThumbnail = "MenuIconTextures/wand2";
         stageInfo.mStarRequirement = 2;
 
         stageInfo.mBronze = 30;
@@ -30,7 +30,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         stageInfo = new StageInfo(2, 0, "Vatsug");
         stageInfo.mName = "Boat ride";
-        stageInfo.mThumbnail = "Textures/vatsugicon";
+        stageInfo.mThumbnail = "MenuIconTextures/vatsugicon";
 
 
         stageInfo.mBronze = 3;
@@ -41,7 +41,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         stageInfo = new StageInfo(2, 1, "Vatsug2");
         stageInfo.mName = "Stranded";
-        stageInfo.mThumbnail = "Textures/vatsugicon2";
+        stageInfo.mThumbnail = "MenuIconTextures/vatsugicon2";
         stageInfo.mBronze = 3;
         stageInfo.mSilver = 6;
         stageInfo.mGold = 9;
@@ -54,7 +54,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         stageInfo = new StageInfo(0, 2, "Attractor_lvl_3");
         stageInfo.mName = "A real challenge!";
-        stageInfo.mThumbnail = "Textures/wand3";
+        stageInfo.mThumbnail = "MenuIconTextures/wand3";
         stageInfo.mStarRequirement = 5;
 
         stageInfo.mBronze = 1;
