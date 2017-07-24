@@ -7,7 +7,12 @@ public class LoadingSceneMain : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-        StageInfo stageInfo = new StageInfo(0, 0, "Attractor_lvl_1");
+        StageInfo stageInfo = new StageInfo(0, 0, "Tutorial");
+        stageInfo.mName = "Tutorial";
+        stageInfo.mThumbnail = "MenuIconTextures/tutorialicon";
+        Hub.Instance.mStageInfoList.Add(stageInfo);
+
+        stageInfo = new StageInfo(1, 0, "Attractor_lvl_1");
         stageInfo.mName = "My first wand!";
         stageInfo.mThumbnail = "MenuIconTextures/wand1";
         stageInfo.mBronze = 30;
@@ -16,7 +21,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
-        stageInfo = new StageInfo(0, 1, "Attractor_lvl_2");
+        stageInfo = new StageInfo(1, 1, "Attractor_lvl_2");
         stageInfo.mName = "Double Trouble!";
         stageInfo.mThumbnail = "MenuIconTextures/wand2";
         stageInfo.mStarRequirement = 2;
@@ -64,7 +69,7 @@ public class LoadingSceneMain : MonoBehaviour {
 
         UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
 
-        stageInfo = new StageInfo(0, 2, "Attractor_lvl_3");
+        stageInfo = new StageInfo(1, 2, "Attractor_lvl_3");
         stageInfo.mName = "A real challenge!";
         stageInfo.mThumbnail = "MenuIconTextures/wand3";
         stageInfo.mStarRequirement = 5;
