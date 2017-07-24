@@ -68,6 +68,7 @@ public class VatsugMain2 : MonoBehaviour
         GameObject water = Factory.CreateWater();
 
         Factory.CreateIsland();
+        Factory.CreatePalmTree();
 
         controllerSpawnDelay = 1.0f;
         once = false;

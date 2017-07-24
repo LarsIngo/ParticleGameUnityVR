@@ -609,6 +609,28 @@ public static class Factory
         return;
     }
 
+    public static void CreateVatsug1(Transform parent)
+    {
+
+
+        GameObject StraitenOutSkullObject = new GameObject("StraitenOutFishObject" + count++);
+        StraitenOutSkullObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("Models/Skull/SkullMaterial", typeof(Material));
+        StraitenOutSkullObject.transform.Rotate(new Vector3(0, 0, 0));
+        StraitenOutSkullObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("Models/Skull/skull", typeof(Mesh));
+        GPUParticleSphereCollider particleColider = StraitenOutSkullObject.AddComponent<GPUParticleSphereCollider>();
+        particleColider.Radius = 1.2f;
+        StraitenOutSkullObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        StraitenOutSkullObject.transform.parent = parent;
+        StraitenOutSkullObject.transform.localPosition = new Vector3(0, 0, -0.25f);
+
+        Health hp = StraitenOutSkullObject.AddComponent<Health>();
+        hp.HealthStart = 1000;
+        hp.slowmotionEffect = false;
+        
+
+        return;
+    }
+
     public static void CreateVatsug2(Transform parent)
     {
         GameObject StraitenOutBirdObject = new GameObject("StraitenOutBirdObject" + count++);
@@ -689,17 +711,10 @@ public static class Factory
         return waterGO;
     }
 
-    public static void CreateIsland()
+    public static GameObject CreatePalmTree()
     {
-        GameObject island = new GameObject("Island" + count++);
-
-        island.AddComponent<MeshRenderer>().material = (Material)Resources.Load("Models/Moon/sand_mat");
-        island.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
-        island.transform.localScale = new Vector3(5, 0.5f, 5);
-        island.transform.position = new Vector3(0, -0.1f, 0);
 
         string name = "Palmtree" + count++;
-        Debug.Assert(!GameObject.Find(name));
 
         GameObject go = GameObject.Instantiate(Resources.Load("Models/Palm/Prefabs/PalmTree_dual_ 2sided")) as GameObject;
         go.name = name;
@@ -707,17 +722,41 @@ public static class Factory
         go.transform.eulerAngles = new Vector3(10, 20, 10);
         go.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
 
-        //level.AddChildGO(go);
+        return go;
+    }
 
+    public static GameObject CreateIsland()
+    {
+        GameObject island = new GameObject("Island" + count++);
 
+        island.AddComponent<MeshRenderer>().material = (Material)Resources.Load("Models/Moon/sand_mat");
+        island.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
+        island.transform.localScale = new Vector3(5, 0.5f, 5);
+        island.transform.position = new Vector3(0, -0.1f, 0);
+        
 
-        //PalmTree_dual_leafs_1sided
-
-
-        return;
+        return island;
     }
 
     
+    public static GameObject CreateBridge()
+    {
+        GameObject bride = GameObject.Instantiate(Resources.Load("Models/OldBridge/Prefabs/OldBridge")) as GameObject;
+        return bride;
+    }
+
+    public static GameObject CreateMushroomHouse()
+    {
+        GameObject mushroomHouse = GameObject.Instantiate(Resources.Load("Models/Mushroomhouse/prefab/mushroom_house")) as GameObject;
+
+        mushroomHouse.name = "Mushroom house" + count++;
+        //mushroomHouse.transform.eulerAngles = new Vector3(0, 0, 0);
+        mushroomHouse.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        
+
+        return mushroomHouse;
+    }
+
 
     private static void TempVisuals(GameObject target, PrimitiveType primitive, Color color)
     {
