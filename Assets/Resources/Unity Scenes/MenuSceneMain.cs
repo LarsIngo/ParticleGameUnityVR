@@ -112,6 +112,12 @@ public class MenuSceneMain : MonoBehaviour {
             UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[4].mSceneName);
         if (Input.GetKeyDown(KeyCode.Alpha6))
             UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[5].mSceneName);
+        if (Input.GetKeyDown(KeyCode.Alpha7))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[6].mSceneName);
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[7].mSceneName);
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(Hub.Instance.mStageInfoList[8].mSceneName);
 
         if (VrInput.RightGripPressed())
         {

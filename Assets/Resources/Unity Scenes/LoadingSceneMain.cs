@@ -44,9 +44,20 @@ public class LoadingSceneMain : MonoBehaviour {
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
         stageInfo = new StageInfo(1, 3, "Attractor_lvl_4");
-        stageInfo.mName = "lvl4";
+        stageInfo.mName = "Level 4";
         stageInfo.mThumbnail = "MenuIconTextures/wand3";
         stageInfo.mStarRequirement = 7;
+
+        stageInfo.mBronze = 30;
+        stageInfo.mSilver = 60;
+        stageInfo.mGold = 75;
+
+        Hub.Instance.mStageInfoList.Add(stageInfo);
+
+        stageInfo = new StageInfo(1, 4, "Attractor_lvl_5");
+        stageInfo.mName = "Level 5";
+        stageInfo.mThumbnail = "MenuIconTextures/wand3";
+        stageInfo.mStarRequirement = 0;
 
         stageInfo.mBronze = 30;
         stageInfo.mSilver = 60;
@@ -90,9 +101,6 @@ public class LoadingSceneMain : MonoBehaviour {
 
 
         UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
-
-        
-
     }
 	
 	// Update is called once per frame
