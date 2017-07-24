@@ -190,7 +190,7 @@ public static class Factory
         if (stageInfo.mLocked || stageInfo.mStarRequirement > Hub.Instance.stars)
         {
 
-            GameObject lockImage = CreateWorldImage("Textures/Locked", true);
+            GameObject lockImage = CreateWorldImage("MenuIconTextures/Locked", true);
             lockImage.transform.position -= Vector3.forward * 0.1f;
             lockImage.transform.SetParent(screen.transform);
 
@@ -213,7 +213,7 @@ public static class Factory
             if (stageInfo.Score >= stageInfo.mGold)
             {
 
-                GameObject gold = CreateWorldImage("Textures/Star", true);
+                GameObject gold = CreateWorldImage("MenuIconTextures/Star", true);
                 gold.transform.position += Vector3.right * 1.1f;
                 gold.transform.parent = stars.transform;
 
@@ -221,14 +221,14 @@ public static class Factory
             if (stageInfo.Score >= stageInfo.mSilver)
             {
 
-                GameObject silver = CreateWorldImage("Textures/Star", true);
+                GameObject silver = CreateWorldImage("MenuIconTextures/Star", true);
                 silver.transform.parent = stars.transform;
 
             }
             if (stageInfo.Score >= stageInfo.mBronze)
             {
 
-                GameObject bronze = CreateWorldImage("Textures/Star", true);
+                GameObject bronze = CreateWorldImage("MenuIconTextures/Star", true);
                 bronze.transform.position -= Vector3.right * 1.1f;
                 bronze.transform.parent = stars.transform;
 
@@ -586,9 +586,9 @@ public static class Factory
 
 
         GameObject StraitenOutFishObject = new GameObject("StraitenOutFishObject" + count++);
-        StraitenOutFishObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/nnj3de_crucarp/Materials/cruscarp", typeof(Material));
+        StraitenOutFishObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("Models/nnj3de_crucarp/Materials/cruscarp", typeof(Material));
         StraitenOutFishObject.transform.Rotate(new Vector3(-90, 0, 0));
-        StraitenOutFishObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/nnj3de_crucarp/cruscarp", typeof(Mesh));
+        StraitenOutFishObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("Models/nnj3de_crucarp/cruscarp", typeof(Mesh));
         GPUParticleSphereCollider particleColider = StraitenOutFishObject.AddComponent<GPUParticleSphereCollider>();
         particleColider.Radius = 0.001f;
         StraitenOutFishObject.transform.localScale = new Vector3(300, 200, 200);
@@ -616,8 +616,8 @@ public static class Factory
         //---------------------------------------------------------------------------//
         /*Low Poly Bird (Animated) by Charlie Tinley is licensed under CC Attribution*/
         //---------------------------------------------------------------------------//
-        StraitenOutBirdObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/Fagel/source/Materials/BirdUVTexture", typeof(Material));
-        StraitenOutBirdObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/Fagel/source/Bird_Asset", typeof(Mesh));
+        StraitenOutBirdObject.AddComponent<MeshRenderer>().material = (Material)Resources.Load("Models/Fagel/source/Materials/BirdUVTexture", typeof(Material));
+        StraitenOutBirdObject.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("Models/Fagel/source/Bird_Asset", typeof(Mesh));
 
         GPUParticleSphereCollider particleColider = StraitenOutBirdObject.AddComponent<GPUParticleSphereCollider>();
         particleColider.Radius = 0.045f;
@@ -644,8 +644,8 @@ public static class Factory
     {
         GameObject boat = new GameObject("dasBoot" + count++);
 
-        boat.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/Boat/Meshes/Materials/Boat_MAT", typeof(Material));
-        boat.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("VatsugLevel/Boat/Meshes/Boat_Mesh", typeof(Mesh));
+        boat.AddComponent<MeshRenderer>().material = (Material)Resources.Load("Models/Boat/Meshes/Materials/Boat_MAT", typeof(Material));
+        boat.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("Models/Boat/Meshes/Boat_Mesh", typeof(Mesh));
         boat.transform.Rotate(new Vector3(-90, 90, 0));
         
         return boat;
@@ -654,7 +654,7 @@ public static class Factory
     public static GameObject CreateMoon()
     {
         GameObject moon = new GameObject("moon" + count++);
-        Material mat = (Material)Resources.Load("VatsugLevel/Moon/Moon_mat");
+        Material mat = (Material)Resources.Load("Models/Moon/Moon_mat");
         
         moon.AddComponent<MeshRenderer>().material = mat;
         moon.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
@@ -676,15 +676,11 @@ public static class Factory
     public static GameObject CreateWater()
     {
         GameObject waterGO = new GameObject("water" + count++);
-        //waterGO.transform.localScale = new Vector3(5, 1, 5);
 
         Material mat = (Material)Resources.Load("Water/Materials/WaterBasicNighttime");
-
-        //Material mat = (Material)Resources.Load("WaterOther/Materials/WaterProDaytime");
-        //mat.shader = Shader.Find("FX/Water");
-
+        
         waterGO.AddComponent<MeshRenderer>().material = mat;
-        waterGO.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("WaterOther/Models/WaterPlane", typeof(Mesh));// CreateMesh(PrimitiveType.Plane);
+        waterGO.AddComponent<MeshFilter>().mesh = (Mesh)Resources.Load("Water/Models/WaterBasicPlane", typeof(Mesh));// CreateMesh(PrimitiveType.Plane);
         waterGO.transform.localScale = new Vector3(32, 1, 32);
 
         UnityStandardAssets.Water.WaterBasic vann = waterGO.AddComponent<UnityStandardAssets.Water.WaterBasic>();
@@ -697,7 +693,7 @@ public static class Factory
     {
         GameObject island = new GameObject("Island" + count++);
 
-        island.AddComponent<MeshRenderer>().material = (Material)Resources.Load("VatsugLevel/Moon/sand_mat");
+        island.AddComponent<MeshRenderer>().material = (Material)Resources.Load("Models/Moon/sand_mat");
         island.AddComponent<MeshFilter>().mesh = CreateMesh(PrimitiveType.Sphere);
         island.transform.localScale = new Vector3(5, 0.5f, 5);
         island.transform.position = new Vector3(0, -0.1f, 0);
@@ -705,7 +701,7 @@ public static class Factory
         string name = "Palmtree" + count++;
         Debug.Assert(!GameObject.Find(name));
 
-        GameObject go = GameObject.Instantiate(Resources.Load("VatsugLevel/Palm/Prefabs/PalmTree_dual_ 2sided")) as GameObject;
+        GameObject go = GameObject.Instantiate(Resources.Load("Models/Palm/Prefabs/PalmTree_dual_ 2sided")) as GameObject;
         go.name = name;
         go.transform.position = new Vector3(0.3f, 0.2f, 1.8f);
         go.transform.eulerAngles = new Vector3(10, 20, 10);

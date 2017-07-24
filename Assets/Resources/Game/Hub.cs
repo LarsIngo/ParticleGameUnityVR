@@ -48,7 +48,7 @@ public class Hub
         backgroundMusic = new GameObject("BACKGROUNDMUSIC");
         Object.DontDestroyOnLoad(backgroundMusic);
         AudioSource audioSource = backgroundMusic.AddComponent<AudioSource>();
-        audioSource.clip = Resources.Load<AudioClip>("Music/MachinimaSound.com_-_The_Arcade");
+        audioSource.clip = Resources.Load<AudioClip>("Sounds/Music/MachinimaSound.com_-_The_Arcade");
         audioSource.loop = true;
         audioSource.volume = 0.5f;
         audioSource.Play();

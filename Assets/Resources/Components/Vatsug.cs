@@ -28,7 +28,7 @@ public class Vatsug : MonoBehaviour {
         
         
         for (int i = 1; i < nrOfClips + 1; ++i)
-            clips[i - 1] = Resources.Load<AudioClip>("Samples/Vatsug/splish" + i);
+            clips[i - 1] = Resources.Load<AudioClip>("Sounds/Samples/Vatsug/splish" + i);
         mul = new Vector3(1 / Random.Range(8.0f, 14.0f), Random.Range(3.0f, 5.0f), Random.Range(3.0f, 5.0f));
         offs = new Vector3(0, Random.Range(-1.0f, 2.0f), 0);
 
