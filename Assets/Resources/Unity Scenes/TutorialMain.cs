@@ -9,7 +9,17 @@ public class TutorialMain : MonoBehaviour
     
     UnityEngine.UI.Text mTextDisplay;
 
-    GameObject mEnemy;
+    private GameObject rightWand;
+    private GameObject activateWandTooltip;
+    private LineRenderer lineRenderer;
+
+    private Material tex1;
+    private Material tex2;
+
+    private GameObject mEnemy;
+
+    float texTimer = 0.8f;
+    bool texSwap = false;
 
     bool mFirstEnterDone;
 
@@ -23,7 +33,27 @@ public class TutorialMain : MonoBehaviour
         mFirstEnterDone = true;
 
         // WAND.
-        GameObject rightWand = Factory.CreateAttractorWand(20, true);
+        rightWand = Factory.CreateAttractorWand(20, true);
+
+        activateWandTooltip = Factory.CreateWorldImage("MenuIconTextures/ViveTriggerHoldPressed1");
+        
+        tex1 = new Material(Shader.Find("Unlit/Texture"));
+        tex2 = new Material(Shader.Find("Unlit/Texture"));
+        tex1.mainTexture = Resources.Load("MenuIconTextures/ViveTriggerHoldPressed1") as Texture2D;
+        tex2.mainTexture = Resources.Load("MenuIconTextures/ViveTriggerHoldPressed2") as Texture2D;
+        activateWandTooltip.transform.position = new Vector3(-0.05f, -0.55f, 0.2f);
+        activateWandTooltip.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+        activateWandTooltip.transform.LookAt(activateWandTooltip.transform.position - Camera.main.transform.position);
+        activateWandTooltip.transform.parent = rightWand.transform;
+
+        lineRenderer = rightWand.AddComponent<LineRenderer>();
+        lineRenderer.material = new Material(Shader.Find("Unlit/Color"));
+        lineRenderer.material.color = Color.white;
+        lineRenderer.widthMultiplier = 0.01f;
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, new Vector3(0, 0, 0));
+        lineRenderer.SetPosition(1, new Vector3(0, -0.5f, 0.2f));
+
 
         // TIMER.
         GameObject displayTextObject = Factory.CreateWorldText("Welcome to Partycles", Color.green);
@@ -73,6 +103,24 @@ public class TutorialMain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        lineRenderer.SetPosition(0, rightWand.transform.position);
+        lineRenderer.SetPosition(1, rightWand.transform.position + new Vector3(0, -0.5f, 0.2f));
+        activateWandTooltip.transform.LookAt(activateWandTooltip.transform.position - Camera.main.transform.position);
+
+        texTimer -= Time.deltaTime;
+
+        if (!texSwap && texTimer <= 0.0f)
+        {
+            activateWandTooltip.GetComponent<MeshRenderer>().material = tex1;
+            texTimer = 0.8f;
+            texSwap = true;
+        }
+        else if (texSwap && texTimer <= 0.0f)
+        {
+            activateWandTooltip.GetComponent<MeshRenderer>().material = tex2;
+            texTimer = 1.6f;
+            texSwap = false;
+        }
         
 
         if (!mEnemy)
