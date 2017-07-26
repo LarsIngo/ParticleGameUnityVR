@@ -34,6 +34,7 @@ public class Attractor_lvl_7_Main : MonoBehaviour
 
         // WAND.
         GameObject rightWand = Factory.CreateAttractorWand(20, true);
+        GameObject leftWand = Factory.CreateAttractorWand(20, false);
 
         // TIMER.
         GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);

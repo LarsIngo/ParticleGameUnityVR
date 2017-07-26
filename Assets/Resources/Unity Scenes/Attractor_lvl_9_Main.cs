@@ -105,7 +105,7 @@ public class Attractor_lvl_9_Main : MonoBehaviour
             {
                 levelDone = false;
 
-                mEnemyList[i].transform.position = new Vector3(Mathf.Sin(Time.time + timeOffset[i]) * 6, Mathf.Tan(Time.time * 3 + timeOffset[i]), 4.0f);
+                mEnemyList[i].transform.position = new Vector3(Mathf.Sin(Time.time + timeOffset[i]) * 3, Mathf.Tan(Time.time + timeOffset[i]), 4.0f);
             }
         }
 

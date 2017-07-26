@@ -34,6 +34,7 @@ public class Attractor_lvl_8_Main : MonoBehaviour
 
         // WAND.
         GameObject rightWand = Factory.CreateAttractorWand(20, true);
+        GameObject leftWand = Factory.CreateAttractorWand(20, false);
 
         // TIMER.
         GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);
@@ -107,7 +108,7 @@ public class Attractor_lvl_8_Main : MonoBehaviour
         }
         else
         {
-            mEnemy.transform.position = new Vector3(Mathf.Sin(Time.time) * 6, Mathf.Tan(Time.time * 3), 4.0f);
+            mEnemy.transform.position = new Vector3(Mathf.Sin(Time.time) * 6, Mathf.Tan(Time.time), 3.0f);
         }
 
 
