@@ -2,45 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Attractor_lvl_5_Main : MonoBehaviour
+public class Attractor_lvl_8_Main : MonoBehaviour
 {
 
     /// +++ MEMBERS +++ ///
 
-    StageInfo mStageInfo;
 
+    StageInfo mStageInfo;
     float mTimer = 0;
     UnityEngine.UI.Text mTimerDisplay;
 
-    List<GameObject> mEnemyList = new List<GameObject>();
-    List<Vector3> centerDir = new List<Vector3>();
-    const int nrOfEnemies = 6;
-    const float fac = Mathf.PI * 2 / nrOfEnemies;
-    
+    GameObject mEnemy;
 
     bool mFirstEnterDone;
-    
 
     /// --- MEMBERS --- ///
 
     // Use this for initialization
     void Start()
     {
-
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
 
-            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_5")
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_6")
                 mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
-        
+
         // RESET.
         mFirstEnterDone = true;
 
-        //Equip a wand.
+        // WAND.
         GameObject rightWand = Factory.CreateAttractorWand(20, true);
-        GameObject leftWand = Factory.CreateAttractorWand(20, false);
 
         // TIMER.
         GameObject timerText = Factory.CreateWorldText("Highscore", Color.white);
@@ -95,24 +88,8 @@ public class Attractor_lvl_5_Main : MonoBehaviour
     void Update()
     {
 
-        // Check if level completed.
-        bool levelDone = true;
-        
-        for (int i = 0; i < mEnemyList.Count; ++i)
-        {
-            
-            if (mEnemyList[i])
-            {
-                levelDone = false;
 
-                mEnemyList[i].transform.Translate(centerDir[i] * Time.deltaTime * Mathf.Sin(Time.time + i * fac) * 2.5f);
-            }
-        }
-        
-
-        if (!levelDone)
-            mTimer += Time.deltaTime;
-        else
+        if (!mEnemy)
         {
             if (mFirstEnterDone)
             {
@@ -121,11 +98,6 @@ public class Attractor_lvl_5_Main : MonoBehaviour
                 // Celebration! :D :D :D
                 Factory.CreateCelebration();
 
-                // Update score.
-                float score = 100 - mTimer;
-                if (mStageInfo.Score < score)
-                    mStageInfo.SetScore(score);
-
             }
 
             endTimer += Time.deltaTime;
@@ -133,9 +105,10 @@ public class Attractor_lvl_5_Main : MonoBehaviour
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
 
         }
-
-        // Update time to display.
-        mTimerDisplay.text = Mathf.Max(100 - mTimer, 0).ToString("0.00");
+        else
+        {
+            mEnemy.transform.position = new Vector3(Mathf.Sin(Time.time) * 6, Mathf.Tan(Time.time * 3), 4.0f);
+        }
 
 
         // Check input to leave scene.
@@ -150,18 +123,8 @@ public class Attractor_lvl_5_Main : MonoBehaviour
 
     void SpawnEnemies()
     {
-
-        Vector3 center = new Vector3(0.0f, 0.0f, 3.0f);
-        for (int i = 0; i < nrOfEnemies; ++i)
-        {
-            GameObject enemy = Factory.CreateBasicEnemy(Vector3.right * 3 * Mathf.Sin(fac * i) + Vector3.up * 3 * Mathf.Cos(fac * i), 1000);
-            enemy.transform.position += center;
-            mEnemyList.Add(enemy);
-            centerDir.Add(Vector3.Normalize(center - enemy.transform.position));
-            
-        }
-
-        return;
+        // ENEMIES.
+        mEnemy = Factory.CreateBasicEnemy(Vector3.forward * 4.0f, 3000);
     }
 
 }

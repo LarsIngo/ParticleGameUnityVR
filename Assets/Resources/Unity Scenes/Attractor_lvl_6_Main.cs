@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Attractor_lvl_5_Main : MonoBehaviour
+public class Attractor_lvl_6_Main : MonoBehaviour
 {
 
     /// +++ MEMBERS +++ ///
@@ -13,13 +13,13 @@ public class Attractor_lvl_5_Main : MonoBehaviour
     UnityEngine.UI.Text mTimerDisplay;
 
     List<GameObject> mEnemyList = new List<GameObject>();
-    List<Vector3> centerDir = new List<Vector3>();
-    const int nrOfEnemies = 6;
+
+    const int nrOfEnemies = 3;
     const float fac = Mathf.PI * 2 / nrOfEnemies;
-    
 
     bool mFirstEnterDone;
-    
+
+    GameObject enemies;
 
     /// --- MEMBERS --- ///
 
@@ -30,11 +30,12 @@ public class Attractor_lvl_5_Main : MonoBehaviour
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
 
-            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_5")
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_6")
                 mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
-        
+
+
         // RESET.
         mFirstEnterDone = true;
 
@@ -97,19 +98,16 @@ public class Attractor_lvl_5_Main : MonoBehaviour
 
         // Check if level completed.
         bool levelDone = true;
-        
-        for (int i = 0; i < mEnemyList.Count; ++i)
+        for (int i = 0; i < mEnemyList.Count && levelDone; ++i)
         {
-            
             if (mEnemyList[i])
             {
                 levelDone = false;
 
-                mEnemyList[i].transform.Translate(centerDir[i] * Time.deltaTime * Mathf.Sin(Time.time + i * fac) * 2.5f);
             }
         }
-        
-
+        enemies.transform.position = new Vector3(Mathf.Sin(Time.time) * 3.5f, Mathf.Cos(Time.time) * 3.5f, 0.0f);
+        enemies.transform.Rotate(0, 0, 60 * Time.deltaTime);
         if (!levelDone)
             mTimer += Time.deltaTime;
         else
@@ -150,15 +148,15 @@ public class Attractor_lvl_5_Main : MonoBehaviour
 
     void SpawnEnemies()
     {
+        enemies = new GameObject();
 
-        Vector3 center = new Vector3(0.0f, 0.0f, 3.0f);
+
         for (int i = 0; i < nrOfEnemies; ++i)
         {
-            GameObject enemy = Factory.CreateBasicEnemy(Vector3.right * 3 * Mathf.Sin(fac * i) + Vector3.up * 3 * Mathf.Cos(fac * i), 1000);
-            enemy.transform.position += center;
+            GameObject enemy = Factory.CreateBasicEnemy(Vector3.forward * 4.5f + Vector3.right * 4 * Mathf.Sin(fac * i) + Vector3.up * 4 * Mathf.Cos(fac * i), 1000);
             mEnemyList.Add(enemy);
-            centerDir.Add(Vector3.Normalize(center - enemy.transform.position));
-            
+
+            enemy.transform.parent = enemies.transform;
         }
 
         return;
