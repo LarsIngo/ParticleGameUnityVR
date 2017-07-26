@@ -100,7 +100,8 @@ public class Attractor_lvl_3_Main : MonoBehaviour
                 levelDone = false;
 
         enemies.transform.Rotate(0, 0, 30 * Time.deltaTime);
-        mEnemyList[1].transform.position = new Vector3(Mathf.Sin(Time.time / 3) * 1.5f, Mathf.Sin(Time.time / 1.5f) * 1.5f, 3.0f);
+        if (mEnemyList[1])
+            mEnemyList[1].transform.position = new Vector3(Mathf.Sin(Time.time / 3) * 1.5f, Mathf.Sin(Time.time / 1.5f) * 1.5f, 3.0f);
 
         if (!levelDone)
             mTimer += Time.deltaTime;
