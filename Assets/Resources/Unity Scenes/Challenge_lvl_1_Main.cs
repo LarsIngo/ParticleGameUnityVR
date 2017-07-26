@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Attractor_lvl_3_Main : MonoBehaviour
+public class Challenge_lvl_1_Main : MonoBehaviour
 {
 
     /// +++ MEMBERS +++ ///
@@ -16,8 +16,6 @@ public class Attractor_lvl_3_Main : MonoBehaviour
 
     bool mFirstEnterDone;
 
-    GameObject enemies;
-
     /// --- MEMBERS --- ///
 
     // Use this for initialization
@@ -27,7 +25,7 @@ public class Attractor_lvl_3_Main : MonoBehaviour
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
 
-            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_3")
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Challenge_lvl_1")
                 mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
@@ -52,8 +50,7 @@ public class Attractor_lvl_3_Main : MonoBehaviour
         Highscore.transform.position += Vector3.forward * 100 + Vector3.up * 30;
         Highscore.transform.localScale *= 20;
 
-        // ENEMIES.
-        SpawnEnemies();
+
 
         // SKYBOX.
         Material skyboxMat = new Material(Shader.Find("RenderFX/Skybox"));
@@ -88,35 +85,59 @@ public class Attractor_lvl_3_Main : MonoBehaviour
 
     }
 
+    float enemyTimer = 0;
     float endTimer = 0;
+    bool lost = false;
     // Update is called once per frame
     void Update()
     {
 
-        // Check if level completed.
-        bool levelDone = true;
-        for (int i = 0; i < mEnemyList.Count && levelDone; ++i)
-            if (mEnemyList[i])
-                levelDone = false;
+        for (int i = 0; i < mEnemyList.Count; ++i)
+            if (mEnemyList[i] && mEnemyList[i].transform.position.z < -2)
+            {
 
-        enemies.transform.Rotate(0, 0, 30 * Time.deltaTime);
-        mEnemyList[1].transform.position = new Vector3(Mathf.Sin(Time.time / 3) * 1.5f, Mathf.Sin(Time.time / 1.5f) * 1.5f, 3.0f);
+                lost = true;
+                break;
 
-        if (!levelDone)
+            }
+
+        if (!lost)
+        {
+
+            if (enemyTimer > Mathf.Max((3 - mTimer / 20), 0.5f))
+            {
+
+                SpawnEnemy();
+                enemyTimer = 0;
+
+            }
+
+            enemyTimer += Time.deltaTime;
             mTimer += Time.deltaTime;
+
+        }
         else
         {
+
             if (mFirstEnterDone)
             {
+
+                float score = 0;
+                for (int i = 0; i < mEnemyList.Count; ++i)
+                    if (!mEnemyList[i])
+                        score++;
+
                 mFirstEnterDone = false;
 
-                // Celebration! :D :D :D
-                Factory.CreateCelebration();
-
                 // Update score.
-                float score = 100 - mTimer;
                 if (mStageInfo.Score < score)
+                {
+
+                    // Celebration! :D :D :D
+                    Factory.CreateCelebration();
                     mStageInfo.SetScore(score);
+
+                }
 
             }
 
@@ -126,8 +147,13 @@ public class Attractor_lvl_3_Main : MonoBehaviour
 
         }
 
+        int killCount = 0;
+        for (int i = 0; i < mEnemyList.Count; ++i)
+            if (!mEnemyList[i])
+                killCount++;
+
         // Update time to display.
-        mTimerDisplay.text = Mathf.Max(100 - mTimer, 0).ToString("0.00");
+        mTimerDisplay.text = killCount + "";
 
 
         // Check input to leave scene.
@@ -140,24 +166,20 @@ public class Attractor_lvl_3_Main : MonoBehaviour
 
     }
 
-    void SpawnEnemies()
+    void SpawnEnemy()
     {
+        // ENEMIES.
+        GameObject enemyBlueprint = Factory.CreateBasicEnemy(Vector3.forward * 20 + Vector3.right * 2 + Vector3.up * 2, 200);
 
-        enemies = new GameObject();
+        GameObject walker = new GameObject();
+        Walk walk = walker.AddComponent<Walk>();
+        enemyBlueprint.transform.parent = walker.transform;
 
-        GameObject enemy = Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 3, 1100);
-        mEnemyList.Add(enemy);
+        walker.transform.Rotate(0, 0, Random.Range(0, 360));
+        walk.direction = -Vector3.forward;
+        walk.speed = 6 + mTimer / 10;
 
-        enemy.transform.parent = enemies.transform;
-
-        enemy = Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 0, 2200);
-        mEnemyList.Add(enemy);
-
-        enemy.transform.parent = enemies.transform;
-        enemy = Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * -3, 1100);
-        mEnemyList.Add(enemy);
-
-        enemy.transform.parent = enemies.transform;
+        mEnemyList.Add(enemyBlueprint);
 
     }
 

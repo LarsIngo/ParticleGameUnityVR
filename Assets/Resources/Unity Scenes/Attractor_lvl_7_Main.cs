@@ -24,7 +24,7 @@ public class Attractor_lvl_7_Main : MonoBehaviour
         for (int i = 0; i < Hub.Instance.mStageInfoList.Count; i++)
         {
 
-            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_6")
+            if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_7")
                 mStageInfo = Hub.Instance.mStageInfoList[i];
 
         }
