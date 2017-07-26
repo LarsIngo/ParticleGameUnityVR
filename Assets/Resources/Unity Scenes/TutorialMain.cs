@@ -41,10 +41,11 @@ public class TutorialMain : MonoBehaviour
         tex2 = new Material(Shader.Find("Unlit/Texture"));
         tex1.mainTexture = Resources.Load("MenuIconTextures/ViveTriggerHoldPressed1") as Texture2D;
         tex2.mainTexture = Resources.Load("MenuIconTextures/ViveTriggerHoldPressed2") as Texture2D;
-        activateWandTooltip.transform.position = new Vector3(-0.05f, -0.55f, 0.2f);
+        
         activateWandTooltip.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
         activateWandTooltip.transform.LookAt(activateWandTooltip.transform.position - Camera.main.transform.position);
         activateWandTooltip.transform.parent = rightWand.transform;
+        activateWandTooltip.transform.localPosition = new Vector3(-0.25f, -0.5f, 0.3f);
 
         lineRenderer = rightWand.AddComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Unlit/Color"));
@@ -104,7 +105,7 @@ public class TutorialMain : MonoBehaviour
     void Update()
     {
         lineRenderer.SetPosition(0, rightWand.transform.position);
-        lineRenderer.SetPosition(1, rightWand.transform.position + new Vector3(0, -0.5f, 0.2f));
+        lineRenderer.SetPosition(1, activateWandTooltip.transform.position);// rightWand.transform.position + new Vector3(0, -0.5f, 0.2f));
         activateWandTooltip.transform.LookAt(activateWandTooltip.transform.position - Camera.main.transform.position);
 
         texTimer -= Time.deltaTime;
