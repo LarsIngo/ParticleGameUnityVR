@@ -36,18 +36,17 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo = new StageInfo(1, 2, "Attractor_lvl_3");
         stageInfo.mName = "Level3";
         stageInfo.mThumbnail = "MenuIconTextures/wand3";
-        stageInfo.mStarRequirement = 5;
 
         stageInfo.mBronze = 30;
         stageInfo.mSilver = 60;
         stageInfo.mGold = 75;
+        stageInfo.mLocked = false;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
         stageInfo = new StageInfo(1, 3, "Attractor_lvl_4");
         stageInfo.mName = "Level 4";
         stageInfo.mThumbnail = "MenuIconTextures/wand3";
-        stageInfo.mStarRequirement = 7;
 
         stageInfo.mBronze = 30;
         stageInfo.mSilver = 60;
