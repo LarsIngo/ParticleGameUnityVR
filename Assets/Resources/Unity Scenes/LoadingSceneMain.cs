@@ -18,6 +18,7 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo.mBronze = 30;
         stageInfo.mSilver = 60;
         stageInfo.mGold = 75;
+        
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
@@ -25,10 +26,10 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo.mName = "Double Trouble!";
         stageInfo.mThumbnail = "MenuIconTextures/wand2";
         stageInfo.mStarRequirement = 2;
-
         stageInfo.mBronze = 30;
         stageInfo.mSilver = 60;
         stageInfo.mGold = 75;
+        stageInfo.mLocked = true;
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 
@@ -113,7 +114,7 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo = new StageInfo(3, 0, "Vatsug1");
         stageInfo.mName = "Escape";
         stageInfo.mThumbnail = "MenuIconTextures/vatsugicon1";
-
+        stageInfo.mLocked = false;
 
         stageInfo.mBronze = 3;
         stageInfo.mSilver = 6;
@@ -125,7 +126,7 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo.mName = "Boat ride";
         stageInfo.mThumbnail = "MenuIconTextures/vatsugicon";
 
-
+        stageInfo.mLocked = true;
         stageInfo.mBronze = 3;
         stageInfo.mSilver = 6;
         stageInfo.mGold = 9;
@@ -140,6 +141,8 @@ public class LoadingSceneMain : MonoBehaviour {
         stageInfo.mSilver = 6;
         stageInfo.mGold = 9;
         stageInfo.mStarRequirement = 6;
+        
+
 
         Hub.Instance.mStageInfoList.Add(stageInfo);
 

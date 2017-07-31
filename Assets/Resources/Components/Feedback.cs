@@ -8,14 +8,17 @@ public class FeedBack : MonoBehaviour
     float mTimeSinceLastHit = 0.0f;
     float mLastFrameHealth = 0.0f;
     float mDamageTaken = 0.0f;
-    float mResetTime = 2.0f;
+    float mResetTime = 1.0f;
 
     enum STATE
     {
         NONE = 0,
         COOL,
+        GOOD,
         AWESOME,
-        OMFG
+        INSANE,
+        OMFG,
+        CHEATER
     }
 
     STATE mLastState = STATE.NONE;
@@ -47,13 +50,25 @@ public class FeedBack : MonoBehaviour
             mDamageTaken += mLastFrameHealth - health.HealthCurrent;
 
             // Update state.
-            if (mDamageTaken > 1600)
+            if (mDamageTaken > 3000)
+            {
+                mCurrentState = STATE.CHEATER;
+            }
+            else if (mDamageTaken > 1600)
             {
                 mCurrentState = STATE.OMFG;
             }
-            else if (mDamageTaken > 800)
+            else if (mDamageTaken > 1300)
+            {
+                mCurrentState = STATE.INSANE;
+            }
+            else if (mDamageTaken > 900)
             {
                 mCurrentState = STATE.AWESOME;
+            }
+            else if (mDamageTaken > 500)
+            {
+                mCurrentState = STATE.GOOD;
             }
             else if (mDamageTaken > 200)
             {
@@ -76,15 +91,27 @@ public class FeedBack : MonoBehaviour
                     break;
 
                 case STATE.COOL:
-                    Factory.CreateFeedbackText("COOL", Color.red, transform.position + Vector3.up, new Vector3(-1, 1, 0.1f));
+                    Factory.CreateFeedbackText("COOL", Color.green, transform.position + Vector3.up, new Vector3(-1, 1, 0.1f));
+                    break;
+
+                case STATE.GOOD:
+                    Factory.CreateFeedbackText("GOOD", new Color(0.0f, 0.7f, 0.0f), transform.position + Vector3.up, new Vector3(-1, 1.5f, 0.2f));
                     break;
 
                 case STATE.AWESOME:
-                    Factory.CreateFeedbackText("AWESOME", Color.red, transform.position + Vector3.up, new Vector3(0, 2, 0.1f));
+                    Factory.CreateFeedbackText("AWESOME", Color.yellow, transform.position + Vector3.up, new Vector3(0, 2, 0.1f));
+                    break;
+
+                case STATE.INSANE:
+                    Factory.CreateFeedbackText("INSANE!", new Color(1.0f, 0.5f, 0.1f), transform.position + Vector3.up, new Vector3(1, 3.5f, 0.1f));
                     break;
 
                 case STATE.OMFG:
-                    Factory.CreateFeedbackText("O M G!!", Color.red, transform.position + Vector3.up, new Vector3(1, 3, 0.1f));
+                    Factory.CreateFeedbackText("O M G!!", Color.red, transform.position + Vector3.up, new Vector3(1, 5.0f, 0.1f));
+                    break;
+
+                case STATE.CHEATER:
+                    Factory.CreateFeedbackText("CHEATER?!!", new Color(1.0f, 0.0f, 1.0f), transform.position + Vector3.up * 3.0f, new Vector3(0.0f, 0.0f, 0.0f));
                     break;
 
                 default:
