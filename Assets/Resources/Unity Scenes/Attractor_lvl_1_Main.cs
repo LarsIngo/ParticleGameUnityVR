@@ -15,6 +15,8 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
 
     bool mFirstEnterDone;
 
+    private int stageIndex;
+
     /// --- MEMBERS --- ///
 
     // Use this for initialization
@@ -24,8 +26,10 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
         {
 
             if (Hub.Instance.mStageInfoList[i].mSceneName == "Attractor_lvl_1")
+            {
                 mStageInfo = Hub.Instance.mStageInfoList[i];
-
+                stageIndex = i;
+            }
         }
 
         // RESET.
@@ -107,7 +111,16 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
                 float score = 100 - mTimer;
                 if (mStageInfo.Score < score)
                 {   
-                    
+                    //Make sure you get at least a bronze.
+                    if (score > mStageInfo.mBronze)
+                    {
+                        //check if next stage is in the same world. If it is, unlock it.
+                        StageInfo nextStage = Hub.Instance.mStageInfoList[stageIndex + 1];
+                        if (nextStage.mLocked && nextStage.mWorld == mStageInfo.mWorld)
+                        {
+                            nextStage.mLocked = false;
+                        }
+                    }
                     mStageInfo.SetScore(score);
                 }
             }
