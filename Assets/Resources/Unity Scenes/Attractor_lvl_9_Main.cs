@@ -13,6 +13,7 @@ public class Attractor_lvl_9_Main : MonoBehaviour
     UnityEngine.UI.Text mTimerDisplay;
 
     List<GameObject> mEnemyList = new List<GameObject>();
+    List<Vector3> mPosOffset = new List<Vector3>();
     List<float> timeOffset = new List<float>();
     const int nrOfEnemies = 5;
     const float fac = Mathf.PI * 2 / nrOfEnemies;
@@ -105,7 +106,7 @@ public class Attractor_lvl_9_Main : MonoBehaviour
             {
                 levelDone = false;
 
-                mEnemyList[i].transform.position = new Vector3(Mathf.Sin(Time.time + timeOffset[i]) * 3, Mathf.Tan(Time.time + timeOffset[i]), 4.0f);
+                mEnemyList[i].transform.position = new Vector3(Mathf.Sin(Time.time + timeOffset[i]) * 3, Mathf.Tan(Time.time + timeOffset[i]), 4.0f) + mPosOffset[i];
             }
         }
 
@@ -154,6 +155,7 @@ public class Attractor_lvl_9_Main : MonoBehaviour
         {
             GameObject enemy = Factory.CreateBasicEnemy(Vector3.forward * 3, 1000);
             mEnemyList.Add(enemy);
+            mPosOffset.Add(new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)));
             timeOffset.Add(fac * i);
 
         }
