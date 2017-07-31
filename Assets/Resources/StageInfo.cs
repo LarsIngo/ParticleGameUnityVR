@@ -27,7 +27,18 @@ public class StageInfo  {
             return;
 
         int starsEarned = 0;
-
+        
+        //Make sure you get at least a bronze.
+        if (newScore > mBronze)
+        {
+            //check if next stage is in the same world. If it is, unlock it.
+            StageInfo nextStage = Hub.Instance.mStageInfoList[mStage];
+            if (nextStage.mLocked && nextStage.mWorld == mWorld)
+            {
+                nextStage.mLocked = false;
+            }
+        }
+         
         if (mScore >= mBronze)
             starsEarned--;
         if (mScore >= mSilver)

@@ -107,16 +107,7 @@ public class Attractor_lvl_1_Main : MonoBehaviour {
                 float score = 100 - mTimer;
                 if (mStageInfo.Score < score)
                 {   
-                    //Make sure you get at least a bronze.
-                    if (score > mStageInfo.mBronze)
-                    {
-                        //check if next stage is in the same world. If it is, unlock it.
-                        StageInfo nextStage = Hub.Instance.mStageInfoList[mStageInfo.mStage];
-                        if (nextStage.mLocked && nextStage.mWorld == mStageInfo.mWorld)
-                        {
-                            nextStage.mLocked = false;
-                        }
-                    }
+                    
                     mStageInfo.SetScore(score);
                 }
             }
