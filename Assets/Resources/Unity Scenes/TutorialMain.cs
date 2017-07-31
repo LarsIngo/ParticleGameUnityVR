@@ -45,12 +45,12 @@ public class TutorialMain : MonoBehaviour
         tex1.mainTexture = Resources.Load("MenuIconTextures/ViveTriggerHoldPressed1") as Texture2D;
         tex2.mainTexture = Resources.Load("MenuIconTextures/ViveTriggerHoldPressed2") as Texture2D;
         
-        activateWandTooltip.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+        activateWandTooltip.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
         activateWandTooltip.transform.LookAt(Camera.main.transform.position);
         activateWandTooltip.transform.parent = rightWand.transform;
         activateWandTooltip.transform.localPosition = new Vector3(-0.25f, -0.25f, 0.15f);
 
-        lineRenderer = rightWand.AddComponent<LineRenderer>();
+        lineRenderer = activateWandTooltip.AddComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Unlit/Color"));
         lineRenderer.material.color = Color.white;
         lineRenderer.widthMultiplier = 0.005f;
@@ -108,10 +108,17 @@ public class TutorialMain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        lineRenderer.SetPosition(0, rightWand.transform.position + rightWand.transform.forward * -0.06f + rightWand.transform.up * -0.02f);
-        lineRenderer.SetPosition(1, activateWandTooltip.transform.position + activateWandTooltip.transform.right * -0.08f + activateWandTooltip.transform.up * 0.08f);// rightWand.transform.position + new Vector3(0, -0.5f, 0.2f));
-        activateWandTooltip.transform.LookAt(Camera.main.transform.position);
-
+        if (VrInput.RightTrigger() < 0.5)
+        {
+            activateWandTooltip.SetActive(true);
+            lineRenderer.SetPosition(0, rightWand.transform.position + rightWand.transform.forward * -0.06f + rightWand.transform.up * -0.02f);
+            lineRenderer.SetPosition(1, activateWandTooltip.transform.position + activateWandTooltip.transform.right * -0.08f + activateWandTooltip.transform.up * 0.08f);// rightWand.transform.position + new Vector3(0, -0.5f, 0.2f));
+            activateWandTooltip.transform.LookAt(Camera.main.transform.position);
+        }
+        else
+        {
+            activateWandTooltip.SetActive(false);
+        }
         texTimer -= Time.deltaTime;
 
         
@@ -119,13 +126,13 @@ public class TutorialMain : MonoBehaviour
         if (!texSwap && texTimer <= 0.0f)
         {
             tooltipChild.GetComponent<MeshRenderer>().material = tex1;
-            texTimer = 0.8f;
+            texTimer = 0.6f;
             texSwap = true;
         }
         else if (texSwap && texTimer <= 0.0f)
         {
             tooltipChild.GetComponent<MeshRenderer>().material = tex2;
-            texTimer = 1.6f;
+            texTimer = 1.2f;
             texSwap = false;
         }
         
