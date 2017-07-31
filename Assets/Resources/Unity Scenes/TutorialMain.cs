@@ -10,6 +10,7 @@ public class TutorialMain : MonoBehaviour
     UnityEngine.UI.Text mTextDisplay;
 
     private GameObject rightWand;
+    private GameObject tooltipChild;
     private GameObject activateWandTooltip;
     private LineRenderer lineRenderer;
 
@@ -34,26 +35,29 @@ public class TutorialMain : MonoBehaviour
 
         // WAND.
         rightWand = Factory.CreateAttractorWand(20, true);
+        activateWandTooltip = new GameObject();
+        tooltipChild = Factory.CreateWorldImage("MenuIconTextures/ViveTriggerHoldPressed1");
+        tooltipChild.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
+        tooltipChild.transform.parent = activateWandTooltip.transform;
 
-        activateWandTooltip = Factory.CreateWorldImage("MenuIconTextures/ViveTriggerHoldPressed1");
-        
         tex1 = new Material(Shader.Find("Unlit/Texture"));
         tex2 = new Material(Shader.Find("Unlit/Texture"));
         tex1.mainTexture = Resources.Load("MenuIconTextures/ViveTriggerHoldPressed1") as Texture2D;
         tex2.mainTexture = Resources.Load("MenuIconTextures/ViveTriggerHoldPressed2") as Texture2D;
         
         activateWandTooltip.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-        activateWandTooltip.transform.LookAt(activateWandTooltip.transform.position - Camera.main.transform.position);
+        activateWandTooltip.transform.LookAt(Camera.main.transform.position);
         activateWandTooltip.transform.parent = rightWand.transform;
-        activateWandTooltip.transform.localPosition = new Vector3(-0.25f, -0.5f, 0.3f);
+        activateWandTooltip.transform.localPosition = new Vector3(-0.25f, -0.25f, 0.15f);
 
         lineRenderer = rightWand.AddComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Unlit/Color"));
         lineRenderer.material.color = Color.white;
-        lineRenderer.widthMultiplier = 0.01f;
+        lineRenderer.widthMultiplier = 0.005f;
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, new Vector3(0, 0, 0));
         lineRenderer.SetPosition(1, new Vector3(0, -0.5f, 0.2f));
+        
 
 
         // TIMER.
@@ -104,21 +108,23 @@ public class TutorialMain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        lineRenderer.SetPosition(0, rightWand.transform.position);
-        lineRenderer.SetPosition(1, activateWandTooltip.transform.position);// rightWand.transform.position + new Vector3(0, -0.5f, 0.2f));
-        activateWandTooltip.transform.LookAt(activateWandTooltip.transform.position - Camera.main.transform.position);
+        lineRenderer.SetPosition(0, rightWand.transform.position + rightWand.transform.forward * -0.06f + rightWand.transform.up * -0.02f);
+        lineRenderer.SetPosition(1, activateWandTooltip.transform.position + activateWandTooltip.transform.right * -0.08f + activateWandTooltip.transform.up * 0.08f);// rightWand.transform.position + new Vector3(0, -0.5f, 0.2f));
+        activateWandTooltip.transform.LookAt(Camera.main.transform.position);
 
         texTimer -= Time.deltaTime;
 
+        
+
         if (!texSwap && texTimer <= 0.0f)
         {
-            activateWandTooltip.GetComponent<MeshRenderer>().material = tex1;
+            tooltipChild.GetComponent<MeshRenderer>().material = tex1;
             texTimer = 0.8f;
             texSwap = true;
         }
         else if (texSwap && texTimer <= 0.0f)
         {
-            activateWandTooltip.GetComponent<MeshRenderer>().material = tex2;
+            tooltipChild.GetComponent<MeshRenderer>().material = tex2;
             texTimer = 1.6f;
             texSwap = false;
         }
@@ -155,7 +161,7 @@ public class TutorialMain : MonoBehaviour
     void SpawnEnemies()
     {
         // ENEMIES.
-        mEnemy = Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 0, 750);
+        mEnemy = Factory.CreateBasicEnemy(Vector3.forward * 3 + Vector3.right * 0, 2000);
     }
 
 }
